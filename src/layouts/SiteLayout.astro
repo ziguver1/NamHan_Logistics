@@ -1,0 +1,69 @@
+---
+import SiteHeader from '@/components/layout/SiteHeader.astro';
+import SiteFooter from '@/components/layout/SiteFooter.astro';
+import { companyInfo } from '@/content/company';
+import '@/styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  canonicalPath?: string;
+}
+
+const {
+  title = `${companyInfo.shortName} — Giải pháp vận tải & Logistics chuyên nghiệp`,
+  description = companyInfo.tagline,
+  canonicalPath = '/',
+} = Astro.props;
+
+const siteTitle = title.includes(companyInfo.shortName)
+  ? title
+  : `${title} | ${companyInfo.shortName}`;
+---
+
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="format-detection" content="telephone=no" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+
+    <!-- SEO Meta Tags -->
+    <title>{siteTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph / Social -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={siteTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:locale" content="vi_VN" />
+
+    <!-- Canonical Path -->
+    <meta property="og:url" content={canonicalPath} />
+
+    <!-- Web Font Preconnect (Inter) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Accessibility Skip Link -->
+    <a href="#main-content" class="skip-link">Chuyển đến nội dung chính</a>
+
+    <!-- Global Header -->
+    <SiteHeader currentPath={canonicalPath} />
+
+    <!-- Main Content Landmark -->
+    <main id="main-content">
+      <slot />
+    </main>
+
+    <!-- Global Footer -->
+    <SiteFooter />
+  </body>
+</html>

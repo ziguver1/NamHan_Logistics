@@ -1,0 +1,140 @@
+---
+import { ROUTES } from '@/lib/routes';
+
+interface Props {
+  currentRoute?: string;
+}
+
+const { currentRoute = ROUTES.SERVICES } = Astro.props;
+
+const switcherItems = [
+  {
+    label: '1. Trang Tổng Quan Dịch Vụ',
+    href: ROUTES.SERVICES,
+  },
+  {
+    label: '2. Trang Chi Tiết: Vận Tải Đường Bộ (Mũi Nhọn)',
+    href: ROUTES.SERVICE_ROAD,
+  },
+  {
+    label: '3. Logistics & Giao Nhận',
+    href: ROUTES.SERVICE_LOGISTICS,
+  },
+  {
+    label: '4. Bốc Xếp & Hỗ Trợ',
+    href: ROUTES.SERVICE_HANDLING,
+  },
+  {
+    label: '5. Giải Pháp Vận Tải',
+    href: ROUTES.SERVICE_SOLUTIONS,
+  },
+];
+---
+
+<nav class="module-switcher-bar" aria-label="Điều hướng các phân hệ dịch vụ">
+  <div class="container switcher-container">
+    <span class="switcher-label">Giao diện đang chọn trong Module:</span>
+    <div class="switcher-list" role="tablist">
+      {switcherItems.map((item) => {
+        const isActive = currentRoute === item.href;
+        return (
+          <a
+            href={item.href}
+            class={`switcher-btn ${isActive ? 'is-active' : ''}`}
+            role="tab"
+            aria-selected={isActive ? 'true' : 'false'}
+          >
+            {item.label}
+          </a>
+        );
+      })}
+    </div>
+  </div>
+</nav>
+
+<style>
+  .module-switcher-bar {
+    background-color: #ffffff;
+    border-bottom: 1px solid var(--color-border);
+    padding-top: 0.625rem;
+    padding-bottom: 0.625rem;
+    font-size: 0.8125rem;
+  }
+
+  .switcher-container {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    padding-inline-start: var(--page-gutter);
+    padding-inline-end: var(--page-gutter);
+  }
+
+  .switcher-container::-webkit-scrollbar {
+    height: 3px;
+  }
+
+  .switcher-container::-webkit-scrollbar-thumb {
+    background-color: var(--color-border-strong);
+    border-radius: var(--radius-full);
+  }
+
+  .switcher-label {
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .switcher-list {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-shrink: 0;
+  }
+
+  .switcher-btn {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.375rem 0.875rem;
+    border-radius: var(--radius-md);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #475569;
+    background-color: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    white-space: nowrap;
+    text-decoration: none;
+    transition: all var(--transition-fast);
+  }
+
+  .switcher-btn:hover {
+    background-color: #e2e8f0;
+    color: var(--color-brand-navy);
+  }
+
+  .switcher-btn.is-active {
+    background-color: var(--color-brand-navy);
+    color: #ffffff;
+    border-color: var(--color-brand-navy);
+    box-shadow: 0 1px 3px rgba(11, 25, 44, 0.2);
+  }
+
+  @media (max-width: 767px) {
+    .module-switcher-bar {
+      padding-top: 0.5rem;
+      padding-bottom: 0.5rem;
+    }
+
+    .switcher-label {
+      font-size: 0.75rem;
+    }
+
+    .switcher-btn {
+      font-size: 0.75rem;
+      padding: 0.3125rem 0.625rem;
+    }
+  }
+</style>

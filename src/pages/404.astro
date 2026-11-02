@@ -1,0 +1,111 @@
+---
+import SiteLayout from '@/layouts/SiteLayout.astro';
+import { ROUTES } from '@/lib/routes';
+import { companyInfo } from '@/content/company';
+---
+
+<SiteLayout
+  title={`404 - Không tìm thấy trang | ${companyInfo.shortName}`}
+  description="Trang bạn đang tìm kiếm không tồn tại hoặc đã được chuyển hướng."
+  canonicalPath={ROUTES.NOT_FOUND}
+>
+  <section class="section not-found-section">
+    <div class="container not-found-content">
+      <span class="status-code">404</span>
+      <h1 class="page-title">Trang không tồn tại</h1>
+      <p class="page-desc">
+        Địa chỉ trang bạn vừa truy cập không có trên hệ thống hoặc đã được cập nhật đường dẫn mới.
+      </p>
+      <div class="action-wrap">
+        <a href={ROUTES.HOME} class="btn-home">Về trang chủ</a>
+        <a href={ROUTES.CONTACT} class="btn-contact">Liên hệ hỗ trợ</a>
+      </div>
+    </div>
+  </section>
+</SiteLayout>
+
+<style>
+  .not-found-section {
+    min-height: 60vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .not-found-content {
+    max-width: 36rem;
+  }
+
+  .status-code {
+    font-size: clamp(4rem, 10vw, 7rem);
+    font-weight: 900;
+    line-height: 1;
+    color: var(--color-brand-orange);
+    letter-spacing: -0.04em;
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .page-title {
+    font-size: var(--font-h2);
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    margin-bottom: 1rem;
+  }
+
+  .page-desc {
+    color: var(--color-text-secondary);
+    font-size: var(--font-body);
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  .action-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    justify-content: center;
+  }
+
+  @media (min-width: 640px) {
+    .action-wrap {
+      flex-direction: row;
+    }
+  }
+
+  .btn-home {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--touch-target-min);
+    background-color: var(--color-brand-navy);
+    color: var(--color-text-inverse);
+    font-weight: 600;
+    padding: 0.75rem 1.75rem;
+    border-radius: var(--radius-md);
+    transition: background-color var(--transition-fast);
+  }
+
+  .btn-home:hover {
+    background-color: var(--color-brand-navy-light);
+  }
+
+  .btn-contact {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--touch-target-min);
+    background-color: transparent;
+    color: var(--color-brand-navy);
+    border: 1px solid var(--color-border);
+    font-weight: 600;
+    padding: 0.75rem 1.75rem;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+  }
+
+  .btn-contact:hover {
+    background-color: var(--color-bg-muted);
+  }
+</style>

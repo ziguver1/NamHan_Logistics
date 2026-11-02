@@ -1,0 +1,226 @@
+---
+/**
+ * Contact Hero Section (Figma Frame 101:1823)
+ * Design Reference: 08-lien-he.png
+ * Features:
+ * - Badge "● BÁO GIÁ VẬN CHUYỂN"
+ * - H1 "Nhận báo giá nhanh dễ dàng, phù hợp với nhu cầu của bạn"
+ * - Subtitle explaining flexible road transport
+ * - 3 Value highlight pills (Tư vấn nhanh chóng, Giải pháp phù hợp nhu cầu, Đồng hành cùng doanh nghiệp)
+ * - Truck visual on right side with seamless fade to white
+ */
+---
+
+<section class="contact-hero-section" aria-labelledby="contact-hero-title">
+  <div class="container">
+    <div class="hero-card">
+      <!-- Left Content Column -->
+      <div class="hero-content">
+        <div class="badge-wrapper">
+          <span class="hero-badge">
+            <span class="badge-dot" aria-hidden="true"></span>
+            BÁO GIÁ VẬN CHUYỂN
+          </span>
+        </div>
+
+        <h1 id="contact-hero-title" class="hero-title">
+          Nhận báo giá nhanh dễ dàng,<br class="hero-br" />phù hợp với nhu cầu của bạn
+        </h1>
+
+        <p class="hero-subtitle">
+          Nam Hân Logistics cung cấp giải pháp vận tải đường bộ linh hoạt, cho mọi quy mô đơn hàng, từ chuyến lẻ đến hợp tác dài hạn.
+        </p>
+
+        <!-- Feature Highlight Pills -->
+        <div class="feature-pills" role="list">
+          <div class="feature-pill" role="listitem">
+            <svg class="pill-icon text-blue" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+            <span>Tư vấn nhanh chóng</span>
+          </div>
+
+          <div class="feature-pill" role="listitem">
+            <svg class="pill-icon text-blue" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <polyline points="9 12 11 14 15 10"/>
+            </svg>
+            <span>Giải pháp phù hợp nhu cầu</span>
+          </div>
+
+          <div class="feature-pill" role="listitem">
+            <svg class="pill-icon text-blue" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+            <span>Đồng hành cùng doanh nghiệp</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Visual Spacer (background truck image shows through) -->
+      <div class="hero-visual" aria-hidden="true"></div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact-hero-section {
+    padding: clamp(0.75rem, 1.75vw, 1.5rem) 0 clamp(0.5rem, 1.25vw, 1rem);
+    background-color: var(--color-bg-page, #ffffff);
+  }
+
+  .container {
+    max-width: var(--content-max, 75.5rem);
+    margin: 0 auto;
+    padding: 0 var(--page-gutter, 1.5rem);
+  }
+
+  .hero-card {
+    position: relative;
+    border-radius: var(--radius-xl, 20px);
+    border: 1px solid #eef2f6;
+    background: #ffffff url('/images/contact/contact-hero-bg.webp') no-repeat right center;
+    background-size: cover;
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: clamp(1.5rem, 3vw, 2.5rem) clamp(1.25rem, 3vw, 2.75rem);
+    align-items: center;
+    min-height: 350px;
+  }
+
+  @media (min-width: 900px) {
+    .hero-card {
+      grid-template-columns: 520px 1fr;
+      padding: 2.25rem 2.75rem;
+      background: linear-gradient(90deg, #ffffff 0%, #ffffff 42%, rgba(255, 255, 255, 0.96) 50%, rgba(255, 255, 255, 0) 64%),
+                  url('/images/contact/contact-hero-bg.webp') no-repeat right center;
+      background-size: cover;
+    }
+  }
+
+  @media (max-width: 899px) {
+    .hero-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.98) 100%),
+                  url('/images/contact/contact-hero-bg.webp') no-repeat right center;
+      background-size: cover;
+    }
+  }
+
+  .hero-content {
+    display: flex;
+    flex-direction: column;
+    z-index: 2;
+  }
+
+  .badge-wrapper {
+    margin-bottom: 1rem;
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.35rem 0.85rem;
+    border-radius: var(--radius-full, 9999px);
+    background-color: #fff7ed;
+    border: 1px solid #ffedd5;
+    color: var(--color-brand-orange, #ea580c);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .badge-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background-color: var(--color-brand-orange, #ea580c);
+  }
+
+  .hero-title {
+    font-family: var(--font-sans);
+    font-size: clamp(1.35rem, 2vw, 2rem);
+    font-weight: 800;
+    line-height: 1.25;
+    color: var(--color-brand-navy, #072238);
+    margin: 0 0 0.75rem 0;
+    letter-spacing: -0.02em;
+  }
+
+  .hero-br {
+    display: inline;
+  }
+
+  .hero-subtitle {
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--color-text-secondary, #475569);
+    margin: 0 0 1.35rem 0;
+    max-width: 505px;
+  }
+
+  .feature-pills {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+    max-width: 510px;
+  }
+
+  .feature-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.45rem;
+    padding: 0.375rem 0.8125rem;
+    border-radius: var(--radius-full, 9999px);
+    background-color: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #1e293b;
+    white-space: nowrap;
+    transition: transform var(--transition-fast, 150ms ease), box-shadow var(--transition-fast, 150ms ease);
+  }
+
+  .feature-pill:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .pill-icon {
+    flex-shrink: 0;
+  }
+
+  .text-blue {
+    color: #0284c7;
+  }
+
+  .hero-visual {
+    position: relative;
+    width: 100%;
+    min-height: 50px;
+  }
+
+  @media (max-width: 640px) {
+    .hero-br {
+      display: none;
+    }
+
+    .feature-pills {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.5rem;
+    }
+
+    .feature-pill {
+      width: 100%;
+    }
+  }
+</style>

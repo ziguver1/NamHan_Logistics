@@ -1,0 +1,1075 @@
+---
+/**
+ * Admin Panel - Announcement Editor (Biên tập Thông báo)
+ * SSR Route: Protected by administrative session.
+ */
+import SiteLayout from '@/layouts/SiteLayout.astro';
+import AdminHeader from '@/components/admin/AdminHeader.astro';
+import AdminLoginForm from '@/components/admin/AdminLoginForm.astro';
+import { isAuthenticatedAdmin } from '@/lib/server/admin-auth';
+import { getAnnouncementById } from '@/lib/server/news-storage';
+
+export const prerender = false;
+
+const request = Astro.request;
+const isAdmin = await isAuthenticatedAdmin(request);
+const url = new URL(request.url);
+
+const editId = url.searchParams.get('id') || '';
+const article = editId && isAdmin ? await getAnnouncementById(editId) : null;
+const isEditing = Boolean(article);
+---
+
+<SiteLayout
+  title={isEditing ? `Sửa: ${article?.title} | Admin Nam Hân` : 'Tạo thông báo mới | Admin Nam Hân'}
+  description="Trình biên tập thông báo, bảng tin điều hành Nam Hân Logistics."
+>
+  {isAdmin && <AdminHeader activeTab="news" />}
+
+  <main class="admin-main">
+    <div class="container admin-container">
+      {!isAdmin ? (
+        <AdminLoginForm />
+      ) : (
+        <div class="editor-wrap">
+          <!-- Header Bar -->
+          <div class="editor-header">
+            <div class="editor-header-left">
+              <a href="/admin/" class="btn-back">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M19 12H5M12 19l-7-7 7-7"/>
+                </svg>
+                <span>Quay lại Bảng tin</span>
+              </a>
+              <h1 class="editor-title">{isEditing ? 'Chỉnh sửa thông báo' : 'Tạo thông báo mới'}</h1>
+            </div>
+
+            <div class="editor-header-actions">
+              {isEditing && (
+                <a
+                  href={`/bang-tin/${article?.slug}?preview=true`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn btn-outline"
+                >
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                    <circle cx="12" cy="12" r="3"/>
+                  </svg>
+                  <span>Xem trước</span>
+                </a>
+              )}
+
+              <button type="button" id="btnSaveDraft" class="btn btn-secondary">
+                <span>Lưu bản nháp</span>
+              </button>
+
+              <button type="button" id="btnPublish" class="btn btn-primary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span>{article?.status === 'published' ? 'Cập nhật bài đăng' : 'Đăng thông báo'}</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Alert area -->
+          <div id="editorAlert" class="editor-alert" style="display: none;" role="alert"></div>
+
+          <!-- Main Editor Form -->
+          <form id="announcementForm" class="editor-grid">
+            <input type="hidden" id="articleId" name="id" value={article?.id || ''} />
+            <input type="hidden" id="articleVersion" name="expectedVersion" value={article?.version || 1} />
+
+            <!-- Left / Main Column: Title, Slug, Summary, Content -->
+            <div class="editor-col-main">
+              <!-- Field: Tiêu đề -->
+              <div class="form-card">
+                <div class="form-group">
+                  <label for="titleInput" class="form-label required">Tiêu đề thông báo</label>
+                  <input
+                    type="text"
+                    id="titleInput"
+                    name="title"
+                    class="form-input title-input"
+                    placeholder="Ví dụ: Thông báo kế hoạch vận chuyển hàng hóa dịp Tết Nguyên Đán 2026"
+                    value={article?.title || ''}
+                    required
+                    maxlength="250"
+                  />
+                </div>
+
+                <!-- Field: Slug -->
+                <div class="form-group slug-group">
+                  <label for="slugInput" class="form-label">
+                    Đường dẫn liên kết (Slug)
+                    <small class="text-muted">(Tự động sinh từ tiêu đề, có thể tùy chỉnh)</small>
+                  </label>
+                  <div class="slug-input-wrap">
+                    <span class="slug-prefix">/bang-tin/</span>
+                    <input
+                      type="text"
+                      id="slugInput"
+                      name="slug"
+                      class="form-input slug-input"
+                      placeholder="thong-bao-ke-hoach-van-chuyen-tet-2026"
+                      value={article?.slug || ''}
+                      pattern="^[a-z0-9-]+$"
+                    />
+                  </div>
+                </div>
+
+                <!-- Field: Mô tả ngắn -->
+                <div class="form-group">
+                  <div class="label-with-count">
+                    <label for="summaryInput" class="form-label required">Mô tả ngắn gọn (Tóm tắt)</label>
+                    <span id="summaryCounter" class="char-count">0/500</span>
+                  </div>
+                  <textarea
+                    id="summaryInput"
+                    name="summary"
+                    class="form-textarea summary-textarea"
+                    rows="3"
+                    placeholder="Tóm tắt ngắn gọn nội dung thông báo trong 1-3 câu..."
+                    maxlength="500"
+                    required
+                  >{article?.summary || ''}</textarea>
+                </div>
+              </div>
+
+              <!-- Field: Rich Text Content Editor -->
+              <div class="form-card">
+                <div class="content-header">
+                  <label class="form-label required">Nội dung chi tiết thông báo</label>
+                  <span class="text-muted"><small>Trình soạn thảo chuẩn hóa, chống mã độc XSS</small></span>
+                </div>
+
+                <!-- Formatting Toolbar -->
+                <div class="editor-toolbar" role="toolbar" aria-label="Định dạng văn bản">
+                  <button type="button" class="tool-btn" data-command="formatBlock" data-val="<p>" title="Đoạn văn">P</button>
+                  <button type="button" class="tool-btn" data-command="formatBlock" data-val="<h2>" title="Tiêu đề 2 (Lớn)">H2</button>
+                  <button type="button" class="tool-btn" data-command="formatBlock" data-val="<h3>" title="Tiêu đề 3 (Vừa)">H3</button>
+                  <span class="tool-separator"></span>
+                  <button type="button" class="tool-btn" data-command="bold" title="In đậm (Ctrl+B)"><strong>B</strong></button>
+                  <button type="button" class="tool-btn" data-command="italic" title="In nghiêng (Ctrl+I)"><em>I</em></button>
+                  <span class="tool-separator"></span>
+                  <button type="button" class="tool-btn" data-command="insertUnorderedList" title="Danh sách gạch đầu dòng">• List</button>
+                  <button type="button" class="tool-btn" data-command="insertOrderedList" title="Danh sách đánh số">1. List</button>
+                  <button type="button" class="tool-btn" data-command="formatBlock" data-val="<blockquote>" title="Trích dẫn">Quote</button>
+                  <span class="tool-separator"></span>
+                  <button type="button" class="tool-btn" id="btnInsertLink" title="Chèn liên kết">Link</button>
+                  <button type="button" class="tool-btn" id="btnInsertImage" title="Chèn hình ảnh vào nội dung">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                      <circle cx="9" cy="9" r="2"/>
+                      <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                    </svg>
+                    <span>Ảnh</span>
+                  </button>
+                  <input type="file" id="inlineImageInput" accept="image/jpeg,image/png,image/webp" style="display: none;" />
+                </div>
+
+                <!-- Contenteditable Surface -->
+                <div
+                  id="richContentEditor"
+                  class="rich-editor-surface"
+                  contenteditable="true"
+                  role="textbox"
+                  aria-multiline="true"
+                  aria-label="Soạn thảo nội dung thông báo"
+                >{article?.content ? '' : ''}</div>
+                <!-- Hidden textarea to store markup for POST -->
+                <textarea id="hiddenContent" name="content" style="display: none;">{article?.content || ''}</textarea>
+              </div>
+            </div>
+
+            <!-- Right / Side Column: Settings, Cover Image, Attachments -->
+            <div class="editor-col-side">
+              <!-- Card: Xuất bản & Ghim -->
+              <div class="form-card">
+                <h3 class="side-card-title">Cấu hình hiển thị</h3>
+
+                <div class="form-group checkbox-group">
+                  <label class="checkbox-label">
+                    <input
+                      type="checkbox"
+                      id="isPinnedInput"
+                      name="isPinned"
+                      class="form-checkbox"
+                      checked={Boolean(article?.isPinned)}
+                    />
+                    <span class="checkbox-custom"></span>
+                    <span class="checkbox-text">
+                      <strong>Ghim thông báo</strong>
+                      <small class="d-block text-muted">Ưu tiên hiển thị trên đầu Bảng tin và Trang chủ</small>
+                    </span>
+                  </label>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Trạng thái hiện tại</label>
+                  <div class="status-indicator-box">
+                    {article?.status === 'published' ? (
+                      <span class="badge-status status-published">🟢 Đang đăng</span>
+                    ) : article?.status === 'deleted' ? (
+                      <span class="badge-status status-deleted">🔴 Đang trong thùng rác</span>
+                    ) : (
+                      <span class="badge-status status-draft">🟡 Bản nháp (Chưa công khai)</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card: Ảnh đại diện (Cover Image) -->
+              <div class="form-card">
+                <h3 class="side-card-title">Ảnh đại diện thông báo</h3>
+                <p class="side-card-desc">Ảnh hiển thị trên thẻ Bảng tin và đầu bài viết (JPEG, PNG, WebP tối đa 5 MB).</p>
+
+                <div class="cover-uploader">
+                  <div id="coverPreviewWrap" class="cover-preview-box" style={article?.coverImage?.url ? 'display: block;' : 'display: none;'}>
+                    <img id="coverPreviewImg" src={article?.coverImage?.url || ''} alt="Ảnh đại diện" class="cover-img" />
+                    <button type="button" id="btnRemoveCover" class="btn-remove-cover" title="Xóa ảnh đại diện">✕</button>
+                  </div>
+
+                  <input type="hidden" id="coverImageUrl" name="coverImageUrl" value={article?.coverImage?.url || ''} />
+
+                  <div id="coverUploadActions" style={article?.coverImage?.url ? 'display: none;' : 'display: block;'}>
+                    <button type="button" id="btnUploadCover" class="btn btn-outline btn-block">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                        <circle cx="9" cy="9" r="2"/>
+                        <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                      </svg>
+                      <span>Tải ảnh đại diện</span>
+                    </button>
+                    <input type="file" id="coverFileInput" accept="image/jpeg,image/png,image/webp" style="display: none;" />
+                  </div>
+
+                  <div class="form-group mt-3">
+                    <label for="coverAltInput" class="form-label">Mô tả ảnh (Alt text)</label>
+                    <input
+                      type="text"
+                      id="coverAltInput"
+                      name="coverAlt"
+                      class="form-input"
+                      placeholder="Mô tả nội dung ảnh..."
+                      value={article?.coverImage?.alt || ''}
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <!-- Card: Tài liệu đính kèm (PDF) -->
+              <div class="form-card">
+                <h3 class="side-card-title">Tài liệu đính kèm (PDF)</h3>
+                <p class="side-card-desc">Đính kèm công văn, bảng giá hoặc thông báo có dấu đỏ (Tối đa 10 MB/tệp).</p>
+
+                <div class="attachments-list" id="attachmentsList">
+                  {article?.attachments?.map((att) => (
+                    <div class="attachment-item" data-id={att.id} data-file={JSON.stringify(att)}>
+                      <div class="att-info">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                          <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <div class="att-name-wrap">
+                          <span class="att-name" title={att.originalName}>{att.originalName}</span>
+                          <small class="att-size">{(att.sizeBytes / 1024).toFixed(0)} KB</small>
+                        </div>
+                      </div>
+                      <button type="button" class="btn-remove-att" title="Xóa tệp đính kèm">✕</button>
+                    </div>
+                  ))}
+                </div>
+
+                <div class="mt-3">
+                  <button type="button" id="btnUploadAttachment" class="btn btn-outline btn-block">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                      <polyline points="17 8 12 3 7 8"/>
+                      <line x1="12" y1="3" x2="12" y2="15"/>
+                    </svg>
+                    <span>Thêm tệp PDF đính kèm</span>
+                  </button>
+                  <input type="file" id="attachmentFileInput" accept="application/pdf" style="display: none;" />
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+      )}
+    </div>
+  </main>
+</SiteLayout>
+
+<style>
+  .admin-main {
+    background-color: #f8fafc;
+    min-height: calc(100vh - 120px);
+    padding: 1.5rem 1rem 4rem;
+  }
+
+  .admin-container {
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  /* Header */
+  .editor-header {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  @media (min-width: 768px) {
+    .editor-header {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+
+  .btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+    text-decoration: none;
+    margin-bottom: 0.25rem;
+  }
+  .btn-back:hover {
+    color: #0f172a;
+  }
+
+  .editor-title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: #0f172a;
+  }
+
+  .editor-header-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  /* Layout Grid */
+  .editor-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 992px) {
+    .editor-grid {
+      grid-template-columns: 2fr 1fr;
+    }
+  }
+
+  /* Form Cards */
+  .form-card {
+    background: #ffffff;
+    border-radius: 0.75rem;
+    border: 1px solid #e2e8f0;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+  }
+
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+  .form-group:last-child {
+    margin-bottom: 0;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #334155;
+    margin-bottom: 0.4rem;
+  }
+
+  .form-label.required::after {
+    content: ' *';
+    color: #dc2626;
+  }
+
+  .label-with-count {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.4rem;
+  }
+
+  .char-count {
+    font-size: 0.75rem;
+    color: #94a3b8;
+  }
+
+  .form-input, .form-textarea {
+    width: 100%;
+    padding: 0.65rem 0.85rem;
+    font-size: 0.95rem;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 6px;
+    background: #ffffff;
+    outline: none;
+    transition: border-color 0.15s;
+    font-family: inherit;
+  }
+
+  .form-input:focus, .form-textarea:focus {
+    border-color: #0284c7;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+  }
+
+  .title-input {
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+
+  .slug-input-wrap {
+    display: flex;
+    align-items: center;
+    background: #f8fafc;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  .slug-prefix {
+    padding: 0 0.75rem;
+    color: #64748b;
+    font-size: 0.85rem;
+    font-weight: 600;
+    background: #f1f5f9;
+    border-right: 1px solid #cbd5e1;
+    align-self: stretch;
+    display: flex;
+    align-items: center;
+  }
+
+  .slug-input {
+    border: none;
+    background: transparent;
+    padding: 0.6rem 0.75rem;
+    font-size: 0.875rem;
+    font-family: monospace;
+  }
+  .slug-input:focus {
+    box-shadow: none;
+  }
+
+  .summary-textarea {
+    resize: vertical;
+    line-height: 1.5;
+  }
+
+  /* Rich Text Editor */
+  .content-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+  }
+
+  .editor-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    background: #f1f5f9;
+    border: 1.5px solid #cbd5e1;
+    border-bottom: none;
+    border-top-left-radius: 6px;
+    border-top-right-radius: 6px;
+  }
+
+  .tool-btn {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 4px;
+    padding: 0.35rem 0.6rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #334155;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+  .tool-btn:hover {
+    background: #e2e8f0;
+    color: #0f172a;
+  }
+
+  .tool-separator {
+    width: 1px;
+    height: 18px;
+    background: #cbd5e1;
+    margin: 0 0.25rem;
+  }
+
+  .rich-editor-surface {
+    min-height: 340px;
+    max-height: 600px;
+    overflow-y: auto;
+    padding: 1.25rem;
+    border: 1.5px solid #cbd5e1;
+    border-bottom-left-radius: 6px;
+    border-bottom-right-radius: 6px;
+    background: #ffffff;
+    font-size: 1rem;
+    line-height: 1.7;
+    outline: none;
+  }
+
+  .rich-editor-surface:focus {
+    border-color: #0284c7;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+  }
+
+  .rich-editor-surface h2 {
+    font-size: 1.35rem;
+    font-weight: 800;
+    margin: 1.25rem 0 0.5rem;
+    color: #0f172a;
+  }
+
+  .rich-editor-surface h3 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    margin: 1rem 0 0.5rem;
+    color: #0f172a;
+  }
+
+  .rich-editor-surface p {
+    margin-bottom: 0.85rem;
+  }
+
+  .rich-editor-surface ul, .rich-editor-surface ol {
+    margin-bottom: 0.85rem;
+    padding-left: 1.5rem;
+  }
+
+  .rich-editor-surface blockquote {
+    border-left: 4px solid #0284c7;
+    padding-left: 1rem;
+    color: #475569;
+    font-style: italic;
+    margin: 1rem 0;
+  }
+
+  .rich-editor-surface img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 6px;
+    margin: 0.75rem 0;
+  }
+
+  /* Side Column */
+  .side-card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.35rem;
+  }
+
+  .side-card-desc {
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+  }
+
+  .checkbox-group {
+    background: #f8fafc;
+    padding: 0.75rem;
+    border-radius: 6px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .checkbox-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    cursor: pointer;
+  }
+
+  .form-checkbox {
+    margin-top: 0.2rem;
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+  }
+
+  .checkbox-text {
+    font-size: 0.875rem;
+  }
+
+  .status-indicator-box {
+    margin-top: 0.35rem;
+  }
+
+  .badge-status {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.825rem;
+    font-weight: 700;
+  }
+  .status-published { background: #ecfdf5; color: #065f46; }
+  .status-draft { background: #fffbeb; color: #92400e; }
+  .status-deleted { background: #fef2f2; color: #991b1b; }
+
+  /* Cover Uploader */
+  .cover-preview-box {
+    position: relative;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+    border: 1px solid #cbd5e1;
+    max-height: 200px;
+  }
+
+  .cover-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+  }
+
+  .btn-remove-cover {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    background: rgba(0, 0, 0, 0.7);
+    color: #ffffff;
+    border: none;
+    border-radius: 50%;
+    width: 26px;
+    height: 26px;
+    cursor: pointer;
+    font-size: 0.8rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Attachments */
+  .attachments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .attachment-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.6rem 0.75rem;
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+  }
+
+  .att-info {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    overflow: hidden;
+  }
+
+  .att-name-wrap {
+    overflow: hidden;
+  }
+
+  .att-name {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #1e293b;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 180px;
+  }
+
+  .att-size {
+    color: #64748b;
+    font-size: 0.75rem;
+  }
+
+  .btn-remove-att {
+    background: none;
+    border: none;
+    color: #ef4444;
+    cursor: pointer;
+    font-size: 0.85rem;
+    padding: 0.2rem;
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+
+  .btn-primary { background: #0284c7; color: #ffffff; }
+  .btn-primary:hover { background: #0369a1; }
+  .btn-secondary { background: #e2e8f0; color: #334155; }
+  .btn-secondary:hover { background: #cbd5e1; }
+  .btn-outline { background: #ffffff; border: 1px solid #cbd5e1; color: #334155; }
+  .btn-outline:hover { background: #f1f5f9; }
+  .btn-block { width: 100%; }
+
+  .editor-alert {
+    padding: 0.85rem 1rem;
+    border-radius: 6px;
+    margin-bottom: 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+  }
+  .alert-success { background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; }
+  .alert-danger { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+
+  .mt-3 { margin-top: 0.75rem; }
+  .text-muted { color: #64748b; }
+  .d-block { display: block; }
+</style>
+
+<script>
+  import { generateVietnameseSlug } from '@/lib/server/html-sanitizer';
+
+  const titleInput = document.getElementById('titleInput') as HTMLInputElement | null;
+  const slugInput = document.getElementById('slugInput') as HTMLInputElement | null;
+  const summaryInput = document.getElementById('summaryInput') as HTMLTextAreaElement | null;
+  const summaryCounter = document.getElementById('summaryCounter');
+  const richEditor = document.getElementById('richContentEditor');
+  const hiddenContent = document.getElementById('hiddenContent') as HTMLTextAreaElement | null;
+  const editorAlert = document.getElementById('editorAlert');
+
+  // Initialize editor content from hidden textarea
+  if (richEditor && hiddenContent) {
+    richEditor.innerHTML = hiddenContent.value || '<p>Nhập nội dung thông báo tại đây...</p>';
+  }
+
+  // Summary counter
+  if (summaryInput && summaryCounter) {
+    const updateCount = () => {
+      summaryCounter.textContent = `${summaryInput.value.length}/500`;
+    };
+    summaryInput.addEventListener('input', updateCount);
+    updateCount();
+  }
+
+  // Auto-slug generation from title
+  let slugManuallyEdited = Boolean(slugInput?.value);
+  if (slugInput) {
+    slugInput.addEventListener('input', () => {
+      slugManuallyEdited = true;
+    });
+  }
+
+  if (titleInput && slugInput) {
+    titleInput.addEventListener('input', () => {
+      if (!slugManuallyEdited) {
+        slugInput.value = generateVietnameseSlug(titleInput.value);
+      }
+    });
+  }
+
+  // Formatting Toolbar commands
+  document.querySelectorAll('.tool-btn[data-command]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const command = btn.getAttribute('data-command');
+      const val = btn.getAttribute('data-val') || undefined;
+      if (command) {
+        document.execCommand(command, false, val);
+        richEditor?.focus();
+      }
+    });
+  });
+
+  // Insert Link button
+  const btnLink = document.getElementById('btnInsertLink');
+  if (btnLink) {
+    btnLink.addEventListener('click', () => {
+      const url = prompt('Nhập địa chỉ liên kết (URL):', 'https://');
+      if (url && url !== 'https://') {
+        document.execCommand('createLink', false, url);
+        richEditor?.focus();
+      }
+    });
+  }
+
+  // Insert Image into rich editor
+  const btnInlineImage = document.getElementById('btnInsertImage');
+  const inlineFileInput = document.getElementById('inlineImageInput') as HTMLInputElement | null;
+
+  if (btnInlineImage && inlineFileInput) {
+    btnInlineImage.addEventListener('click', () => inlineFileInput.click());
+
+    inlineFileInput.addEventListener('change', async () => {
+      const file = inlineFileInput.files?.[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const res = await fetch('/api/news/upload', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success && data.file?.url) {
+          document.execCommand('insertImage', false, data.file.url);
+          richEditor?.focus();
+        } else {
+          alert('Lỗi tải ảnh: ' + (data.error || 'Không thể tải lên'));
+        }
+      } catch {
+        alert('Lỗi kết nối tải ảnh');
+      } finally {
+        inlineFileInput.value = '';
+      }
+    });
+  }
+
+  // Cover Image upload
+  const btnUploadCover = document.getElementById('btnUploadCover');
+  const coverFileInput = document.getElementById('coverFileInput') as HTMLInputElement | null;
+  const coverPreviewWrap = document.getElementById('coverPreviewWrap');
+  const coverPreviewImg = document.getElementById('coverPreviewImg') as HTMLImageElement | null;
+  const coverImageUrl = document.getElementById('coverImageUrl') as HTMLInputElement | null;
+  const coverUploadActions = document.getElementById('coverUploadActions');
+  const btnRemoveCover = document.getElementById('btnRemoveCover');
+
+  if (btnUploadCover && coverFileInput) {
+    btnUploadCover.addEventListener('click', () => coverFileInput.click());
+
+    coverFileInput.addEventListener('change', async () => {
+      const file = coverFileInput.files?.[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const res = await fetch('/api/news/upload', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success && data.file?.url) {
+          if (coverImageUrl) coverImageUrl.value = data.file.url;
+          if (coverPreviewImg) coverPreviewImg.src = data.file.url;
+          if (coverPreviewWrap) coverPreviewWrap.style.display = 'block';
+          if (coverUploadActions) coverUploadActions.style.display = 'none';
+        } else {
+          alert('Lỗi tải ảnh đại diện: ' + (data.error || 'Thất bại'));
+        }
+      } catch {
+        alert('Lỗi kết nối máy chủ');
+      } finally {
+        coverFileInput.value = '';
+      }
+    });
+  }
+
+  if (btnRemoveCover) {
+    btnRemoveCover.addEventListener('click', () => {
+      if (coverImageUrl) coverImageUrl.value = '';
+      if (coverPreviewImg) coverPreviewImg.src = '';
+      if (coverPreviewWrap) coverPreviewWrap.style.display = 'none';
+      if (coverUploadActions) coverUploadActions.style.display = 'block';
+    });
+  }
+
+  // Attachments Manager
+  const btnUploadAtt = document.getElementById('btnUploadAttachment');
+  const attFileInput = document.getElementById('attachmentFileInput') as HTMLInputElement | null;
+  const attList = document.getElementById('attachmentsList');
+
+  function bindAttRemoveButtons() {
+    document.querySelectorAll('.btn-remove-att').forEach((btn) => {
+      (btn as HTMLElement).onclick = () => {
+        btn.closest('.attachment-item')?.remove();
+      };
+    });
+  }
+  bindAttRemoveButtons();
+
+  if (btnUploadAtt && attFileInput) {
+    btnUploadAtt.addEventListener('click', () => attFileInput.click());
+
+    attFileInput.addEventListener('change', async () => {
+      const file = attFileInput.files?.[0];
+      if (!file) return;
+
+      const formData = new FormData();
+      formData.append('file', file);
+
+      try {
+        const res = await fetch('/api/news/upload', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success && data.file) {
+          const item = document.createElement('div');
+          item.className = 'attachment-item';
+          item.setAttribute('data-id', data.file.id);
+          item.setAttribute('data-file', JSON.stringify(data.file));
+          item.innerHTML = `
+            <div class="att-info">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+              </svg>
+              <div class="att-name-wrap">
+                <span class="att-name" title="${data.file.originalName}">${data.file.originalName}</span>
+                <small class="att-size">${(data.file.sizeBytes / 1024).toFixed(0)} KB</small>
+              </div>
+            </div>
+            <button type="button" class="btn-remove-att" title="Xóa tệp đính kèm">✕</button>
+          `;
+          attList?.appendChild(item);
+          bindAttRemoveButtons();
+        } else {
+          alert('Lỗi tải tệp: ' + (data.error || 'Thất bại'));
+        }
+      } catch {
+        alert('Lỗi kết nối máy chủ');
+      } finally {
+        attFileInput.value = '';
+      }
+    });
+  }
+
+  // Save / Publish logic
+  async function submitForm(targetStatus: 'draft' | 'published') {
+    if (editorAlert) editorAlert.style.display = 'none';
+
+    const title = titleInput?.value.trim() || '';
+    if (!title) {
+      alert('Vui lòng nhập tiêu đề thông báo.');
+      titleInput?.focus();
+      return;
+    }
+
+    const summary = summaryInput?.value.trim() || '';
+    if (!summary) {
+      alert('Vui lòng nhập mô tả ngắn gọn.');
+      summaryInput?.focus();
+      return;
+    }
+
+    const contentHtml = richEditor?.innerHTML.trim() || '';
+    const id = (document.getElementById('articleId') as HTMLInputElement)?.value || '';
+    const expectedVersion = parseInt((document.getElementById('articleVersion') as HTMLInputElement)?.value || '1', 10);
+    const slug = slugInput?.value.trim() || '';
+    const isPinned = (document.getElementById('isPinnedInput') as HTMLInputElement)?.checked || false;
+
+    // Cover image
+    const cUrl = coverImageUrl?.value || '';
+    const cAlt = (document.getElementById('coverAltInput') as HTMLInputElement)?.value || '';
+    const coverImage = cUrl ? { url: cUrl, alt: cAlt } : undefined;
+
+    // Attachments
+    const attachments: any[] = [];
+    document.querySelectorAll('.attachment-item').forEach((el) => {
+      const dataStr = el.getAttribute('data-file');
+      if (dataStr) {
+        try {
+          attachments.push(JSON.parse(dataStr));
+        } catch {}
+      }
+    });
+
+    const payload = {
+      id,
+      title,
+      slug,
+      summary,
+      content: contentHtml,
+      coverImage,
+      attachments,
+      isPinned,
+      status: targetStatus,
+      expectedVersion
+    };
+
+    const saveBtn = targetStatus === 'published' ? document.getElementById('btnPublish') : document.getElementById('btnSaveDraft');
+    if (saveBtn) {
+      saveBtn.setAttribute('disabled', 'true');
+    }
+
+    try {
+      const res = await fetch('/api/news/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+
+      if (res.ok && data.success) {
+        if (editorAlert) {
+          editorAlert.className = 'editor-alert alert-success';
+          editorAlert.textContent = data.message || 'Lưu thành công!';
+          editorAlert.style.display = 'block';
+        }
+        // Redirect to admin list after short delay
+        setTimeout(() => {
+          window.location.href = '/admin/';
+        }, 1200);
+      } else {
+        if (res.status === 409) {
+          if (confirm('XUNG ĐỘT PHIÊN BẢN:\n' + data.error + '\nBạn có muốn tải lại nội dung mới nhất không?')) {
+            window.location.reload();
+            return;
+          }
+        }
+        if (editorAlert) {
+          editorAlert.className = 'editor-alert alert-danger';
+          editorAlert.textContent = 'Lỗi: ' + (data.error || 'Không thể lưu thông báo');
+          editorAlert.style.display = 'block';
+        }
+      }
+    } catch {
+      if (editorAlert) {
+        editorAlert.className = 'editor-alert alert-danger';
+        editorAlert.textContent = 'Không thể kết nối đến máy chủ.';
+        editorAlert.style.display = 'block';
+      }
+    } finally {
+      if (saveBtn) {
+        saveBtn.removeAttribute('disabled');
+      }
+    }
+  }
+
+  document.getElementById('btnSaveDraft')?.addEventListener('click', () => submitForm('draft'));
+  document.getElementById('btnPublish')?.addEventListener('click', () => submitForm('published'));
+</script>

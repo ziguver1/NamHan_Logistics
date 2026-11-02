@@ -1,0 +1,227 @@
+---
+const industries = [
+  {
+    enTitle: 'Logistics & Express Delivery',
+    viTitle: 'Logistics & Chuyển phát',
+    desc: 'Vận chuyển hàng ghép, gom hàng liên tỉnh và giao nhận bưu chính cho các đơn vị chuyển phát nhanh hàng đầu.',
+    icon: 'truck',
+  },
+  {
+    enTitle: 'Agriculture',
+    viTitle: 'Nông sản & Vật tư nông nghiệp',
+    desc: 'Vận chuyển lúa gạo, cà phê, nông sản sấy, phân bón và vật tư nông nghiệp phục vụ mùa vụ trên toàn quốc.',
+    icon: 'leaf',
+  },
+  {
+    enTitle: 'Food & Beverage',
+    viTitle: 'Thực phẩm & Đồ uống',
+    desc: 'Hàng thực phẩm đóng gói, đồ uống đóng chai, bánh kẹo và gia vị với quy chuẩn bảo quản và bốc xếp cẩn trọng.',
+    icon: 'food',
+  },
+  {
+    enTitle: 'Livestock & Feed',
+    viTitle: 'Thức ăn chăn nuôi & Thủy sản',
+    desc: 'Vận tải nguyên liệu chế biến thức ăn, ngô hạt, bã đậu nành và thức ăn thành phẩm đến các trang trại lớn.',
+    icon: 'feed',
+  },
+  {
+    enTitle: 'Manufacturing',
+    viTitle: 'Sản xuất chế biến chế tạo',
+    desc: 'Vận chuyển nguyên phụ liệu may mặc, giày da, linh kiện cơ khí và sản phẩm hoàn thiện cho các nhà máy KCN.',
+    icon: 'factory',
+  },
+  {
+    enTitle: 'Industrial Products',
+    viTitle: 'Sản phẩm công nghiệp & Vật liệu',
+    desc: 'Hóa chất công nghiệp thông thường, hạt nhựa, vật liệu xây dựng và bao bì công nghiệp an toàn tuyệt đối.',
+    icon: 'box',
+  },
+];
+---
+
+<section class="about-industries-section" aria-label="Ngành hàng phục vụ">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">LĨNH VỰC KHÁCH HÀNG</div>
+      <h2 class="section-title">Đồng hành cùng nhiều ngành hàng</h2>
+      <p class="section-desc">
+        Kinh nghiệm vận tải phong phú cho các nhóm ngành hàng thiết yếu của nền kinh tế.
+      </p>
+    </div>
+
+    <div class="industries-grid">
+      {industries.map((ind) => (
+        <div class="industry-card">
+          <div class="ind-icon-wrap" aria-hidden="true">
+            {ind.icon === 'truck' && (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="1" y="3" width="15" height="13" rx="1"/>
+                <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                <circle cx="5.5" cy="18.5" r="2.5"/>
+                <circle cx="18.5" cy="18.5" r="2.5"/>
+              </svg>
+            )}
+            {ind.icon === 'leaf' && (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/>
+                <path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>
+              </svg>
+            )}
+            {ind.icon === 'food' && (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M18 8h1a4 4 0 0 1 0 8h-1"/>
+                <path d="M2 8h16v9a4 4 0 0 1-4 4H6a4 4 0 0 1-4-4V8z"/>
+                <line x1="6" y1="1" x2="6" y2="4"/>
+                <line x1="10" y1="1" x2="10" y2="4"/>
+                <line x1="14" y1="1" x2="14" y2="4"/>
+              </svg>
+            )}
+            {ind.icon === 'feed' && (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/>
+                <path d="m3.3 7 8.7 5 8.7-5"/>
+                <path d="M12 22V12"/>
+              </svg>
+            )}
+            {ind.icon === 'factory' && (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M2 20a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V8l-7 5V8l-7 5V4a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2Z"/>
+                <path d="M17 18h1"/>
+                <path d="M12 18h1"/>
+                <path d="M7 18h1"/>
+              </svg>
+            )}
+            {ind.icon === 'box' && (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+              </svg>
+            )}
+          </div>
+
+          <div class="ind-body">
+            <span class="ind-en-badge">{ind.enTitle}</span>
+            <h3 class="ind-title">{ind.viTitle}</h3>
+            <p class="ind-desc">{ind.desc}</p>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-industries-section {
+    padding-top: var(--section-space);
+    padding-bottom: var(--section-space);
+    background-color: var(--color-bg-page);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .section-header {
+    text-align: center;
+    max-width: 44rem;
+    margin-inline: auto;
+    margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-brand-orange);
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 2.5vw + 0.75rem, 2.5rem);
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .section-desc {
+    font-size: var(--font-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .industries-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .industries-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .industries-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .industry-card {
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .industry-card:hover {
+    transform: translateY(-2px);
+    border-color: #fed7aa;
+    box-shadow: 0 8px 16px -2px rgba(0, 0, 0, 0.05);
+  }
+
+  .ind-icon-wrap {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--radius-md);
+    background-color: #fff1eb;
+    color: var(--color-brand-orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .ind-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .ind-en-badge {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: var(--color-brand-orange);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .ind-title {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: var(--color-brand-navy);
+  }
+
+  .ind-desc {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+  }
+</style>

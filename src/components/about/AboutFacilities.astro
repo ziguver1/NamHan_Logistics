@@ -1,0 +1,275 @@
+---
+import { aboutAssets } from '@/content/about-assets';
+import ImageSlot from '@/components/ui/ImageSlot.astro';
+
+const facilities = [
+  {
+    hub: 'Hub 01',
+    title: 'Trụ sở chính & Hub Bắc Trung Bộ',
+    image: aboutAssets.facilityBimSon,
+    region: 'Khu vực Bắc – Bắc Trung Bộ',
+    location: 'Trụ sở – Bỉm Sơn, Thanh Hóa',
+    features: [
+      'Hỗ trợ điều vận 24/7',
+      'Bãi đỗ xe container & sửa chữa chuyên sâu',
+      'Điểm kết nối và sang tải hàng hóa liên miền',
+    ],
+  },
+  {
+    hub: 'Hub 02',
+    title: 'Depot Vùng Kinh Tế Trọng Điểm Phía Nam',
+    image: aboutAssets.facilityBinhDuong,
+    region: 'Khu vực Công Nghiệp Phía Nam',
+    location: 'Bãi xe – Bình Dương',
+    features: [
+      'Bãi tập kết & Xưởng kỹ thuật',
+      'Tiếp nhận hàng KCN VSIP, Sóng Thần, Mỹ Phước',
+      'Đội xe cơ động phục vụ doanh nghiệp sản xuất',
+    ],
+  },
+  {
+    hub: 'Hub 03',
+    title: 'Hub Tiếp Vận & Kết Nối Cảng',
+    image: aboutAssets.facilityHcm,
+    region: 'TP. Hồ Chí Minh & Cụm Cảng Biển',
+    location: 'Bãi xe – Quận 12, TP. Hồ Chí Minh',
+    features: [
+      'Giao nhận nội đô & chuyển tiếp',
+      'Kết nối trực tiếp cụm Cảng Cát Lái, Hiệp Phước',
+      'Trung tâm điều phối chặng cuối Đông Nam Bộ',
+    ],
+  },
+];
+---
+
+<section class="about-facilities-section" aria-label="Cơ sở vật chất & bãi xe Nam Hân">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">CƠ SỞ VẬT CHẤT</div>
+      <h2 class="section-title">Hệ thống bãi xe & cơ sở vận hành</h2>
+      <div class="badge-pill">
+        <span class="badge-dot" aria-hidden="true"></span>
+        <span>Depot & Trạm bảo dưỡng tập trung</span>
+      </div>
+      <p class="section-desc">
+        Hệ thống cơ sở vật chất được bố trí chiến lược tại các cửa ngõ giao thông trọng điểm, đảm bảo khả năng tiếp nhận, sang tải và bảo dưỡng phương tiện 24/7.
+      </p>
+    </div>
+
+    <div class="facilities-grid">
+      {facilities.map((fac) => (
+        <article class="facility-card">
+          <div class="card-media">
+            <ImageSlot
+              src={fac.image?.src}
+              alt={fac.image?.alt}
+              label={fac.image?.label}
+              aspectRatio="16/10"
+              rounded="none"
+              class="facility-slot"
+            />
+            <span class="hub-badge">{fac.hub}</span>
+          </div>
+
+          <div class="card-body">
+            <div class="facility-region">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <span>{fac.region}</span>
+            </div>
+
+            <h3 class="facility-title">{fac.title}</h3>
+            <p class="facility-location">{fac.location}</p>
+
+            <ul class="facility-features">
+              {fac.features.map((feat) => (
+                <li>
+                  <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="check-icon" aria-hidden="true">
+                    <polyline points="4 11 8 15 16 6"/>
+                  </svg>
+                  <span>{feat}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-facilities-section {
+    padding-top: var(--section-space);
+    padding-bottom: var(--section-space);
+    background-color: var(--color-bg-page);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .section-header {
+    text-align: center;
+    max-width: 44rem;
+    margin-inline: auto;
+    margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-brand-orange);
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 2.5vw + 0.75rem, 2.5rem);
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .badge-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    background-color: #fff1eb;
+    border: 1px solid #fed7aa;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-brand-orange);
+  }
+
+  .badge-dot {
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: var(--radius-full);
+    background-color: var(--color-brand-orange);
+  }
+
+  .section-desc {
+    font-size: var(--font-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .facilities-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+
+  @media (min-width: 768px) {
+    .facilities-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .facilities-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .facility-card {
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .facility-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 20px -4px rgba(0, 0, 0, 0.08);
+  }
+
+  .card-media {
+    position: relative;
+    width: 100%;
+  }
+
+  .hub-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background-color: var(--color-brand-navy);
+    color: #ffffff;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    padding: 0.25rem 0.625rem;
+    border-radius: var(--radius-sm);
+    letter-spacing: 0.05em;
+    z-index: 2;
+  }
+
+  .card-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .facility-region {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--color-brand-orange);
+    margin-bottom: 0.5rem;
+  }
+
+  .facility-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-brand-navy);
+    line-height: 1.35;
+    margin-bottom: 0.25rem;
+  }
+
+  .facility-location {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #475569;
+    margin-bottom: 1rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .facility-features {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    margin-top: auto;
+  }
+
+  .facility-features li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    line-height: 1.45;
+  }
+
+  .check-icon {
+    color: var(--color-brand-orange);
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+</style>

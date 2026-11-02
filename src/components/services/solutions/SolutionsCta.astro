@@ -1,0 +1,102 @@
+---
+import { ROUTES } from '@/lib/routes';
+---
+
+<section class="solutions-cta-section" aria-label="Tư vấn giải pháp vận tải">
+  <div class="container">
+    <div class="cta-banner">
+      <div class="cta-content">
+        <h2 class="cta-title">
+          Bạn chưa biết phương án nào<br />
+          phù hợp?
+        </h2>
+        <p class="cta-desc">
+          Trao đổi cùng Nam Hân Logistics để lựa chọn phương án vận chuyển phù hợp với nhu cầu.
+        </p>
+      </div>
+
+      <div class="cta-action">
+        <a href={ROUTES.CONTACT} class="btn-primary">
+          <span>Tư vấn ngay</span>
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4.167 10h11.666m-4.166-4.167L15.833 10l-4.166 4.167"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .solutions-cta-section {
+    padding-top: clamp(2rem, 4vw, 3.5rem);
+    padding-bottom: clamp(3rem, 6vw, 5rem);
+    background-color: #f8fafc;
+  }
+
+  .cta-banner {
+    background-color: #0b1e36;
+    border-radius: var(--radius-xl, 20px);
+    padding: clamp(2.5rem, 5vw, 3.5rem) clamp(1.75rem, 4vw, 3.5rem);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    box-shadow: 0 16px 40px rgba(11, 30, 54, 0.2);
+  }
+
+  @media (min-width: 900px) {
+    .cta-banner {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .cta-content {
+    max-width: 44rem;
+  }
+
+  .cta-title {
+    font-size: clamp(1.875rem, 3.5vw, 2.5rem);
+    font-weight: 800;
+    color: #ffffff;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.875rem;
+  }
+
+  .cta-desc {
+    font-size: 1rem;
+    color: #94a3b8;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .cta-action {
+    flex-shrink: 0;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.625rem;
+    min-height: var(--touch-target-min, 44px);
+    background-color: var(--color-brand-orange, #ea580c);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    padding: 0.875rem 2rem;
+    border-radius: var(--radius-md, 8px);
+    box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);
+    transition: all var(--transition-fast);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-brand-orange-hover, #c2410c);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(234, 88, 12, 0.45);
+  }
+</style>

@@ -1,0 +1,277 @@
+---
+import { aboutAssets } from '@/content/about-assets';
+import ImageSlot from '@/components/ui/ImageSlot.astro';
+
+const warehouseImage = aboutAssets.aboutWarehouse;
+---
+
+<section id="gioi-thieu" class="about-intro-section" aria-label="Giới thiệu doanh nghiệp Nam Hân">
+  <div class="container intro-container">
+    <!-- Left Column: Story & Operations -->
+    <div class="intro-left">
+      <div class="section-tag">GIỚI THIỆU DOANH NGHIỆP</div>
+      <h2 class="section-title">Nam Hân Logistics là ai?</h2>
+
+      <div class="intro-paragraphs">
+        <p>
+          Công ty TNHH Vận tải Thương mại Dịch vụ Nam Hân là đơn vị chuyên cung cấp dịch vụ vận tải hàng hóa đường bộ nội địa, kết nối các trung tâm kinh tế, khu công nghiệp và hệ thống cảng biển trên toàn quốc.
+        </p>
+        <p>
+          Với đội xe đa tải trọng từ xe tải nhỏ, xe tải nặng đến xe đầu kéo container chuyên dụng, Nam Hân đáp ứng linh hoạt các nhu cầu vận chuyển hàng dự án, hàng bao chuyến và hàng hợp đồng doanh nghiệp.
+        </p>
+      </div>
+
+      <!-- 2 Feature Blocks -->
+      <div class="feature-blocks">
+        <div class="feature-item">
+          <div class="feature-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="12 2 2 7 12 12 22 7 12 22"/>
+              <polyline points="2 17 12 22 22 17"/>
+              <polyline points="2 12 12 17 22 12"/>
+            </svg>
+          </div>
+          <div class="feature-text">
+            <h3 class="feature-title">Tổ chức chuyên sâu</h3>
+            <p class="feature-desc">Quy trình kiểm soát tải trọng, bảo dưỡng định kỳ và theo dõi định vị GPS 24/7 trên từng phương tiện.</p>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <div class="feature-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+            </svg>
+          </div>
+          <div class="feature-text">
+            <h3 class="feature-title">Vận hành ổn định</h3>
+            <p class="feature-desc">Đội ngũ tài xế giàu kinh nghiệm tuyến dài, thông thạo địa hình và luôn tuân thủ quy chuẩn an toàn đường bộ.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Image & Highlight Badges -->
+    <div class="intro-right">
+      <div class="image-wrapper">
+        <ImageSlot
+          src={warehouseImage?.src}
+          alt={warehouseImage?.alt}
+          label={warehouseImage?.label}
+          aspectRatio="16/10"
+          rounded="xl"
+          class="intro-slot"
+        />
+      </div>
+
+      <!-- 2 Bottom Cards -->
+      <div class="intro-badges">
+        <div class="badge-card">
+          <div class="badge-icon shield" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <polyline points="9 12 11 14 15 10"/>
+            </svg>
+          </div>
+          <div class="badge-info">
+            <span class="badge-name">An Toàn 100%</span>
+            <span class="badge-sub">Bảo hiểm hàng hóa đầy đủ & minh bạch</span>
+          </div>
+        </div>
+
+        <div class="badge-card">
+          <div class="badge-icon clock" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+          </div>
+          <div class="badge-info">
+            <span class="badge-name">Đúng Giờ</span>
+            <span class="badge-sub">Lịch xuất bến cố định hàng ngày</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-intro-section {
+    padding-top: var(--section-space);
+    padding-bottom: var(--section-space);
+    background-color: var(--color-bg-page);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .intro-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .intro-container {
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 4rem;
+    }
+  }
+
+  .intro-left {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .section-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-brand-orange);
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 2.5vw + 0.75rem, 2.5rem);
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .intro-paragraphs {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    font-size: var(--font-body);
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+  }
+
+  .feature-blocks {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin-top: 0.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .feature-blocks {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .feature-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    padding: 1.25rem;
+    background-color: var(--color-bg-muted);
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--color-border);
+  }
+
+  .feature-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-md);
+    background-color: #fff1eb;
+    color: var(--color-brand-orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .feature-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .feature-title {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-brand-navy);
+  }
+
+  .feature-desc {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+  }
+
+  /* Right Column */
+  .intro-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .image-wrapper {
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+  }
+
+  .intro-badges {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .intro-badges {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .badge-card {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 1rem 1.25rem;
+    background-color: #ffffff;
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-md);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+  }
+
+  .badge-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: var(--radius-full);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .badge-icon.shield {
+    background-color: #ecfdf5;
+    color: #059669;
+  }
+
+  .badge-icon.clock {
+    background-color: #eff6ff;
+    color: #2563eb;
+  }
+
+  .badge-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .badge-name {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-brand-navy);
+  }
+
+  .badge-sub {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+  }
+</style>

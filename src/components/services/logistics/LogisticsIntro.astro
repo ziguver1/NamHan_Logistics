@@ -1,0 +1,308 @@
+---
+import { logisticsAssets } from '@/content/logistics-assets';
+import ImageSlot from '@/components/ui/ImageSlot.astro';
+
+const warehouseImage = logisticsAssets.warehouse;
+
+const features = [
+  {
+    icon: 'clipboard',
+    title: 'Tiếp nhận chuyên nghiệp',
+    desc: 'Phân loại & kiểm đếm pallet chính xác theo phiếu xuất kho',
+  },
+  {
+    icon: 'exchange',
+    title: 'Phối hợp an toàn',
+    desc: 'Quy trình chằng buộc, bảo quản hàng công nghiệp chuẩn mực',
+  },
+  {
+    icon: 'pin',
+    title: 'Giao nhận đích xác',
+    desc: 'Tận cửa kho (Door-to-Door) kèm biên bản giao nhận chi tiết',
+  },
+  {
+    icon: 'branch',
+    title: 'Điều phối linh hoạt',
+    desc: 'Bố trí đội xe tải nội địa và liên tỉnh bám sát kế hoạch sản xuất',
+  },
+];
+---
+
+<section class="logistics-intro-section" aria-labelledby="logistics-intro-heading">
+  <div class="container intro-grid">
+    <!-- Left Column: Copy & 2x2 Mini Feature Cards -->
+    <div class="intro-left">
+      <div class="section-tag-row">
+        <span class="tag-bar" aria-hidden="true"></span>
+        <span class="section-tag">NĂNG LỰC CỐT LÕI</span>
+      </div>
+
+      <h2 id="logistics-intro-heading" class="section-title">
+        Giải pháp logistics của Nam Hân
+      </h2>
+
+      <p class="section-desc">
+        Chúng tôi xây dựng chuỗi cung ứng khép kín, kết nối mật thiết giữa kho bãi trung chuyển và mạng lưới xe tải chuyên dụng. Mọi lô hàng từ phụ tùng công nghiệp, nguyên vật liệu sản xuất đến thành phẩm thương mại đều được kiểm soát nghiêm ngặt từ khâu tiếp nhận đến tận điểm giao nhận cuối cùng.
+      </p>
+
+      <div class="mini-features-grid">
+        {
+          features.map((item) => (
+            <div class="mini-feat-card">
+              <div class="mini-feat-icon" aria-hidden="true">
+                {item.icon === 'clipboard' && (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                    <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
+                  </svg>
+                )}
+                {item.icon === 'exchange' && (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="m16 3 4 4-4 4"/>
+                    <path d="M20 7H4"/>
+                    <path d="m8 21-4-4 4-4"/>
+                    <path d="M4 17h16"/>
+                  </svg>
+                )}
+                {item.icon === 'pin' && (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                    <circle cx="12" cy="10" r="3"/>
+                  </svg>
+                )}
+                {item.icon === 'branch' && (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="6" y1="3" x2="6" y2="15"/>
+                    <circle cx="18" cy="6" r="3"/>
+                    <circle cx="6" cy="18" r="3"/>
+                    <path d="M18 9a9 9 0 0 1-9 9"/>
+                  </svg>
+                )}
+              </div>
+              <div class="mini-feat-info">
+                <h3 class="mini-feat-title">{item.title}</h3>
+                <p class="mini-feat-text">{item.desc}</p>
+              </div>
+            </div>
+          ))
+        }
+      </div>
+    </div>
+
+    <!-- Right Column: Media with Bottom Overlay Bar -->
+    <div class="intro-right">
+      <div class="media-container">
+        <ImageSlot
+          src={warehouseImage.src}
+          alt={warehouseImage.alt}
+          width={warehouseImage.width}
+          height={warehouseImage.height}
+          label={warehouseImage.label}
+          aspectRatio={warehouseImage.aspectRatio}
+          class="warehouse-slot"
+        />
+
+        <div class="media-bottom-bar">
+          <div class="bar-icon-box" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+          <div class="bar-info">
+            <strong class="bar-title">Tiêu chuẩn vận hành ISO 9001:2015</strong>
+            <span class="bar-sub">Đồng bộ quy trình tại 4 trung tâm depot toàn quốc</span>
+          </div>
+          <div class="bar-ops-tag">NHL-OPS</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .logistics-intro-section {
+    padding-top: clamp(3rem, 6vw, 4.5rem);
+    padding-bottom: clamp(3rem, 6vw, 4.5rem);
+    background-color: #ffffff;
+  }
+
+  .intro-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .intro-grid {
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 3.5rem;
+    }
+  }
+
+  /* Left Column */
+  .section-tag-row {
+    display: flex;
+    align-items: center;
+    gap: 0.625rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .tag-bar {
+    width: 2rem;
+    height: 2px;
+    background-color: var(--color-brand-orange);
+    border-radius: 1px;
+  }
+
+  .section-tag {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-brand-orange);
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 2.5vw + 0.5rem, 2.375rem);
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+
+  .section-desc {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+    margin-bottom: 2rem;
+  }
+
+  /* 2x2 Mini Feature Cards */
+  .mini-features-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (min-width: 600px) {
+    .mini-features-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.25rem;
+    }
+  }
+
+  .mini-feat-card {
+    background-color: #f8fafc;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 1.125rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    transition: transform var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .mini-feat-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(249, 80, 22, 0.3);
+  }
+
+  .mini-feat-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-sm);
+    background-color: #ffffff;
+    color: var(--color-brand-orange);
+    border: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .mini-feat-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-brand-navy);
+    margin-bottom: 0.25rem;
+    line-height: 1.35;
+  }
+
+  .mini-feat-text {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* Right Media */
+  .media-container {
+    position: relative;
+    border-radius: var(--radius-lg, 16px);
+    overflow: hidden;
+    box-shadow: 0 12px 32px rgba(11, 25, 44, 0.08);
+  }
+
+  :global(.warehouse-slot) {
+    border-radius: var(--radius-lg, 16px);
+    overflow: hidden;
+  }
+
+  .media-bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(11, 25, 44, 0.96), rgba(11, 25, 44, 0.85));
+    color: #ffffff;
+    padding: 1rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+  }
+
+  .bar-icon-box {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 0.375rem;
+    background-color: var(--color-brand-orange);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .bar-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+    flex-grow: 1;
+  }
+
+  .bar-title {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .bar-sub {
+    font-size: 0.6875rem;
+    color: #cbd5e1;
+  }
+
+  .bar-ops-tag {
+    font-family: var(--font-mono, monospace);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: #38bdf8;
+    background-color: rgba(56, 189, 248, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+  }
+</style>

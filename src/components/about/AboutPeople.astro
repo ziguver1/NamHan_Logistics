@@ -1,0 +1,283 @@
+---
+import { aboutAssets } from '@/content/about-assets';
+import ImageSlot from '@/components/ui/ImageSlot.astro';
+
+const peopleImage = aboutAssets.peopleControl;
+---
+
+<section class="about-people-section" aria-label="Đội ngũ nhân sự Nam Hân">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">CON NGƯỜI LÀ NỀN TẢNG</div>
+      <h2 class="section-title">Đội ngũ Nam Hân</h2>
+      <p class="section-desc">
+        Sức mạnh của Nam Hân đến từ tập thể những con người kỷ luật, tận tụy và giàu kinh nghiệm trong lĩnh vực logistics vận tải đường bộ.
+      </p>
+    </div>
+
+    <div class="people-grid">
+      <!-- Left: Visual & Operation Stat Card -->
+      <div class="people-left">
+        <div class="people-image-wrapper">
+          <ImageSlot
+            src={peopleImage?.src}
+            alt={peopleImage?.alt}
+            label={peopleImage?.label}
+            aspectRatio="16/10"
+            rounded="xl"
+            class="people-slot"
+          />
+          <div class="image-overlay-badge">
+            <span class="badge-dot" aria-hidden="true"></span>
+            <span>Tận tâm – Kỷ luật – Chuyên nghiệp</span>
+          </div>
+        </div>
+
+        <div class="people-stat-box">
+          <div class="stat-number">70-80</div>
+          <div class="stat-info">
+            <span class="stat-title">Lực lượng cốt lõi</span>
+            <span class="stat-desc">Nhân sự, tài xế và lực lượng vận hành trực tiếp</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: 3 Stacked Role Cards -->
+      <div class="people-right">
+        <!-- Role 1 -->
+        <div class="role-card">
+          <div class="role-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"/>
+              <path d="M12 2a14.5 14.5 0 0 0 0 20 14.5 14.5 0 0 0 0-20"/>
+              <path d="M2 12h20"/>
+            </svg>
+          </div>
+          <div class="role-body">
+            <h3 class="role-title">Đội ngũ tài xế</h3>
+            <p class="role-desc">
+              Có giấy phép hạng FC/C đầy đủ, được đào tạo định kỳ về an toàn giao thông, văn hóa ứng xử và kỹ năng xử lý tình huống trên các cung đường đèo dốc, cao tốc.
+            </p>
+          </div>
+        </div>
+
+        <!-- Role 2 -->
+        <div class="role-card">
+          <div class="role-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
+            </svg>
+          </div>
+          <div class="role-body">
+            <h3 class="role-title">Điều phối vận hành</h3>
+            <p class="role-desc">
+              Bộ phận trực ca 24/7 theo dõi hành trình GPS, cảnh báo tốc độ, hướng dẫn tài xế chọn lộ trình tối ưu và cập nhật trạng thái đơn hàng liên tục cho khách hàng.
+            </p>
+          </div>
+        </div>
+
+        <!-- Role 3 -->
+        <div class="role-card">
+          <div class="role-icon" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+              <circle cx="9" cy="7" r="4"/>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+            </svg>
+          </div>
+          <div class="role-body">
+            <h3 class="role-title">Đội ngũ kinh doanh & Chăm sóc khách hàng</h3>
+            <p class="role-desc">
+              Tư vấn giải pháp vận chuyển tối ưu chi phí, xây dựng hợp đồng minh bạch và đồng hành xử lý phát sinh nhanh chóng.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-people-section {
+    padding-top: var(--section-space);
+    padding-bottom: var(--section-space);
+    background-color: #f8fafc;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .section-header {
+    text-align: center;
+    max-width: 44rem;
+    margin-inline: auto;
+    margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-brand-orange);
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 2.5vw + 0.75rem, 2.5rem);
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .section-desc {
+    font-size: var(--font-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .people-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .people-grid {
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 3.5rem;
+    }
+  }
+
+  /* Left Column */
+  .people-left {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .people-image-wrapper {
+    position: relative;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+  }
+
+  .image-overlay-badge {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    background-color: rgba(11, 25, 44, 0.85);
+    backdrop-filter: blur(6px);
+    color: #ffffff;
+    padding: 0.375rem 0.875rem;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    z-index: 2;
+  }
+
+  .badge-dot {
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: var(--radius-full);
+    background-color: var(--color-brand-orange);
+  }
+
+  .people-stat-box {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    padding: 1.25rem 1.5rem;
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  }
+
+  .stat-number {
+    font-size: 2.25rem;
+    font-weight: 900;
+    color: var(--color-brand-orange);
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  .stat-info {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .stat-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-brand-navy);
+  }
+
+  .stat-desc {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+  }
+
+  /* Right Column: Roles */
+  .people-right {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .role-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 1.25rem;
+    padding: 1.5rem;
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+    transition: transform var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .role-card:hover {
+    transform: translateY(-2px);
+    border-color: #fed7aa;
+  }
+
+  .role-icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: var(--radius-md);
+    background-color: #fff1eb;
+    color: var(--color-brand-orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .role-body {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .role-title {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: var(--color-brand-navy);
+  }
+
+  .role-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+  }
+</style>

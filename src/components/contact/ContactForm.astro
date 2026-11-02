@@ -1,0 +1,1015 @@
+---
+/**
+ * Main Shipping Contact Form (Figma Node 101:1859 & Voice UI 101:1937)
+ * Design Reference: 08-lien-he.png (Lead Point 1)
+ *
+ * Compliance:
+ * - Customer Type: Cá nhân / Doanh nghiệp toggle (Doanh nghiệp active by default)
+ * - Fields: Tên công ty / Họ tên, Điểm đi, Điểm đến, Bạn cần vận chuyển gì?, Khối lượng / số lượng (nếu biết), SĐT / Zalo
+ * - Voice Input: Browser-native Web Speech API with fallback according to docs/06-VOICE-INPUT.md
+ * - Phase 1 Demo Compliance: Informative preview banner with direct hotline (no false success message)
+ */
+import { companyInfo } from '@/content/company';
+---
+
+<div class="contact-form-card" id="shipping-form">
+  <div class="form-header">
+    <h2 class="form-title">Thông tin yêu cầu vận chuyển</h2>
+    <p class="form-subtitle">Điền thông tin để Nam Hân tư vấn giải pháp phù hợp cho bạn.</p>
+  </div>
+
+  <form id="contactShippingForm" class="shipping-form" data-hotline={companyInfo.hotline} novalidate>
+    <!-- Honeypot anti-spam field (hidden from real users) -->
+    <div style="display:none !important; position:absolute; left:-9999px;" aria-hidden="true">
+      <label for="company_tax_id_bypass">Không điền vào ô này</label>
+      <input type="text" id="company_tax_id_bypass" name="company_tax_id_bypass" tabindex="-1" autocomplete="off" />
+    </div>
+
+    <!-- Hidden metadata fields -->
+    <input type="hidden" id="formRequestId" name="requestId" value="" />
+    <input type="hidden" id="formSourceUrl" name="sourceUrl" value="/lien-he/" />
+
+    <!-- Radio Toggle: Bạn là -->
+    <fieldset class="form-group customer-type-group">
+      <legend class="form-label">Bạn là</legend>
+      <div class="radio-options" role="radiogroup" aria-label="Loại khách hàng">
+        <label class="radio-label">
+          <input type="radio" name="customerType" value="individual" class="radio-input" />
+          <span class="radio-custom" aria-hidden="true"></span>
+          <span class="radio-text">Cá nhân</span>
+        </label>
+        <label class="radio-label">
+          <input type="radio" name="customerType" value="business" class="radio-input" checked />
+          <span class="radio-custom" aria-hidden="true"></span>
+          <span class="radio-text active">Doanh nghiệp</span>
+        </label>
+      </div>
+    </fieldset>
+
+    <!-- Field 1: Tên công ty / Họ tên -->
+    <div class="form-group">
+      <label for="clientName" class="form-label">
+        <span id="clientNameLabelText">Tên công ty / Họ tên</span>
+      </label>
+      <div class="input-with-icon">
+        <span class="input-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+          </svg>
+        </span>
+        <input
+          type="text"
+          id="clientName"
+          name="clientName"
+          class="form-input"
+          placeholder="Nhập tên công ty hoặc họ tên của bạn"
+          required
+          aria-required="true"
+        />
+      </div>
+      <span class="field-error" id="clientNameError" aria-live="polite"></span>
+    </div>
+
+    <!-- 2-col Row: Điểm đi & Điểm đến -->
+    <div class="form-row-2">
+      <!-- Điểm đi -->
+      <div class="form-group">
+        <label for="pickupLocation" class="form-label">Điểm đi</label>
+        <div class="input-with-icon">
+          <span class="input-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+          </span>
+          <input
+            type="text"
+            id="pickupLocation"
+            name="pickupLocation"
+            class="form-input"
+            placeholder="Nhập tỉnh / thành hoặc địa điểm"
+            required
+            aria-required="true"
+          />
+        </div>
+        <span class="field-error" id="pickupLocationError" aria-live="polite"></span>
+      </div>
+
+      <!-- Điểm đến -->
+      <div class="form-group">
+        <label for="deliveryLocation" class="form-label">Điểm đến</label>
+        <div class="input-with-icon">
+          <span class="input-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+          </span>
+          <input
+            type="text"
+            id="deliveryLocation"
+            name="deliveryLocation"
+            class="form-input"
+            placeholder="Nhập tỉnh / thành hoặc địa điểm"
+            required
+            aria-required="true"
+          />
+        </div>
+        <span class="field-error" id="deliveryLocationError" aria-live="polite"></span>
+      </div>
+    </div>
+
+    <!-- Field: Bạn cần vận chuyển gì? (Cargo Description) -->
+    <div class="form-group">
+      <label for="cargoDescription" class="form-label">Bạn cần vận chuyển gì?</label>
+      <div class="textarea-with-icon">
+        <span class="textarea-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+            <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
+            <line x1="12" y1="22.08" x2="12" y2="12"/>
+          </svg>
+        </span>
+        <textarea
+          id="cargoDescription"
+          name="cargoDescription"
+          class="form-textarea"
+          rows="3"
+          placeholder="Mô tả hàng hóa, ví dụ: máy móc, nông sản, hàng tiêu dùng, ..."
+          required
+          aria-required="true"
+        ></textarea>
+      </div>
+      <span class="field-error" id="cargoDescriptionError" aria-live="polite"></span>
+    </div>
+
+    <!-- 2-col Row: Khối lượng / số lượng & Số điện thoại / Zalo -->
+    <div class="form-row-2">
+      <!-- Khối lượng -->
+      <div class="form-group">
+        <label for="cargoWeight" class="form-label">Khối lượng / số lượng (nếu biết)</label>
+        <div class="input-with-icon">
+          <span class="input-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m16 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+              <path d="m2 16 3-8 3 8c-.87.65-1.92 1-3 1s-2.13-.35-3-1Z"/>
+              <path d="M7 21h10"/>
+              <path d="M12 3v18"/>
+              <path d="M3 7h2c2 0 5-1 7-2 2 1 5 2 7 2h2"/>
+            </svg>
+          </span>
+          <input
+            type="text"
+            id="cargoWeight"
+            name="cargoWeight"
+            class="form-input"
+            placeholder="Ví dụ: 2 tấn, 10 pallet, 50 thùng, ..."
+          />
+        </div>
+        <span class="field-error" id="cargoWeightError" aria-live="polite"></span>
+      </div>
+
+      <!-- Số điện thoại / Zalo -->
+      <div class="form-group">
+        <label for="contactPhone" class="form-label">Số điện thoại / Zalo</label>
+        <div class="input-with-icon">
+          <span class="input-icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+          </span>
+          <input
+            type="tel"
+            id="contactPhone"
+            name="contactPhone"
+            class="form-input"
+            placeholder="Nhập số điện thoại hoặc Zalo"
+            required
+            aria-required="true"
+          />
+        </div>
+        <span class="field-error" id="contactPhoneError" aria-live="polite"></span>
+      </div>
+    </div>
+
+    <!-- Voice Input UI Banner (Node 101:1937) -->
+    <div class="voice-input-banner" id="voiceBannerContainer">
+      <button
+        type="button"
+        id="voiceInputTrigger"
+        class="voice-banner-btn"
+        aria-label="Nói thay vì nhập - Nhấn để ghi âm mô tả yêu cầu vận chuyển"
+      >
+        <div class="voice-icon-circle" id="voiceIconCircle">
+          <svg class="mic-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3Z"/>
+            <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+            <line x1="12" y1="19" x2="12" y2="22"/>
+          </svg>
+        </div>
+        <div class="voice-text-content">
+          <strong class="voice-main-title" id="voiceMainTitle">Nói thay vì nhập</strong>
+          <span class="voice-sub-title" id="voiceSubTitle">Nhấn để ghi âm mô tả yêu cầu vận chuyển của bạn</span>
+        </div>
+        <div class="voice-arrow-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="9 18 15 12 9 6"/>
+          </svg>
+        </div>
+      </button>
+
+      <!-- Live Voice Status Indicator -->
+      <div id="voiceStatusIndicator" class="voice-status-box" style="display: none;" aria-live="polite">
+        <span class="voice-pulse-dot" aria-hidden="true"></span>
+        <span id="voiceStatusText">Đang lắng nghe... Hãy nói yêu cầu của bạn (Bấm lại để dừng)</span>
+      </div>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="form-submit-group">
+      <button type="submit" class="btn-submit" id="submitShippingBtn">
+        <span id="submitBtnText">Gửi yêu cầu vận chuyển</span>
+        <svg class="btn-arrow" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </button>
+    </div>
+
+    <!-- Submission Status Banner -->
+    <div id="contactFormStatus" class="form-status-banner" role="status" aria-live="polite" style="display: none;">
+      <svg id="statusIconSuccess" class="status-info-icon status-icon-success" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: none;">
+        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+        <polyline points="22 4 12 14.01 9 11.01"/>
+      </svg>
+      <svg id="statusIconError" class="status-info-icon status-icon-error" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="display: none;">
+        <circle cx="12" cy="12" r="10"/>
+        <line x1="12" y1="8" x2="12" y2="12"/>
+        <line x1="12" y1="16" x2="12.01" y2="16"/>
+      </svg>
+      <div class="status-content">
+        <strong id="statusTitle">Gửi yêu cầu vận chuyển</strong>
+        <span id="statusMessage"></span>
+      </div>
+    </div>
+  </form>
+</div>
+
+<style>
+  .contact-form-card {
+    background-color: #ffffff;
+    border-radius: var(--radius-xl, 20px);
+    border: 1px solid #eef2f6;
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+    padding: clamp(1.5rem, 3.5vw, 2.25rem);
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .form-header {
+    margin-bottom: 1.25rem;
+  }
+
+  .form-title {
+    font-family: var(--font-sans);
+    font-size: clamp(1.25rem, 1.15rem + 0.4vw, 1.375rem);
+    font-weight: 800;
+    color: var(--color-brand-navy, #072238);
+    margin: 0 0 0.375rem 0;
+    letter-spacing: -0.01em;
+  }
+
+  .form-subtitle {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary, #64748b);
+    margin: 0;
+    line-height: 1.45;
+  }
+
+  .shipping-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .customer-type-group {
+    border: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .form-label {
+    font-size: 0.84375rem;
+    font-weight: 600;
+    color: var(--color-text-primary, #0f172a);
+    display: block;
+  }
+
+  .radio-options {
+    display: flex;
+    gap: 1.75rem;
+    margin-top: 0.35rem;
+  }
+
+  .radio-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    cursor: pointer;
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #475569;
+    user-select: none;
+  }
+
+  .radio-input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+
+  .radio-custom {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 2px solid #cbd5e1;
+    background-color: #ffffff;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all var(--transition-fast, 150ms ease);
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .radio-input:checked + .radio-custom {
+    border-color: #1d68d8;
+  }
+
+  .radio-input:checked + .radio-custom::after {
+    content: '';
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #1d68d8;
+    position: absolute;
+  }
+
+  .radio-input:checked ~ .radio-text {
+    font-weight: 600;
+    color: #0f172a;
+  }
+
+  .radio-input:focus-visible + .radio-custom {
+    outline: 2px solid #1d68d8;
+    outline-offset: 2px;
+  }
+
+  .form-row-2 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (min-width: 600px) {
+    .form-row-2 {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-icon {
+    position: absolute;
+    left: 0.875rem;
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  .form-input {
+    width: 100%;
+    height: 46px;
+    padding: 0 0.875rem 0 2.5rem;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    color: var(--color-text-primary, #0f172a);
+    font-size: 0.875rem;
+    font-family: inherit;
+    transition: border-color var(--transition-fast, 150ms ease), box-shadow var(--transition-fast, 150ms ease);
+  }
+
+  .form-input::placeholder {
+    color: #94a3b8;
+    font-size: 0.84375rem;
+  }
+
+  .form-input:hover {
+    border-color: #cbd5e1;
+  }
+
+  .form-input:focus {
+    outline: none;
+    border-color: #1d68d8;
+    box-shadow: 0 0 0 3px rgba(29, 104, 216, 0.12);
+  }
+
+  .textarea-with-icon {
+    position: relative;
+  }
+
+  .textarea-icon {
+    position: absolute;
+    left: 0.875rem;
+    top: 0.875rem;
+    color: #94a3b8;
+    pointer-events: none;
+  }
+
+  .form-textarea {
+    width: 100%;
+    min-height: 88px;
+    padding: 0.75rem 0.875rem 0.75rem 2.5rem;
+    border-radius: 10px;
+    border: 1px solid #e2e8f0;
+    background-color: #ffffff;
+    color: var(--color-text-primary, #0f172a);
+    font-size: 0.875rem;
+    font-family: inherit;
+    resize: vertical;
+    transition: border-color var(--transition-fast, 150ms ease), box-shadow var(--transition-fast, 150ms ease);
+  }
+
+  .form-textarea::placeholder {
+    color: #94a3b8;
+    font-size: 0.84375rem;
+  }
+
+  .form-textarea:hover {
+    border-color: #cbd5e1;
+  }
+
+  .form-textarea:focus {
+    outline: none;
+    border-color: #1d68d8;
+    box-shadow: 0 0 0 3px rgba(29, 104, 216, 0.12);
+  }
+
+  .field-error {
+    font-size: 0.8125rem;
+    color: var(--color-status-error, #dc2626);
+    display: block;
+    margin: 0;
+  }
+
+  .field-error:empty {
+    display: none;
+  }
+
+  .form-input.is-invalid,
+  .form-textarea.is-invalid {
+    border-color: var(--color-status-error, #dc2626);
+    background-color: #fef2f2;
+  }
+
+  /* Voice Input Banner (Figma Node 101:1937) */
+  .voice-input-banner {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+  }
+
+  .voice-banner-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding: 0.75rem 1rem;
+    border-radius: 12px;
+    background-color: #f0f7ff;
+    border: 1px solid #dbeafe;
+    cursor: pointer;
+    text-align: left;
+    transition: all var(--transition-fast, 150ms ease);
+  }
+
+  .voice-banner-btn:hover {
+    background-color: #e0f0fe;
+    border-color: #bfdbfe;
+    transform: translateY(-1px);
+  }
+
+  .voice-banner-btn:focus-visible {
+    outline: 2px solid #1d68d8;
+    outline-offset: 2px;
+  }
+
+  .voice-banner-btn.is-listening {
+    background-color: #fee2e2;
+    border-color: #fca5a5;
+  }
+
+  .voice-icon-circle {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-color: #1d68d8;
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background-color var(--transition-fast, 150ms ease);
+  }
+
+  .voice-banner-btn.is-listening .voice-icon-circle {
+    background-color: #ef4444;
+    animation: mic-pulse 1.2s infinite ease-in-out;
+  }
+
+  @keyframes mic-pulse {
+    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); }
+    70% { transform: scale(1.08); box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+  }
+
+  .voice-text-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .voice-main-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #072238;
+  }
+
+  .voice-sub-title {
+    font-size: 0.78125rem;
+    color: #1d68d8;
+    font-weight: 500;
+  }
+
+  .voice-arrow-icon {
+    color: #1d68d8;
+    flex-shrink: 0;
+  }
+
+  .voice-status-box {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.875rem;
+    border-radius: var(--radius-sm, 8px);
+    background-color: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary, #475569);
+  }
+
+  .voice-pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #ef4444;
+    animation: blink 1s infinite alternate;
+  }
+
+  @keyframes blink {
+    from { opacity: 0.3; }
+    to { opacity: 1; }
+  }
+
+  /* Submit Button */
+  .form-submit-group {
+    margin-top: 0.375rem;
+  }
+
+  .btn-submit {
+    width: 100%;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.8125rem 1.5rem;
+    border-radius: 10px;
+    background: #f95016;
+    color: #ffffff;
+    font-size: 0.9375rem;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(249, 80, 22, 0.28);
+    transition: transform var(--transition-fast, 150ms ease), box-shadow var(--transition-fast, 150ms ease), filter var(--transition-fast, 150ms ease);
+  }
+
+  .btn-submit:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(249, 80, 22, 0.38);
+    filter: brightness(1.05);
+  }
+
+  .btn-submit:active {
+    transform: translateY(0);
+  }
+
+  .btn-submit:focus-visible {
+    outline: 2px solid #f95016;
+    outline-offset: 3px;
+  }
+
+  .btn-submit:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
+    filter: none;
+    transform: none;
+    box-shadow: none;
+  }
+
+  /* Status banner variations */
+  .form-status-banner {
+    display: none;
+    gap: 0.75rem;
+    padding: 1rem 1.25rem;
+    border-radius: var(--radius-md, 12px);
+    background-color: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+    font-size: 0.875rem;
+    line-height: 1.5;
+    animation: fadeIn 250ms ease forwards;
+  }
+
+  .form-status-banner.status-success {
+    background-color: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+  }
+  .form-status-banner.status-success strong {
+    color: #14532d;
+  }
+  .form-status-banner.status-success .status-icon-success {
+    display: inline-block !important;
+  }
+  .form-status-banner.status-success .status-icon-error {
+    display: none !important;
+  }
+
+  .form-status-banner.status-error {
+    background-color: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+  }
+  .form-status-banner.status-error strong {
+    color: #7f1d1d;
+  }
+  .form-status-banner.status-error .status-icon-error {
+    display: inline-block !important;
+  }
+  .form-status-banner.status-error .status-icon-success {
+    display: none !important;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .status-info-icon {
+    flex-shrink: 0;
+    color: #16a34a;
+    margin-top: 0.125rem;
+  }
+
+  .status-content strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: #14532d;
+  }
+
+  .status-hotline-link {
+    color: #15803d;
+    text-decoration: underline;
+  }
+</style>
+
+<script>
+  function initContactForm() {
+    const form = document.getElementById('contactShippingForm') as HTMLFormElement | null;
+    if (!form) return;
+
+    const clientName = document.getElementById('clientName') as HTMLInputElement | null;
+    const pickupLocation = document.getElementById('pickupLocation') as HTMLInputElement | null;
+    const deliveryLocation = document.getElementById('deliveryLocation') as HTMLInputElement | null;
+    const cargoDescription = document.getElementById('cargoDescription') as HTMLTextAreaElement | null;
+    const cargoWeight = document.getElementById('cargoWeight') as HTMLInputElement | null;
+    const contactPhone = document.getElementById('contactPhone') as HTMLInputElement | null;
+    const statusBanner = document.getElementById('contactFormStatus');
+    const statusTitle = document.getElementById('statusTitle');
+    const statusMessage = document.getElementById('statusMessage');
+    const submitBtn = document.getElementById('submitShippingBtn') as HTMLButtonElement | null;
+    const submitBtnText = document.getElementById('submitBtnText');
+    const formRequestId = document.getElementById('formRequestId') as HTMLInputElement | null;
+
+    // Generate stable idempotency requestId if empty
+    function ensureRequestId() {
+      if (formRequestId && !formRequestId.value) {
+        const todayStr = new Date().toISOString().slice(0, 10).replace(/-/g, '');
+        const randStr = Math.random().toString(36).substring(2, 7).toUpperCase();
+        formRequestId.value = `NHL-${todayStr}-${randStr}`;
+      }
+      return formRequestId?.value || '';
+    }
+    ensureRequestId();
+
+    // Customer Type toggle label enhancement
+    const customerTypeRadios = form.querySelectorAll<HTMLInputElement>('input[name="customerType"]');
+    const clientNameLabel = document.getElementById('clientNameLabelText');
+
+    customerTypeRadios.forEach((radio) => {
+      radio.addEventListener('change', () => {
+        if (clientNameLabel) {
+          clientNameLabel.textContent = radio.value === 'individual' ? 'Họ và tên của bạn' : 'Tên công ty / Họ tên';
+        }
+      });
+    });
+
+    // Validation helper
+    function validateField(input: HTMLInputElement | HTMLTextAreaElement | null, errorId: string, message: string): boolean {
+      if (!input) return true;
+      const errorEl = document.getElementById(errorId);
+      const val = input.value.trim();
+
+      if (!val) {
+        input.classList.add('is-invalid');
+        input.setAttribute('aria-invalid', 'true');
+        if (errorEl) errorEl.textContent = message;
+        return false;
+      }
+
+      if (input.type === 'tel' && val.length < 9) {
+        input.classList.add('is-invalid');
+        input.setAttribute('aria-invalid', 'true');
+        if (errorEl) errorEl.textContent = 'Vui lòng nhập số điện thoại hoặc Zalo hợp lệ (từ 9 số).';
+        return false;
+      }
+
+      input.classList.remove('is-invalid');
+      input.removeAttribute('aria-invalid');
+      if (errorEl) errorEl.textContent = '';
+      return true;
+    }
+
+    // Clear validation error on input
+    [clientName, pickupLocation, deliveryLocation, cargoDescription, contactPhone].forEach((field) => {
+      field?.addEventListener('input', () => {
+        field.classList.remove('is-invalid');
+        field.removeAttribute('aria-invalid');
+        const err = document.getElementById(`${field.id}Error`);
+        if (err) err.textContent = '';
+      });
+    });
+
+    // Form submission
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const isNameValid = validateField(clientName, 'clientNameError', 'Vui lòng nhập tên công ty hoặc họ tên.');
+      const isPickupValid = validateField(pickupLocation, 'pickupLocationError', 'Vui lòng nhập địa điểm lấy hàng.');
+      const isDeliveryValid = validateField(deliveryLocation, 'deliveryLocationError', 'Vui lòng nhập địa điểm giao hàng.');
+      const isCargoValid = validateField(cargoDescription, 'cargoDescriptionError', 'Vui lòng mô tả loại hàng hóa cần vận chuyển.');
+      const isPhoneValid = validateField(contactPhone, 'contactPhoneError', 'Vui lòng nhập số điện thoại hoặc Zalo liên hệ.');
+
+      if (!isNameValid || !isPickupValid || !isDeliveryValid || !isCargoValid || !isPhoneValid) {
+        return;
+      }
+
+      const activeRadio = form.querySelector<HTMLInputElement>('input[name="customerType"]:checked');
+      const customerType = activeRadio?.value || 'business';
+      const currentRequestId = ensureRequestId();
+
+      const payload = {
+        requestId: currentRequestId,
+        customerType,
+        clientName: clientName?.value.trim() || '',
+        pickupLocation: pickupLocation?.value.trim() || '',
+        deliveryLocation: deliveryLocation?.value.trim() || '',
+        cargoDescription: cargoDescription?.value.trim() || '',
+        cargoWeight: cargoWeight?.value.trim() || '',
+        contactPhone: contactPhone?.value.trim() || '',
+        sourceUrl: '/lien-he/',
+        company_tax_id_bypass: (document.getElementById('company_tax_id_bypass') as HTMLInputElement)?.value || ''
+      };
+
+      // Set Submitting State
+      if (submitBtn) submitBtn.disabled = true;
+      if (submitBtnText) submitBtnText.textContent = 'Đang gửi yêu cầu...';
+      form.setAttribute('aria-busy', 'true');
+
+      try {
+        const res = await fetch('/api/contact/submit', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        const data = await res.json().catch(() => ({}));
+
+        if (res.ok && data.success) {
+          // Success State
+          if (statusBanner) {
+            statusBanner.className = 'form-status-banner status-success';
+            if (statusTitle) statusTitle.textContent = 'Gửi yêu cầu vận chuyển thành công!';
+            if (statusMessage) {
+              statusMessage.innerHTML = `Mã yêu cầu: <strong>${data.requestId || currentRequestId}</strong>.<br/>Đội ngũ Nam Hân Logistics đã ghi nhận thông tin và sẽ liên hệ tư vấn lộ trình & báo giá qua số điện thoại/Zalo trong thời gian sớm nhất.`;
+            }
+            statusBanner.style.display = 'flex';
+            statusBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+
+          if (submitBtnText) submitBtnText.textContent = 'Đã gửi thành công (Bấm để gửi yêu cầu mới)';
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.onclick = () => {
+              submitBtn.onclick = null;
+              if (submitBtnText) submitBtnText.textContent = 'Gửi yêu cầu vận chuyển';
+              if (statusBanner) statusBanner.style.display = 'none';
+              if (formRequestId) formRequestId.value = '';
+              ensureRequestId();
+              form.reset();
+              const defaultRadio = form.querySelector<HTMLInputElement>('input[value="business"]');
+              if (defaultRadio) defaultRadio.checked = true;
+            };
+          }
+        } else {
+          // Error State: Keep user inputs intact
+          if (statusBanner) {
+            statusBanner.className = 'form-status-banner status-error';
+            if (statusTitle) statusTitle.textContent = 'Chưa thể gửi yêu cầu';
+            const errorMsg = data.message || data.error || 'Đã có sự cố khi gửi dữ liệu. Quý khách vui lòng thử lại hoặc liên hệ Hotline.';
+            if (statusMessage) {
+              statusMessage.innerHTML = `${errorMsg}`;
+            }
+            statusBanner.style.display = 'flex';
+            statusBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+
+          if (data.errors && typeof data.errors === 'object') {
+            for (const [fName, fMsg] of Object.entries(data.errors)) {
+              const errEl = document.getElementById(`${fName}Error`);
+              if (errEl) errEl.textContent = String(fMsg);
+            }
+          }
+
+          if (submitBtnText) submitBtnText.textContent = 'Thử gửi lại';
+          if (submitBtn) submitBtn.disabled = false;
+        }
+      } catch (networkErr) {
+        console.error('Submission network error:', networkErr);
+        if (statusBanner) {
+          statusBanner.className = 'form-status-banner status-error';
+          if (statusTitle) statusTitle.textContent = 'Lỗi kết nối';
+          if (statusMessage) {
+            statusMessage.innerHTML = 'Không thể kết nối đến máy chủ. Dữ liệu của quý khách đã được giữ nguyên, vui lòng bấm "Thử gửi lại" hoặc gọi Hotline trực tiếp.';
+          }
+          statusBanner.style.display = 'flex';
+          statusBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+        if (submitBtnText) submitBtnText.textContent = 'Thử gửi lại';
+        if (submitBtn) submitBtn.disabled = false;
+      } finally {
+        form.removeAttribute('aria-busy');
+      }
+    });
+
+    // Voice input
+    const voiceTrigger = document.getElementById('voiceInputTrigger');
+    const voiceStatus = document.getElementById('voiceStatusIndicator');
+    const voiceStatusText = document.getElementById('voiceStatusText');
+    const voiceMainTitle = document.getElementById('voiceMainTitle');
+    const voiceSubTitle = document.getElementById('voiceSubTitle');
+
+    type SpeechRecognitionType = typeof window & {
+      SpeechRecognition?: any;
+      webkitSpeechRecognition?: any;
+    };
+
+    const windowWithSpeech = window as unknown as SpeechRecognitionType;
+    const SpeechRecognition = windowWithSpeech.SpeechRecognition || windowWithSpeech.webkitSpeechRecognition;
+
+    let recognition: any = null;
+    let isListening = false;
+
+    if (voiceTrigger) {
+      if (!SpeechRecognition) {
+        voiceTrigger.addEventListener('click', () => {
+          if (voiceStatus && voiceStatusText) {
+            voiceStatus.style.display = 'flex';
+            voiceStatusText.textContent = 'Trình duyệt hiện tại chưa hỗ trợ nhận diện giọng nói. Quý khách vui lòng nhập tay vào ô mô tả hàng hóa.';
+          }
+        });
+      } else {
+        try {
+          recognition = new SpeechRecognition();
+          recognition.lang = 'vi-VN';
+          recognition.continuous = true;
+          recognition.interimResults = true;
+
+          recognition.onstart = () => {
+            isListening = true;
+            voiceTrigger.classList.add('is-listening');
+            if (voiceMainTitle) voiceMainTitle.textContent = 'Đang lắng nghe...';
+            if (voiceSubTitle) voiceSubTitle.textContent = 'Hãy nói rõ loại hàng và quy cách vận chuyển (Bấm lại để dừng)';
+            if (voiceStatus && voiceStatusText) {
+              voiceStatus.style.display = 'flex';
+              voiceStatusText.textContent = 'Hệ thống đang chuyển giọng nói thành văn bản...';
+            }
+          };
+
+          recognition.onresult = (event: any) => {
+            let finalTranscript = '';
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
+              if (event.results[i].isFinal) {
+                finalTranscript += event.results[i][0].transcript;
+              }
+            }
+
+            if (finalTranscript && cargoDescription) {
+              const currentText = cargoDescription.value.trim();
+              cargoDescription.value = currentText ? `${currentText} ${finalTranscript.trim()}` : finalTranscript.trim();
+              cargoDescription.classList.remove('is-invalid');
+              const err = document.getElementById('cargoDescriptionError');
+              if (err) err.textContent = '';
+            }
+          };
+
+          recognition.onerror = (event: any) => {
+            console.warn('Speech recognition warning:', event.error);
+            stopListening();
+            if (voiceStatus && voiceStatusText) {
+              voiceStatus.style.display = 'flex';
+              if (event.error === 'not-allowed') {
+                voiceStatusText.textContent = 'Quyền truy cập Microphone bị từ chối. Vui lòng cho phép Microphone hoặc nhập tay.';
+              } else {
+                voiceStatusText.textContent = 'Đã dừng nhận diện giọng nói. Quý khách có thể kiểm tra và chỉnh sửa nội dung bên trên.';
+              }
+            }
+          };
+
+          recognition.onend = () => {
+            stopListening();
+          };
+
+          function stopListening() {
+            isListening = false;
+            voiceTrigger?.classList.remove('is-listening');
+            if (voiceMainTitle) voiceMainTitle.textContent = 'Nói thay vì nhập';
+            if (voiceSubTitle) voiceSubTitle.textContent = 'Nhấn để ghi âm mô tả yêu cầu vận chuyển của bạn';
+          }
+
+          voiceTrigger.addEventListener('click', () => {
+            if (isListening) {
+              recognition.stop();
+              stopListening();
+            } else {
+              try {
+                recognition.start();
+              } catch (err) {
+                console.warn('Recognition start error:', err);
+              }
+            }
+          });
+        } catch (e) {
+          console.warn('Speech recognition init error:', e);
+        }
+      }
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initContactForm);
+  } else {
+    initContactForm();
+  }
+  document.addEventListener('astro:page-load', initContactForm);
+</script>

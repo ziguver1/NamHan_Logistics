@@ -1,0 +1,288 @@
+---
+interface ActivityCard {
+  step: string;
+  title: string;
+  desc: string;
+  actionText: string;
+  iconType: 'route' | 'pod' | 'split' | 'custom';
+}
+
+const activities: ActivityCard[] = [
+  {
+    step: '01',
+    title: 'ĐIỀU PHỐI VẬN CHUYỂN',
+    desc: 'Lên lịch trình, bố trí xe tải và giám sát lộ trình vận tải thông suốt. Định tuyến chính xác giúp rút ngắn thời gian luân chuyển liên tỉnh.',
+    actionText: 'LỊCH TRÌNH 24/7',
+    iconType: 'route',
+  },
+  {
+    step: '02',
+    title: 'GIAO NHẬN HÀNG HÓA',
+    desc: 'Kiểm đếm số lượng, kiểm tra tình trạng niêm phong thùng hàng, ký nhận biên bản giao hàng minh bạch tại kho gửi và kho nhận.',
+    actionText: 'BIÊN BẢN POD ĐIỆN TỬ',
+    iconType: 'pod',
+  },
+  {
+    step: '03',
+    title: 'PHỐI HỢP HÀNG HÓA',
+    desc: 'Phân loại, gom hàng lẻ (LTL) và sắp xếp hàng hóa khoa học theo từng điểm đến, tối ưu hóa tải trọng và tiết kiệm chi phí cho chủ hàng.',
+    actionText: 'TỐI ƯU DUNG TÍCH',
+    iconType: 'split',
+  },
+  {
+    step: '04',
+    title: 'HỖ TRỢ THEO NHU CẦU',
+    desc: 'Đáp ứng linh hoạt yêu cầu giao nhận đặc thù của từng khách hàng doanh nghiệp: bốc dỡ ca đêm, hẹn giờ chính xác hoặc giao nhiều chặng.',
+    actionText: 'TÙY BIẾN GIẢI PHÁP',
+    iconType: 'custom',
+  },
+];
+---
+
+<section class="logistics-activities-section" aria-labelledby="logistics-activities-heading">
+  <div class="container">
+    <div class="section-top-row">
+      <div class="header-content">
+        <span class="section-tag">DỊCH VỤ CHI TIẾT</span>
+        <h2 id="logistics-activities-heading" class="section-title">Các hoạt động hỗ trợ</h2>
+        <p class="section-desc">
+          Giải quyết triệt để từng điểm nghẽn trong chuỗi chuyển giao hàng hóa với 4 nghiệp vụ điều hành nòng cốt.
+        </p>
+      </div>
+
+      <div class="active-units-badge" aria-label="Trạng thái phân hệ">
+        <span class="pulse-dot" aria-hidden="true"></span>
+        <span>SUPPORT UNITS: 04 ACTIVE</span>
+      </div>
+    </div>
+
+    <!-- 4 Activities Grid -->
+    <div class="activities-grid">
+      {
+        activities.map((item) => (
+          <div class="activity-card">
+            <div class="card-head">
+              <div class="card-icon-box" aria-hidden="true">
+                {item.iconType === 'route' && (
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="6" cy="19" r="3"/>
+                    <path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/>
+                    <circle cx="18" cy="5" r="3"/>
+                  </svg>
+                )}
+                {item.iconType === 'pod' && (
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <path d="m9 15 2 2 4-4"/>
+                  </svg>
+                )}
+                {item.iconType === 'split' && (
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 3h5v5"/>
+                    <path d="M8 3H3v5"/>
+                    <path d="M12 22v-8.3a4 4 0 0 0-1.172-2.872L3 3"/>
+                    <path d="m15 9 6-6"/>
+                  </svg>
+                )}
+                {item.iconType === 'custom' && (
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="4" y1="21" x2="4" y2="14"/>
+                    <line x1="4" y1="10" x2="4" y2="3"/>
+                    <line x1="12" y1="21" x2="12" y2="12"/>
+                    <line x1="12" y1="8" x2="12" y2="3"/>
+                    <line x1="20" y1="21" x2="20" y2="16"/>
+                    <line x1="20" y1="12" x2="20" y2="3"/>
+                    <line x1="1" y1="14" x2="7" y2="14"/>
+                    <line x1="9" y1="8" x2="15" y2="8"/>
+                    <line x1="17" y1="16" x2="23" y2="16"/>
+                  </svg>
+                )}
+              </div>
+
+              <span class="step-label">{item.step}</span>
+            </div>
+
+            <h3 class="card-title">{item.title}</h3>
+            <p class="card-desc">{item.desc}</p>
+
+            <a href="#route-inquiry" class="card-action-link">
+              <span>{item.actionText}</span>
+              <span class="arrow" aria-hidden="true">→</span>
+            </a>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .logistics-activities-section {
+    padding-top: clamp(3rem, 6vw, 4.5rem);
+    padding-bottom: clamp(3rem, 6vw, 4.5rem);
+    background-color: #f8fafc;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .section-top-row {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  @media (min-width: 768px) {
+    .section-top-row {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+  }
+
+  .section-tag {
+    display: inline-block;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-brand-orange);
+    margin-bottom: 0.625rem;
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 2.5vw + 0.5rem, 2.375rem);
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.625rem;
+  }
+
+  .section-desc {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    max-width: 36rem;
+  }
+
+  .active-units-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #e0e7ff;
+    color: #4338ca;
+    border: 1px solid #c7d2fe;
+    padding: 0.45rem 0.875rem;
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    align-self: flex-start;
+  }
+
+  .pulse-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: #4f46e5;
+  }
+
+  .activities-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .activities-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .activities-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+  }
+
+  .activity-card {
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg, 16px);
+    padding: 1.75rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .activity-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    border-color: rgba(249, 80, 22, 0.3);
+  }
+
+  .card-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 1.25rem;
+  }
+
+  .card-icon-box {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.5rem;
+    background-color: #eef2ff;
+    color: #4f46e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .step-label {
+    font-size: 0.8125rem;
+    font-weight: 800;
+    color: #94a3b8;
+  }
+
+  .card-title {
+    font-size: 1rem;
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    line-height: 1.35;
+    letter-spacing: -0.01em;
+    margin-bottom: 0.75rem;
+  }
+
+  .card-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    flex-grow: 1;
+    margin-bottom: 1.5rem;
+  }
+
+  .card-action-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: var(--color-brand-orange);
+    text-decoration: none;
+    transition: gap var(--transition-fast);
+  }
+
+  .card-action-link:hover {
+    gap: 0.625rem;
+  }
+
+  .arrow {
+    transition: transform var(--transition-fast);
+  }
+</style>

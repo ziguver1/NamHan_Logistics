@@ -1,0 +1,356 @@
+---
+import { listAnnouncements } from '@/lib/server/news-storage';
+import { ROUTES } from '@/lib/routes';
+
+// Fetch the top 3 published announcements (pinned first, newest published date)
+let announcements: any[] = [];
+try {
+  const allPublished = await listAnnouncements({
+    status: 'published',
+    includeDeleted: false
+  });
+  announcements = allPublished.slice(0, 3);
+} catch (err) {
+  console.error('Failed to load announcements for home page:', err);
+}
+
+function formatDate(isoStr?: string) {
+  if (!isoStr) return '';
+  const d = new Date(isoStr);
+  return d.toLocaleDateString('vi-VN', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric'
+  });
+}
+---
+
+<section class="news-section section section-muted" aria-labelledby="news-heading">
+  <div class="container">
+    <!-- Header with Tag and Title -->
+    <div class="news-header-wrap">
+      <div class="news-header-left">
+        <div class="section-tag">BẢNG TIN DOANH NGHIỆP</div>
+        <h2 id="news-heading" class="section-title">
+          THÔNG BÁO CHÍNH THỨC & TIN TỨC VẬN TẢI
+        </h2>
+      </div>
+      <div class="news-header-right">
+        <a href={ROUTES.NEWS} class="btn-all-news">
+          <span>Xem tất cả thông báo</span>
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+            <path d="M3.333 8h9.334m-3.334-3.333L12.667 8l-3.334 3.333" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+
+    {announcements.length === 0 ? (
+      <div class="news-empty-state">
+        <div class="empty-icon" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <path d="M19 20H5a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h10l6 6v8a2 2 0 0 1-2 2Z"/>
+            <path d="M14 2v6h6"/>
+            <path d="M8 13h8"/>
+            <path d="M8 17h5"/>
+          </svg>
+        </div>
+        <p class="empty-text">Hiện chưa có thông báo mới nào được đăng tải.</p>
+        <a href={ROUTES.NEWS} class="empty-link">Truy cập Bảng tin doanh nghiệp &rarr;</a>
+      </div>
+    ) : (
+      <div class="news-grid">
+        {announcements.map((post) => {
+          const coverUrl = post.coverImage?.url || '/images/home/news-thumb-1.webp';
+          const coverAlt = post.coverImage?.altText || post.title;
+          const detailUrl = `/bang-tin/${post.slug}`;
+
+          return (
+            <article class="news-card">
+              <a href={detailUrl} class="news-media" tabindex="-1" aria-hidden="true">
+                <img
+                  src={coverUrl}
+                  alt={coverAlt}
+                  class="news-img"
+                  loading="lazy"
+                  decoding="async"
+                />
+                {post.isPinned ? (
+                  <span class="news-category pinned-category">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                      <path d="M12 17v5"/>
+                      <path d="M9 10.76a2 2 0 0 1-1.11 1.79l-1.78.9A2 2 0 0 0 5 15.24V16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-.76a2 2 0 0 0-1.11-1.79l-1.78-.9A2 2 0 0 1 15 10.76V7a2 2 0 0 1 2-2 1 1 0 0 0 1-1V3a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1 2 2 0 0 1 2 2v3.76z"/>
+                    </svg>
+                    Đã ghim
+                  </span>
+                ) : (
+                  <span class="news-category">Thông báo</span>
+                )}
+              </a>
+
+              <div class="news-body">
+                <time class="news-date" datetime={post.publishedAt}>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                    <line x1="16" x2="16" y1="2" y2="6"/>
+                    <line x1="8" x2="8" y1="2" y2="6"/>
+                    <line x1="3" x2="21" y1="10" y2="10"/>
+                  </svg>
+                  {formatDate(post.publishedAt)}
+                </time>
+
+                <h3 class="news-title">
+                  <a href={detailUrl} class="news-title-link">
+                    {post.title}
+                  </a>
+                </h3>
+
+                <p class="news-summary">
+                  {post.summary}
+                </p>
+
+                <div class="news-action">
+                  <a href={detailUrl} class="news-read-more" aria-label={`Xem chi tiết thông báo: ${post.title}`}>
+                    <span>Xem chi tiết</span>
+                    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+                      <path d="M3.333 8h9.334m-3.334-3.333L12.667 8l-3.334 3.333" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+            </article>
+          );
+        })}
+      </div>
+    )}
+  </div>
+</section>
+
+<style>
+  .news-header-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-bottom: 2.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .news-header-wrap {
+      flex-direction: row;
+      align-items: flex-end;
+      justify-content: space-between;
+    }
+  }
+
+  .section-tag {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--color-brand-orange);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
+    font-size: var(--font-h2);
+    font-weight: 900;
+    color: var(--color-brand-navy);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .btn-all-news {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: var(--touch-target-min);
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-brand-navy);
+    padding: 0.5rem 1rem;
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+    text-decoration: none;
+  }
+
+  .btn-all-news:hover {
+    color: var(--color-brand-orange);
+    border-color: var(--color-brand-orange);
+  }
+
+  /* Empty state */
+  .news-empty-state {
+    padding: 3rem 1.5rem;
+    background: var(--color-bg-surface);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .empty-icon {
+    color: var(--color-text-muted);
+  }
+
+  .empty-text {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    margin: 0;
+  }
+
+  .empty-link {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-brand-orange);
+    text-decoration: none;
+  }
+
+  .empty-link:hover {
+    text-decoration: underline;
+  }
+
+  /* News Grid: 1 col on mobile, 3 cols on desktop */
+  .news-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+
+  @media (min-width: 768px) {
+    .news-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+  }
+
+  .news-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .news-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .news-media {
+    position: relative;
+    display: block;
+    aspect-ratio: 16 / 10;
+    background-color: var(--color-bg-subtle);
+    overflow: hidden;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .news-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform var(--transition-normal);
+  }
+
+  .news-card:hover .news-img {
+    transform: scale(1.04);
+  }
+
+  .news-category {
+    position: absolute;
+    top: 0.75rem;
+    left: 0.75rem;
+    background-color: var(--color-brand-navy);
+    color: var(--color-text-inverse);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    padding: 0.25rem 0.625rem;
+    border-radius: var(--radius-sm);
+    z-index: 2;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .pinned-category {
+    background-color: var(--color-brand-orange);
+    color: #ffffff;
+  }
+
+  .news-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .news-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+    margin-bottom: 0.625rem;
+  }
+
+  .news-title {
+    font-size: 1.0625rem;
+    font-weight: 800;
+    line-height: 1.35;
+    margin-bottom: 0.75rem;
+  }
+
+  .news-title-link {
+    color: var(--color-brand-navy);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .news-title-link:hover {
+    color: var(--color-brand-orange);
+  }
+
+  .news-summary {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    margin-bottom: 1.25rem;
+    flex: 1;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .news-action {
+    margin-top: auto;
+    padding-top: 0.875rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .news-read-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    min-height: var(--touch-target-min);
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--color-brand-orange);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .news-read-more:hover {
+    color: var(--color-brand-orange-hover);
+  }
+</style>

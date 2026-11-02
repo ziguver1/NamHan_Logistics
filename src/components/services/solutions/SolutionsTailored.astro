@@ -1,0 +1,244 @@
+---
+import { solutionsAssets } from '@/content/solutions-assets';
+import ImageSlot from '@/components/ui/ImageSlot.astro';
+
+const fleetImage = solutionsAssets.fleet;
+---
+
+<section class="solutions-tailored-section" aria-labelledby="solutions-tailored-heading">
+  <div class="container tailored-grid">
+    <!-- Left Column: Text & 2 Principle Cards -->
+    <div class="tailored-left">
+      <span class="section-tag">THỰC TẾ & HIỆU QUẢ</span>
+      <h2 id="solutions-tailored-heading" class="section-title">
+        Nam Hân xây dựng phương án theo nhu cầu
+      </h2>
+      <p class="section-desc">
+        Mỗi nhu cầu vận chuyển có đặc điểm khác nhau. Nam Hân lựa chọn phương án phù hợp dựa trên loại hàng hóa, khối lượng, tuyến đường, phương tiện và yêu cầu giao nhận của khách hàng.
+      </p>
+
+      <div class="tailored-cards">
+        <div class="tailored-card">
+          <div class="card-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+              <polyline points="9 12 11 14 15 10"/>
+            </svg>
+          </div>
+          <div class="card-text">
+            <h3 class="card-title">Không dàn trải lý thuyết</h3>
+            <p class="card-sub">
+              Chọn xe chuẩn tải, tuyến đường thông suốt và hạn chế tối đa chi phí phát sinh.
+            </p>
+          </div>
+        </div>
+
+        <div class="tailored-card">
+          <div class="card-icon" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="m16 3 4 4-4 4"/>
+              <path d="M20 7H4"/>
+              <path d="m8 21-4-4 4-4"/>
+              <path d="M4 17h16"/>
+            </svg>
+          </div>
+          <div class="card-text">
+            <h3 class="card-title">Chủ động điều phối</h3>
+            <p class="card-sub">
+              Đáp ứng kịp thời biến động khối lượng của doanh nghiệp theo mùa vụ.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Fleet Media with Tag Overlay -->
+    <div class="tailored-right">
+      <div class="media-container">
+        <ImageSlot
+          src={fleetImage.src}
+          alt={fleetImage.alt}
+          width={fleetImage.width}
+          height={fleetImage.height}
+          label={fleetImage.label}
+          aspectRatio={fleetImage.aspectRatio}
+          class="fleet-slot"
+        />
+
+        <div class="media-corridor-badge">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="6" cy="19" r="3"/>
+            <path d="M9 19h8.5a3.5 3.5 0 0 0 0-7h-11a3.5 3.5 0 0 1 0-7H15"/>
+            <circle cx="18" cy="5" r="3"/>
+          </svg>
+          <div class="corridor-text">
+            <strong class="corridor-title">TRỤC BẮC - NAM</strong>
+            <span class="corridor-sub">Kết nối thông suốt 63 tỉnh thành</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .solutions-tailored-section {
+    padding-top: clamp(3rem, 6vw, 4.5rem);
+    padding-bottom: clamp(3rem, 6vw, 4.5rem);
+    background-color: #ffffff;
+  }
+
+  .tailored-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .tailored-grid {
+      grid-template-columns: 1.05fr 0.95fr;
+      gap: 3.5rem;
+    }
+  }
+
+  /* Left Side */
+  .section-tag {
+    display: inline-block;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-brand-orange);
+    margin-bottom: 0.625rem;
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 2.5vw + 0.5rem, 2.375rem);
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    margin-bottom: 1rem;
+  }
+
+  .section-desc {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+    margin-bottom: 2rem;
+  }
+
+  .tailored-cards {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 600px) {
+    .tailored-cards {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  .tailored-card {
+    background-color: #f8fafc;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 1.25rem 1rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.875rem;
+    transition: transform var(--transition-fast), border-color var(--transition-fast);
+  }
+
+  .tailored-card:hover {
+    transform: translateY(-2px);
+    border-color: rgba(249, 80, 22, 0.3);
+  }
+
+  .card-icon {
+    width: 2.25rem;
+    height: 2.25rem;
+    border-radius: var(--radius-sm);
+    background-color: #ffffff;
+    color: var(--color-brand-orange);
+    border: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .card-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--color-brand-navy);
+    margin-bottom: 0.25rem;
+    line-height: 1.35;
+  }
+
+  .card-sub {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  /* Right Media */
+  .media-container {
+    position: relative;
+    border-radius: var(--radius-lg, 16px);
+  }
+
+  :global(.fleet-slot) {
+    border-radius: var(--radius-lg, 16px);
+    overflow: hidden;
+    box-shadow: 0 10px 28px rgba(11, 25, 44, 0.08);
+  }
+
+  .media-corridor-badge {
+    position: absolute;
+    bottom: -1rem;
+    left: 1.5rem;
+    background-color: rgba(11, 25, 44, 0.95);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    color: #ffffff;
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--radius-md);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.875rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25);
+  }
+
+  @media (max-width: 639px) {
+    .media-corridor-badge {
+      position: relative;
+      bottom: auto;
+      left: auto;
+      margin-top: 1rem;
+      width: 100%;
+    }
+  }
+
+  .media-corridor-badge svg {
+    color: #38bdf8;
+    flex-shrink: 0;
+  }
+
+  .corridor-title {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: #ffffff;
+    margin-bottom: 0.125rem;
+  }
+
+  .corridor-sub {
+    font-size: 0.75rem;
+    color: #cbd5e1;
+  }
+</style>

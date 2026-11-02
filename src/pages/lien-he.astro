@@ -1,0 +1,70 @@
+---
+import SiteLayout from '@/layouts/SiteLayout.astro';
+import ContactHero from '@/components/contact/ContactHero.astro';
+import ContactForm from '@/components/contact/ContactForm.astro';
+import ContactSidebar from '@/components/contact/ContactSidebar.astro';
+import ContactFaq from '@/components/contact/ContactFaq.astro';
+import { ROUTES } from '@/lib/routes';
+import { companyInfo } from '@/content/company';
+---
+
+<SiteLayout
+  title={`Liên hệ & Báo giá vận chuyển — ${companyInfo.shortName}`}
+  description="Liên hệ Nam Hân Logistics để nhận báo giá vận tải đường bộ nhanh chóng, dễ dàng và phù hợp với nhu cầu. Hỗ trợ tư vấn giải pháp 24/7 qua Hotline 0856 699 111, Zalo và biểu mẫu trực tuyến."
+  canonicalPath={ROUTES.CONTACT}
+>
+  <!-- 1. Hero Section (Figma Frame 101:1823) -->
+  <ContactHero />
+
+  <!-- 2. Main Form & Sidebar Section (Figma Frame 101:1859 & 101:1955) -->
+  <section class="contact-main-section" aria-label="Gửi yêu cầu vận chuyển và thông tin liên hệ">
+    <div class="container">
+      <div class="contact-main-grid">
+        <!-- Left: Shipping Request Form (Lead Point 1) -->
+        <div class="grid-form-col">
+          <ContactForm />
+        </div>
+
+        <!-- Right: Process & Quick Contact Sidebar -->
+        <div class="grid-sidebar-col">
+          <ContactSidebar />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. FAQ Section (Figma Frame 98:1253) -->
+  <ContactFaq />
+</SiteLayout>
+
+<style>
+  .contact-main-section {
+    padding: clamp(0.75rem, 1.5vw, 1.25rem) 0 clamp(1.5rem, 3vw, 2.5rem);
+    background-color: var(--color-bg-page, #ffffff);
+  }
+
+  .container {
+    max-width: var(--content-max, 75.5rem);
+    margin: 0 auto;
+    padding: 0 var(--page-gutter, 1.5rem);
+  }
+
+  .contact-main-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: clamp(1.25rem, 2.5vw, 1.5rem);
+    align-items: start;
+  }
+
+  @media (min-width: 992px) {
+    .contact-main-grid {
+      grid-template-columns: 1.63fr 1fr;
+      gap: 1.5rem;
+    }
+  }
+
+  .grid-form-col,
+  .grid-sidebar-col {
+    min-width: 0;
+  }
+</style>

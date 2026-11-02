@@ -1,0 +1,201 @@
+---
+import { solutionsAssets } from '@/content/solutions-assets';
+import ImageSlot from '@/components/ui/ImageSlot.astro';
+
+const modes = [
+  {
+    image: solutionsAssets.modeLtl,
+    title: 'Hàng Lẻ',
+    badge: 'LTL',
+    desc: 'Thích hợp cho các kiện hàng nhỏ gửi định kỳ, tiết kiệm tối đa ngân sách.',
+    bullet: 'Lịch xe xuất bến mỗi ngày',
+  },
+  {
+    image: solutionsAssets.modeConsolidation,
+    title: 'Hàng Ghép',
+    badge: 'CONSOLIDATION',
+    desc: 'Ghép các lô hàng chung lộ trình Bắc – Trung – Nam, tối ưu diện tích thùng xe.',
+    bullet: 'Tiết kiệm 20% - 35% chi phí',
+  },
+  {
+    image: solutionsAssets.modeFtl,
+    title: 'Hàng Bao Xe',
+    badge: 'FTL',
+    desc: 'Dành riêng toàn bộ tải trọng xe theo lịch trình chuyên biệt của doanh nghiệp.',
+    bullet: 'Giao trực tiếp, niêm phong kẹp chì',
+  },
+];
+---
+
+<section class="solutions-modes-section" aria-labelledby="solutions-modes-heading">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">MÔ HÌNH VẬN HÀNH THỰC TẾ</span>
+      <h2 id="solutions-modes-heading" class="section-title">
+        Lựa chọn hình thức vận chuyển
+      </h2>
+    </div>
+
+    <div class="modes-grid">
+      {
+        modes.map((item) => (
+          <div class="mode-card">
+            <div class="mode-media-wrap">
+              <ImageSlot
+                src={item.image.src}
+                alt={item.image.alt}
+                width={item.image.width}
+                height={item.image.height}
+                label={item.image.label}
+                aspectRatio={item.image.aspectRatio}
+                class="mode-slot"
+              />
+            </div>
+
+            <div class="mode-content">
+              <div class="mode-head">
+                <h3 class="mode-title">{item.title}</h3>
+                <span class="mode-badge">{item.badge}</span>
+              </div>
+
+              <p class="mode-desc">{item.desc}</p>
+
+              <div class="mode-bullet">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+                <span>{item.bullet}</span>
+              </div>
+            </div>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .solutions-modes-section {
+    padding-top: clamp(3rem, 6vw, 4.5rem);
+    padding-bottom: clamp(3rem, 6vw, 4.5rem);
+    background-color: #f8fafc;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .section-header {
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .section-tag {
+    display: inline-block;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-brand-orange);
+    margin-bottom: 0.625rem;
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 2.5vw + 0.5rem, 2.375rem);
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+
+  .modes-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .modes-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+  }
+
+  .mode-card {
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg, 16px);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 12px rgba(11, 25, 44, 0.04);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .mode-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(11, 25, 44, 0.08);
+  }
+
+  .mode-media-wrap {
+    width: 100%;
+    background-color: #e2e8f0;
+  }
+
+  :global(.mode-slot) {
+    width: 100%;
+    border-radius: 0;
+  }
+
+  .mode-content {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+  }
+
+  .mode-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+  }
+
+  .mode-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    line-height: 1.2;
+  }
+
+  .mode-badge {
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--color-brand-orange);
+    background-color: #fff7ed;
+    border: 1px solid #fed7aa;
+    padding: 0.25rem 0.5rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .mode-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+    flex-grow: 1;
+  }
+
+  .mode-bullet {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-brand-navy);
+    padding-top: 0.875rem;
+    border-top: 1px dashed var(--color-border);
+  }
+
+  .mode-bullet svg {
+    color: var(--color-brand-orange);
+    flex-shrink: 0;
+  }
+</style>

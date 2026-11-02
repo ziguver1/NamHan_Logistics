@@ -1,0 +1,219 @@
+---
+/**
+ * Contact FAQ Section (Figma Frame 98:1253)
+ * Design Reference: 08-lien-he.png
+ *
+ * 4 Essential FAQs regarding shipping requests, vehicle selection, Zalo channel, and national coverage.
+ * Semantic HTML with <details>/<summary> for accessible progressive disclosure.
+ */
+
+interface FaqItem {
+  id: string;
+  question: string;
+  answer: string;
+}
+
+const faqs: FaqItem[] = [
+  {
+    id: 'faq-1',
+    question: '1. Tôi có cần biết loại xe để gửi yêu cầu không?',
+    answer:
+      'Không cần. Bạn chỉ cần cung cấp thông tin loại hàng hóa, khối lượng ước tính và địa điểm giao nhận. Đội ngũ điều vận giàu kinh nghiệm của Nam Hân sẽ tính toán tải trọng và tư vấn loại phương tiện (tải thùng kín, bạt, xe cẩu, đầu kéo container) tối ưu nhất cả về chi phí lẫn độ an toàn.',
+  },
+  {
+    id: 'faq-2',
+    question: '2. Tôi có thể gửi yêu cầu qua Zalo không?',
+    answer:
+      'Có. Quý khách hoàn toàn có thể nhấn vào nút "Zalo" trên biểu mẫu hoặc liên hệ trực tiếp số Hotline/Zalo 0856 699 111 để gửi hình ảnh thực tế của kiện hàng, kích thước quy cách và nhận báo giá phản hồi nhanh chóng nhất.',
+  },
+  {
+    id: 'faq-3',
+    question: '3. Khi nào tôi nhận được tư vấn?',
+    answer:
+      'Sau khi bạn gửi thông tin qua form hoặc các kênh liên hệ, chuyên viên điều vận của Nam Hân sẽ tiếp nhận và liên hệ lại trong vòng 15 – 30 phút (trong khung giờ làm việc) để xác nhận thông tin chi tiết và gửi phương án vận chuyển kèm chi phí tối ưu.',
+  },
+  {
+    id: 'faq-4',
+    question: '4. Nam Hân có vận chuyển đi toàn quốc không?',
+    answer:
+      'Có. Nam Hân Logistics cung cấp mạng lưới vận tải đường bộ kết nối xuyên suốt 63 tỉnh thành toàn quốc, với thế mạnh đặc biệt ở trục chính Bắc – Trung – Nam, các tuyến giao nhận liên tỉnh và kết nối trực tiếp đến các khu công nghiệp trọng điểm.',
+  },
+];
+---
+
+<section class="contact-faq-section" aria-labelledby="faq-section-title">
+  <div class="container">
+    <div class="faq-header">
+      <h2 id="faq-section-title" class="faq-title">Câu hỏi thường gặp</h2>
+      <p class="faq-subtitle">Một số thắc mắc phổ biến khi gửi yêu cầu vận chuyển.</p>
+    </div>
+
+    <div class="faq-grid">
+      {faqs.map((faq) => (
+        <details class="faq-item" id={faq.id}>
+          <summary class="faq-summary">
+            <span class="faq-question">{faq.question}</span>
+            <span class="faq-toggle-icon" aria-hidden="true">
+              <svg class="icon-plus" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="12" y1="5" x2="12" y2="19"/>
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+              <svg class="icon-minus" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="5" y1="12" x2="19" y2="12"/>
+              </svg>
+            </span>
+          </summary>
+          <div class="faq-content">
+            <p class="faq-answer">{faq.answer}</p>
+          </div>
+        </details>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .contact-faq-section {
+    padding: clamp(2rem, 3.5vw, 3rem) 0 clamp(3rem, 5vw, 4.5rem);
+    background-color: var(--color-bg-page, #ffffff);
+  }
+
+  .container {
+    max-width: var(--content-max, 75.5rem);
+    margin: 0 auto;
+    padding: 0 var(--page-gutter, 1.5rem);
+  }
+
+  .faq-header {
+    margin-bottom: 1.5rem;
+  }
+
+  .faq-title {
+    font-family: var(--font-sans);
+    font-size: clamp(1.35rem, 1.25rem + 0.5vw, 1.625rem);
+    font-weight: 800;
+    color: var(--color-brand-navy, #072238);
+    margin: 0 0 0.35rem 0;
+    letter-spacing: -0.01em;
+  }
+
+  .faq-subtitle {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary, #64748b);
+    margin: 0;
+    line-height: 1.45;
+  }
+
+  .faq-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (min-width: 768px) {
+    .faq-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem 1.5rem;
+      align-items: start;
+    }
+  }
+
+  .faq-item {
+    background-color: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #eef2f6;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.02);
+    transition: all var(--transition-fast, 150ms ease);
+    overflow: hidden;
+  }
+
+  .faq-item:hover {
+    border-color: #cbd5e1;
+  }
+
+  .faq-item[open] {
+    border-color: #bfdbfe;
+    background-color: #fcfdfe;
+  }
+
+  .faq-summary {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1.125rem 1.35rem;
+    cursor: pointer;
+    user-select: none;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #0f172a;
+    line-height: 1.45;
+  }
+
+  .faq-summary::-webkit-details-marker {
+    display: none;
+  }
+
+  .faq-summary:focus-visible {
+    outline: 2px solid #1d68d8;
+    outline-offset: -2px;
+  }
+
+  .faq-question {
+    flex: 1;
+  }
+
+  .faq-toggle-icon {
+    color: #94a3b8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: color var(--transition-fast, 150ms ease);
+  }
+
+  .faq-item:hover .faq-toggle-icon {
+    color: #072238;
+  }
+
+  .faq-item[open] .faq-toggle-icon {
+    color: #1d68d8;
+  }
+
+  .icon-minus {
+    display: none;
+  }
+
+  .icon-plus {
+    display: block;
+  }
+
+  .faq-item[open] .icon-minus {
+    display: block;
+  }
+
+  .faq-item[open] .icon-plus {
+    display: none;
+  }
+
+  .faq-content {
+    padding: 0 1.35rem 1.125rem 1.35rem;
+    border-top: 1px dashed #f1f5f9;
+    margin-top: -0.125rem;
+    padding-top: 0.875rem;
+    animation: expandFade 200ms ease forwards;
+  }
+
+  @keyframes expandFade {
+    from { opacity: 0; transform: translateY(-4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .faq-answer {
+    margin: 0;
+    font-size: 0.84375rem;
+    color: var(--color-text-secondary, #475569);
+    line-height: 1.6;
+  }
+</style>

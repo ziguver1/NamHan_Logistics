@@ -1,0 +1,335 @@
+---
+import { ROUTES } from '@/lib/routes';
+import { companyInfo } from '@/content/company';
+import { roadAssets } from '@/content/road-assets';
+
+const heroImage = roadAssets.hero;
+---
+
+<section class="road-hero-section" aria-label="Giới thiệu dịch vụ Vận tải đường bộ">
+  <!-- Optional Background Image when available -->
+  {heroImage?.src && (
+    <div class="hero-bg-image" style={{ backgroundImage: `url(${heroImage.src})` }} aria-hidden="true"></div>
+  )}
+  <div class="hero-overlay" aria-hidden="true"></div>
+
+  <div class="container hero-container">
+    <!-- Breadcrumb -->
+    <nav class="hero-breadcrumbs" aria-label="Breadcrumb">
+      <ol class="breadcrumb-list">
+        <li><a href={ROUTES.HOME} class="breadcrumb-link">⌂ Trang chủ</a></li>
+        <li class="breadcrumb-sep" aria-hidden="true">›</li>
+        <li><a href={ROUTES.SERVICES} class="breadcrumb-link">Dịch vụ</a></li>
+        <li class="breadcrumb-sep" aria-hidden="true">›</li>
+        <li class="breadcrumb-current" aria-current="page">Vận tải đường bộ</li>
+      </ol>
+    </nav>
+
+    <!-- Badge -->
+    <div class="hero-badge">
+      <span class="badge-dot" aria-hidden="true"></span>
+      <span class="badge-core">DỊCH VỤ CỐT LÕI 01</span>
+      <span class="badge-divider" aria-hidden="true">|</span>
+      <span class="badge-types">Đường bộ • Đầu kéo container • Xe tải • Xe ben</span>
+    </div>
+
+    <!-- H1 Title -->
+    <h1 class="hero-title">Vận tải đường bộ</h1>
+
+    <!-- Subtitle -->
+    <p class="hero-desc">
+      Vận chuyển hàng hóa bằng xe ô tô trên các tuyến Bắc – Trung – Nam, đáp ứng nhu cầu giao nhận đa dạng của khách hàng.
+    </p>
+
+    <!-- Action Buttons -->
+    <div class="hero-actions">
+      <a href={ROUTES.CONTACT} class="btn-primary">
+        <span>Yêu cầu báo giá</span>
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4.167 10h11.666m-4.166-4.167L15.833 10l-4.166 4.167"/>
+        </svg>
+      </a>
+
+      <a href={`tel:${companyInfo.hotline}`} class="btn-secondary">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+        <span>Liên hệ Nam Hân</span>
+      </a>
+    </div>
+
+    <!-- 4 Key Trust Metrics Box -->
+    <div class="metrics-card">
+      <div class="metric-item">
+        <span class="metric-label">ĐỘ PHỦ TUYẾN</span>
+        <span class="metric-value">Bắc – Trung – Nam</span>
+      </div>
+
+      <div class="metric-divider" aria-hidden="true"></div>
+
+      <div class="metric-item">
+        <span class="metric-label">CHUẨN VẬN HÀNH</span>
+        <span class="metric-value">Giám sát GPS 24/7</span>
+      </div>
+
+      <div class="metric-divider" aria-hidden="true"></div>
+
+      <div class="metric-item">
+        <span class="metric-label">CHỦNG LOẠI XE</span>
+        <span class="metric-value">4 Dòng chuyên dụng</span>
+      </div>
+
+      <div class="metric-divider" aria-hidden="true"></div>
+
+      <div class="metric-item">
+        <span class="metric-label">CAM KẾT AN TOÀN</span>
+        <span class="metric-value">100% Niêm chì / Kẹp seal</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .road-hero-section {
+    position: relative;
+    background: linear-gradient(135deg, #071b30 0%, #0c2c4d 50%, #15436f 100%);
+    padding-top: clamp(2rem, 4vw, 3rem);
+    padding-bottom: clamp(3rem, 6vw, 4.5rem);
+    overflow: hidden;
+    color: #ffffff;
+  }
+
+  .hero-bg-image {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center right;
+    opacity: 0.3;
+    z-index: 0;
+  }
+
+  .hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(7, 27, 48, 0.96) 0%, rgba(12, 44, 77, 0.85) 60%, rgba(21, 67, 111, 0.65) 100%);
+    z-index: 1;
+  }
+
+  .hero-container {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  /* Breadcrumbs */
+  .hero-breadcrumbs {
+    margin-bottom: 0.25rem;
+  }
+
+  .breadcrumb-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    flex-wrap: wrap;
+  }
+
+  .breadcrumb-link {
+    color: #94a3b8;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .breadcrumb-link:hover {
+    color: #ffffff;
+    text-decoration: underline;
+  }
+
+  .breadcrumb-sep {
+    color: #64748b;
+    font-size: 0.75rem;
+  }
+
+  .breadcrumb-current {
+    color: var(--color-brand-orange);
+    font-weight: 700;
+  }
+
+  /* Badge */
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    align-self: flex-start;
+    padding: 0.375rem 0.875rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    backdrop-filter: blur(4px);
+    flex-wrap: wrap;
+  }
+
+  .badge-dot {
+    width: 0.4375rem;
+    height: 0.4375rem;
+    border-radius: var(--radius-full);
+    background-color: var(--color-brand-orange);
+  }
+
+  .badge-core {
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: 0.05em;
+  }
+
+  .badge-divider {
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  .badge-types {
+    color: #cbd5e1;
+    font-weight: 500;
+  }
+
+  /* H1 Title */
+  .hero-title {
+    font-size: clamp(2.25rem, 4vw + 1rem, 3.75rem);
+    font-weight: 900;
+    line-height: 1.15;
+    color: #ffffff;
+    letter-spacing: -0.025em;
+    margin-top: 0.25rem;
+  }
+
+  /* Subtitle */
+  .hero-desc {
+    font-size: clamp(1rem, 1.2vw, 1.125rem);
+    color: #cbd5e1;
+    line-height: 1.6;
+    max-width: 44rem;
+  }
+
+  /* Action Buttons */
+  .hero-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    margin-top: 0.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .hero-actions {
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: var(--touch-target-min);
+    background-color: var(--color-brand-orange);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    padding: 0.875rem 1.75rem;
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 12px rgba(249, 80, 22, 0.3);
+    transition: all var(--transition-fast);
+    text-decoration: none;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-brand-orange-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 16px rgba(249, 80, 22, 0.4);
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: var(--touch-target-min);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    padding: 0.875rem 1.75rem;
+    border-radius: var(--radius-md);
+    backdrop-filter: blur(4px);
+    transition: all var(--transition-fast);
+    text-decoration: none;
+  }
+
+  .btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: #ffffff;
+  }
+
+  /* Metrics Card */
+  .metrics-card {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin-top: 1.75rem;
+    padding: 1.25rem 1.75rem;
+    background-color: rgba(7, 27, 48, 0.7);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: var(--radius-lg);
+    backdrop-filter: blur(8px);
+  }
+
+  @media (min-width: 640px) {
+    .metrics-card {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .metrics-card {
+      grid-template-columns: repeat(4, 1fr);
+      align-items: center;
+    }
+  }
+
+  .metric-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .metric-label {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #94a3b8;
+    text-transform: uppercase;
+  }
+
+  .metric-value {
+    font-size: 1.0625rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.01em;
+  }
+
+  .metric-divider {
+    display: none;
+  }
+
+  @media (min-width: 1024px) {
+    .metric-divider {
+      display: none; /* grid gaps handle separation */
+    }
+  }
+</style>

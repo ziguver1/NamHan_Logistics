@@ -1,0 +1,279 @@
+---
+import { homeAssets } from '@/content/home-assets';
+import ImageSlot from '@/components/ui/ImageSlot.astro';
+
+interface Testimonial {
+  name: string;
+  role: string;
+  company: string;
+  avatarKey: keyof typeof homeAssets;
+  quote: string;
+  rating: number;
+}
+
+const testimonials: Testimonial[] = [
+  {
+    name: 'Nguyễn Văn Tuấn',
+    role: 'Giám đốc Vận hành',
+    company: 'Doanh nghiệp Sản xuất Hàng Gia Dụng',
+    avatarKey: 'clientAvatar1',
+    quote: 'Chúng tôi hợp tác với Nam Hân Logistics hơn 4 năm cho tuyến hàng Bắc — Nam. Đội xe luôn đảm bảo đúng lịch trình 32 giờ cam kết, hàng hóa nguyên vẹn 100%, thủ tục biên nhận minh bạch.',
+    rating: 5,
+  },
+  {
+    name: 'Trần Thị Mai',
+    role: 'Trưởng phòng Logistics',
+    company: 'Công ty Xuất Nhập Khẩu Nông Sản',
+    avatarKey: 'clientAvatar2',
+    quote: 'Hàng nông sản xuất khẩu đòi hỏi thời gian vận chuyển chính xác tuyệt đối. Nam Hân luôn hỗ trợ điều phối xe nhanh chóng cả trong mùa cao điểm, bảo hiểm hàng hóa rõ ràng giúp chúng tôi rất an tâm.',
+    rating: 5,
+  },
+  {
+    name: 'Lê Hoàng Long',
+    role: 'Quản lý Chuỗi Cung Ứng',
+    company: 'Hệ thống Phân phối Bán lẻ Toàn quốc',
+    avatarKey: 'clientAvatar3',
+    quote: 'Dịch vụ bốc xếp và hỗ trợ giao nhận tận nơi của Nam Hân giải phóng rất nhiều áp lực cho kho trung tâm của chúng tôi. Chi phí hợp lý và đội ngũ tài xế rất chuyên nghiệp, trách nhiệm.',
+    rating: 5,
+  },
+];
+---
+
+<section class="testimonials-section section" aria-labelledby="testimonials-heading">
+  <div class="container">
+    <!-- Section Header -->
+    <div class="section-header">
+      <div class="section-tag">ĐỐI TÁC & KHÁCH HÀNG</div>
+      <h2 id="testimonials-heading" class="section-title">
+        SỰ TIN TƯỞNG TỪ HƠN 500+ DOANH NGHIỆP TRÊN TOÀN QUỐC
+      </h2>
+      <p class="section-lead">
+        Lắng nghe những chia sẻ thực tế từ các đối tác đã đồng hành cùng Nam Hân Logistics trong suốt chặng đường phát triển.
+      </p>
+    </div>
+
+    <!-- Testimonials Cards Grid -->
+    <div class="testimonials-grid">
+      {testimonials.map((item) => {
+        const avatar = homeAssets[item.avatarKey];
+        return (
+          <article class="testimonial-card">
+            <!-- Stars -->
+            <div class="star-rating" aria-label={`Đánh giá ${item.rating} trên 5 sao`}>
+              {Array.from({ length: item.rating }).map(() => (
+                <svg class="star-icon" width="18" height="18" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                </svg>
+              ))}
+            </div>
+
+            <blockquote class="card-quote">
+              "{item.quote}"
+            </blockquote>
+
+            <!-- Author Info with ImageSlot Avatar -->
+            <div class="author-wrap">
+              <div class="author-avatar">
+                <ImageSlot
+                  src={avatar?.src}
+                  alt={avatar?.alt}
+                  label={avatar?.label}
+                  aspectRatio="1/1"
+                  rounded="full"
+                  width={52}
+                  height={52}
+                  loading="eager"
+                />
+              </div>
+              <div class="author-meta">
+                <span class="author-name">{item.name}</span>
+                <span class="author-role">{item.role}</span>
+                <span class="author-company">{item.company}</span>
+              </div>
+            </div>
+          </article>
+        );
+      })}
+    </div>
+
+    <!-- Partner Trust Bar -->
+    <div class="partners-bar">
+      <span class="partners-label">Đối tác chiến lược tin cậy</span>
+      <div class="partners-list">
+        <span class="partner-badge">Sản xuất tiêu dùng</span>
+        <span class="partner-badge">Vật liệu xây dựng</span>
+        <span class="partner-badge">Nông sản xuất khẩu</span>
+        <span class="partner-badge">Thương mại điện tử</span>
+        <span class="partner-badge">Điện tử gia dụng</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .testimonials-section {
+    background-color: var(--color-bg-page);
+  }
+
+  .section-header {
+    text-align: center;
+    max-width: 44rem;
+    margin-inline: auto;
+    margin-bottom: 3rem;
+  }
+
+  .section-tag {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--color-brand-orange);
+    text-transform: uppercase;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
+    font-size: var(--font-h2);
+    font-weight: 900;
+    color: var(--color-brand-navy);
+    line-height: 1.2;
+    margin-bottom: 1rem;
+    letter-spacing: -0.02em;
+  }
+
+  .section-lead {
+    font-size: var(--font-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  /* Testimonials Grid */
+  .testimonials-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+
+  @media (min-width: 768px) {
+    .testimonials-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+  }
+
+  .testimonial-card {
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: var(--shadow-sm);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .testimonial-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .star-rating {
+    display: flex;
+    gap: 0.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .star-icon {
+    color: #f59e0b;
+  }
+
+  .card-quote {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+    font-style: italic;
+    margin-bottom: 1.75rem;
+    flex: 1;
+  }
+
+  .author-wrap {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .author-avatar {
+    width: 3.25rem;
+    height: 3.25rem;
+    flex-shrink: 0;
+  }
+
+  .author-meta {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.35;
+  }
+
+  .author-name {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-brand-navy);
+  }
+
+  .author-role {
+    font-size: 0.8125rem;
+    color: var(--color-brand-orange);
+    font-weight: 600;
+  }
+
+  .author-company {
+    font-size: 0.75rem;
+    color: var(--color-text-muted);
+  }
+
+  /* Partners Bar */
+  .partners-bar {
+    margin-top: 3.5rem;
+    padding: 1.5rem;
+    background-color: var(--color-bg-muted);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .partners-bar {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+
+  .partners-label {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .partners-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.625rem;
+    justify-content: center;
+  }
+
+  .partner-badge {
+    padding: 0.375rem 0.75rem;
+    background-color: var(--color-bg-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--color-brand-navy);
+  }
+</style>

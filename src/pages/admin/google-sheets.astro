@@ -1,0 +1,893 @@
+---
+/**
+ * Admin Panel for Google Sheets Form Reception Management
+ * SSR route: Protected by administrative session.
+ */
+import SiteLayout from '@/layouts/SiteLayout.astro';
+import AdminHeader from '@/components/admin/AdminHeader.astro';
+import AdminLoginForm from '@/components/admin/AdminLoginForm.astro';
+import { isAuthenticatedAdmin } from '@/lib/server/admin-auth';
+import { getConfig } from '@/lib/server/storage';
+import { isGoogleConfigured, getGoogleClientId } from '@/lib/server/google-client';
+
+export const prerender = false;
+
+const request = Astro.request;
+const isAdmin = await isAuthenticatedAdmin(request);
+const url = new URL(request.url);
+
+const successParam = url.searchParams.get('success');
+const noticeParam = url.searchParams.get('notice');
+const errorParam = url.searchParams.get('error');
+
+const config = isAdmin ? await getConfig() : null;
+const googleConfigured = isGoogleConfigured();
+const clientId = getGoogleClientId();
+const redirectUri = `${url.origin}/api/auth/google/callback`;
+
+const activeConn = config?.activeConnection;
+const pendingConn = config?.pendingConnection;
+---
+
+<SiteLayout
+  title="Quản trị kết nối Google Sheets | Nam Hân Logistics"
+  description="Trang cấu hình kết nối Google Sheets nhận dữ liệu form liên hệ tự động cho Nam Hân Logistics."
+>
+  {isAdmin && <AdminHeader activeTab="google-sheets" />}
+
+  <main class="admin-main">
+    <div class="container admin-container">
+      {/* Case 1: Not logged in */}
+      {!isAdmin ? (
+        <AdminLoginForm />
+      ) : (
+        /* Case 2: Logged in Dashboard */
+        <div class="dashboard-grid">
+          {/* Header */}
+          <header class="admin-header">
+            <div class="admin-badge">HỆ THỐNG NỘI BỘ</div>
+            <h1 class="admin-title">Cấu hình tiếp nhận Google Sheets</h1>
+            <p class="admin-desc">
+              Quản lý luồng tiếp nhận yêu cầu báo giá vận chuyển và tự động ghi vào bảng tính Google Sheets.
+            </p>
+          </header>
+          {/* Notifications */}
+          {successParam && (
+            <div class="alert alert-success" role="alert">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                <polyline points="22 4 12 14.01 9 11.01"/>
+              </svg>
+              <div>
+                <strong>Kết nối thành công!</strong> Bảng tính "Khách hàng Nam Hân" đã được tạo trong Google Drive của bạn và sẵn sàng tiếp nhận yêu cầu.
+              </div>
+            </div>
+          )}
+
+          {noticeParam === 'account_pending_confirm' && (
+            <div class="alert alert-warning" role="alert">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="12" y1="8" x2="12" y2="12"/>
+                <line x1="12" y1="16" x2="12.01" y2="16"/>
+              </svg>
+              <div>
+                <strong>Tài khoản mới đã cấp quyền và tạo bảng thành công!</strong> Kết nối cũ vẫn đang hoạt động. Vui lòng bấm "Xác nhận chuyển sang tài khoản này" ở khung bên dưới để chính thức đổi nơi nhận.
+              </div>
+            </div>
+          )}
+
+          {errorParam && (
+            <div class="alert alert-danger" role="alert">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <line x1="15" y1="9" x2="9" y2="15"/>
+                <line x1="9" y1="9" x2="15" y2="15"/>
+              </svg>
+              <div>
+                <strong>Lỗi kết nối:</strong> {decodeURIComponent(errorParam)}
+              </div>
+            </div>
+          )}
+
+          {/* Pending Account Switch Stage */}
+          {pendingConn && (
+            <section class="card card-pending" aria-labelledby="pending-heading">
+              <div class="card-badge-pending">CHỜ XÁC NHẬN CHUYỂN ĐỔI</div>
+              <h2 id="pending-heading" class="card-title">Tài khoản Google mới đã sẵn sàng</h2>
+              <p class="card-desc">
+                Bạn đã cấp quyền thành công cho tài khoản Google mới và hệ thống đã tạo sẵn bảng tính. Bảng cũ vẫn đang ghi dữ liệu bình thường cho đến khi bạn xác nhận chuyển.
+              </p>
+
+              <div class="connection-details">
+                <div class="detail-row">
+                  <span class="detail-label">Tài khoản mới:</span>
+                  <strong class="detail-value text-primary">{pendingConn.accountEmail}</strong>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Tên bảng tính mới:</span>
+                  <span class="detail-value">{pendingConn.sheetTitle}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Link bảng tính mới:</span>
+                  <a href={pendingConn.spreadsheetUrl} target="_blank" rel="noopener noreferrer" class="link-external">
+                    <span>Mở Google Sheets</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                      <polyline points="15 3 21 3 21 9"/>
+                      <line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                  </a>
+                </div>
+              </div>
+
+              <div class="action-buttons-group">
+                <button type="button" id="btnConfirmSwitch" class="btn btn-success">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"/>
+                  </svg>
+                  <span>Xác nhận chuyển sang tài khoản này</span>
+                </button>
+                <button type="button" id="btnCancelSwitch" class="btn btn-secondary">
+                  <span>Hủy bỏ và giữ kết nối cũ</span>
+                </button>
+              </div>
+            </section>
+          )}
+
+          {/* Active Connection Status Card */}
+          <section class="card" aria-labelledby="active-heading">
+            <div class="card-header-flex">
+              <div>
+                <h2 id="active-heading" class="card-title">Trạng thái kết nối tiếp nhận</h2>
+                <p class="card-subtitle">Bảng tính đang nhận dữ liệu từ biểu mẫu gửi yêu cầu vận chuyển.</p>
+              </div>
+              <div>
+                {activeConn?.status === 'active' ? (
+                  <span class="badge badge-active">🟢 Đang hoạt động</span>
+                ) : activeConn?.status === 'needs_reauth' ? (
+                  <span class="badge badge-warning">🟡 Cần cấp quyền lại</span>
+                ) : (
+                  <span class="badge badge-inactive">⚪ Chưa kết nối</span>
+                )}
+              </div>
+            </div>
+
+            {activeConn ? (
+              <div class="connection-details">
+                <div class="detail-row">
+                  <span class="detail-label">Tài khoản Google:</span>
+                  <strong class="detail-value">{activeConn.accountEmail}</strong>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Tên bảng tính:</span>
+                  <span class="detail-value">{activeConn.sheetTitle}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">ID bảng tính:</span>
+                  <code class="detail-code">{activeConn.spreadsheetId}</code>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Thời gian kết nối:</span>
+                  <span class="detail-value">{new Date(activeConn.connectedAt).toLocaleString('vi-VN')}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Link bảng tính trực tiếp:</span>
+                  <a href={activeConn.spreadsheetUrl} target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm link-btn">
+                    <span>Mở Google Sheets</span>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                      <polyline points="15 3 21 3 21 9"/>
+                      <line x1="10" y1="14" x2="21" y2="3"/>
+                    </svg>
+                  </a>
+                </div>
+
+                {activeConn.status === 'needs_reauth' && (
+                  <div class="alert alert-warning mt-4">
+                    <strong>Chú ý:</strong> Quyền truy cập Google đã hết hạn hoặc bị thu hồi ({activeConn.lastError || 'Token expired'}). Vui lòng bấm kết nối lại bên dưới để làm mới quyền truy cập.
+                  </div>
+                )}
+
+                <div class="mt-4 pt-3 border-top">
+                  <a href="/api/auth/google/login" class="btn btn-primary">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+                      <circle cx="9" cy="7" r="4"/>
+                      <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
+                      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    <span>{activeConn.status === 'needs_reauth' ? 'Cấp quyền lại cho tài khoản' : 'Đổi sang tài khoản Google khác'}</span>
+                  </a>
+                </div>
+              </div>
+            ) : (
+              <div class="empty-state">
+                <div class="empty-icon">
+                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="12" y1="18" x2="12" y2="12"/>
+                    <line x1="9" y1="15" x2="15" y2="15"/>
+                  </svg>
+                </div>
+                <h3 class="empty-title">Chưa có bảng tính nào được kết nối</h3>
+                <p class="empty-desc">
+                  Bấm nút bên dưới để đăng nhập tài khoản Google. Hệ thống sẽ tự động tạo bảng tính "Khách hàng Nam Hân" với đầy đủ 10 cột dữ liệu và kết nối với biểu mẫu website.
+                </p>
+
+                {googleConfigured ? (
+                  <a href="/api/auth/google/login" class="btn btn-primary btn-lg">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
+                      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                    </svg>
+                    <span>Kết nối Google Sheets ngay</span>
+                  </a>
+                ) : (
+                  <div class="alert alert-warning">
+                    <strong>Chưa hoàn tất cấu hình Google Cloud:</strong> Cần khai báo <code>GOOGLE_CLIENT_ID</code> và <code>GOOGLE_CLIENT_SECRET</code> trong biến môi trường trước khi kết nối. Xem chi tiết tại mục bên dưới.
+                  </div>
+                )}
+              </div>
+            )}
+          </section>
+
+          {/* Environment & Google Cloud Setup Guide Card */}
+          <section class="card" aria-labelledby="config-heading">
+            <h2 id="config-heading" class="card-title">Thông tin cấu hình Google Cloud</h2>
+            <p class="card-subtitle">Các thông số kỹ thuật phục vụ khai báo trên Google Cloud Console.</p>
+
+            <div class="config-table">
+              <div class="config-row">
+                <span class="config-key">Redirect URI (Authorized redirect URIs):</span>
+                <div class="copy-box">
+                  <code>{redirectUri}</code>
+                  <button type="button" class="btn-copy" data-copy={redirectUri} aria-label="Sao chép Redirect URI">
+                    Sao chép
+                  </button>
+                </div>
+              </div>
+              <div class="config-row">
+                <span class="config-key">Google Client ID:</span>
+                <span class="config-val">{clientId ? `${clientId.slice(0, 16)}...` : 'Chưa cấu hình'}</span>
+              </div>
+              <div class="config-row">
+                <span class="config-key">Google Client Secret:</span>
+                <span class="config-val">{googleConfigured ? '•••••••••••••••• (Đã cấu hình)' : 'Chưa cấu hình'}</span>
+              </div>
+              <div class="config-row">
+                <span class="config-key">Phạm vi quyền (OAuth Scopes):</span>
+                <span class="config-val"><code>https://www.googleapis.com/auth/drive.file</code> (Tối thiểu, an toàn)</span>
+              </div>
+            </div>
+          </section>
+
+          {/* Quick Actions & Handover */}
+          <section class="card" aria-labelledby="links-heading">
+            <h2 id="links-heading" class="card-title">Liên kết kiểm thử & Bàn giao</h2>
+            <div class="quick-links">
+              <a href="/lien-he/" target="_blank" class="quick-link-item">
+                <span class="quick-link-title">Mở trang Liên hệ (/lien-he/)</span>
+                <span class="quick-link-desc">Thử nghiệm gửi form yêu cầu vận chuyển thực tế để xem dòng dữ liệu mới trong Sheet.</span>
+              </a>
+              <div class="quick-link-item">
+                <span class="quick-link-title">Quy trình bàn giao sang tài khoản Doanh nghiệp</span>
+                <span class="quick-link-desc">Sau khi thử nghiệm bằng tài khoản cá nhân, quản trị viên chỉ cần đăng nhập tài khoản doanh nghiệp mới tại trang này và xác nhận chuyển. Toàn bộ form sẽ tự động ghi vào Drive mới mà không cần chỉnh sửa code hay khởi động lại website.</span>
+              </div>
+            </div>
+
+            <div class="mt-4 pt-3 border-top flex-between">
+              <span class="text-muted"><small>Phiên làm việc quản trị được bảo vệ an toàn bằng HTTP-only cookie.</small></span>
+              <a href="/api/admin/logout" class="btn btn-outline btn-sm">
+                <span>Đăng xuất</span>
+              </a>
+            </div>
+          </section>
+        </div>
+      )}
+    </div>
+  </main>
+</SiteLayout>
+
+<style>
+  .admin-main {
+    background-color: #f8fafc;
+    min-height: calc(100vh - 120px);
+    padding: 2.5rem 1rem 4rem;
+  }
+
+  .admin-container {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .admin-header {
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .admin-badge {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background-color: #e0f2fe;
+    color: #0369a1;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border-radius: 9999px;
+    margin-bottom: 0.75rem;
+  }
+
+  .admin-title {
+    font-size: 1.875rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 0.5rem;
+  }
+
+  .admin-desc {
+    color: #64748b;
+    font-size: 1rem;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+
+  /* Login Card */
+  .login-card {
+    background: #ffffff;
+    border-radius: 1rem;
+    padding: 2.5rem;
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
+    border: 1px solid #e2e8f0;
+    max-width: 440px;
+    margin: 2rem auto;
+    text-align: center;
+  }
+
+  .login-icon {
+    width: 64px;
+    height: 64px;
+    background: #eff6ff;
+    color: #2563eb;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1.5rem;
+  }
+
+  .login-title {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+  }
+
+  .login-subtitle {
+    font-size: 0.9rem;
+    color: #64748b;
+    margin-bottom: 1.5rem;
+  }
+
+  .login-form {
+    text-align: left;
+  }
+
+  .form-group {
+    margin-bottom: 1.25rem;
+  }
+
+  .form-label {
+    display: block;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #334155;
+    margin-bottom: 0.5rem;
+  }
+
+  .form-input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    font-size: 0.95rem;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 0.5rem;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .form-input:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+  }
+
+  .login-error-msg {
+    color: #dc2626;
+    font-size: 0.85rem;
+    margin-bottom: 1rem;
+    background: #fef2f2;
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+  }
+
+  .login-footer-note {
+    margin-top: 1.5rem;
+    color: #94a3b8;
+    line-height: 1.4;
+  }
+
+  /* Dashboard Grid */
+  .dashboard-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.75rem;
+  }
+
+  /* Cards */
+  .card {
+    background: #ffffff;
+    border-radius: 1rem;
+    padding: 1.75rem 2rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+  }
+
+  .card-pending {
+    border: 2px solid #f59e0b;
+    background: #fffbeb;
+  }
+
+  .card-badge-pending {
+    display: inline-block;
+    padding: 0.25rem 0.6rem;
+    background: #f59e0b;
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    border-radius: 0.375rem;
+    margin-bottom: 0.75rem;
+  }
+
+  .card-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.25rem;
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.25rem;
+  }
+
+  .card-subtitle, .card-desc {
+    font-size: 0.9rem;
+    color: #64748b;
+  }
+
+  /* Badges */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.35rem 0.75rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 9999px;
+  }
+
+  .badge-active {
+    background: #ecfdf5;
+    color: #065f46;
+  }
+
+  .badge-warning {
+    background: #fffbeb;
+    color: #92400e;
+  }
+
+  .badge-inactive {
+    background: #f1f5f9;
+    color: #64748b;
+  }
+
+  /* Details Table */
+  .connection-details {
+    margin-top: 1rem;
+  }
+
+  .detail-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f1f5f9;
+    gap: 0.5rem;
+  }
+
+  .detail-label {
+    width: 180px;
+    font-size: 0.875rem;
+    color: #64748b;
+  }
+
+  .detail-value {
+    font-size: 0.95rem;
+    color: #1e293b;
+  }
+
+  .detail-code {
+    background: #f1f5f9;
+    padding: 0.2rem 0.4rem;
+    border-radius: 0.25rem;
+    font-family: monospace;
+    font-size: 0.85rem;
+    color: #0f172a;
+  }
+
+  .link-external {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    color: #2563eb;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-decoration: underline;
+  }
+
+  .link-btn {
+    text-decoration: none;
+  }
+
+  /* Action Buttons */
+  .action-buttons-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-top: 1.5rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 0.65rem 1.25rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    text-decoration: none;
+  }
+
+  .btn-primary {
+    background-color: #0284c7;
+    color: #ffffff;
+  }
+  .btn-primary:hover {
+    background-color: #0369a1;
+  }
+
+  .btn-success {
+    background-color: #059669;
+    color: #ffffff;
+  }
+  .btn-success:hover {
+    background-color: #047857;
+  }
+
+  .btn-secondary {
+    background-color: #e2e8f0;
+    color: #334155;
+  }
+  .btn-secondary:hover {
+    background-color: #cbd5e1;
+  }
+
+  .btn-outline {
+    background: transparent;
+    border: 1.5px solid #cbd5e1;
+    color: #334155;
+  }
+  .btn-outline:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+  }
+
+  .btn-sm {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.85rem;
+  }
+
+  .btn-lg {
+    padding: 0.85rem 1.75rem;
+    font-size: 1.05rem;
+  }
+
+  .btn-block {
+    width: 100%;
+  }
+
+  /* Alerts */
+  .alert {
+    display: flex;
+    gap: 0.75rem;
+    align-items: flex-start;
+    padding: 1rem 1.25rem;
+    border-radius: 0.75rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+  }
+
+  .alert-success {
+    background: #ecfdf5;
+    border: 1px solid #a7f3d0;
+    color: #065f46;
+  }
+
+  .alert-warning {
+    background: #fffbeb;
+    border: 1px solid #fde68a;
+    color: #92400e;
+  }
+
+  .alert-danger {
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    color: #991b1b;
+  }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 2.5rem 1rem;
+  }
+
+  .empty-icon {
+    color: #94a3b8;
+    margin-bottom: 1rem;
+  }
+
+  .empty-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+  }
+
+  .empty-desc {
+    color: #64748b;
+    font-size: 0.95rem;
+    max-width: 500px;
+    margin: 0 auto 1.5rem;
+  }
+
+  /* Config Table */
+  .config-table {
+    margin-top: 1rem;
+  }
+
+  .config-row {
+    display: flex;
+    flex-direction: column;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid #f1f5f9;
+    gap: 0.35rem;
+  }
+
+  @media (min-width: 640px) {
+    .config-row {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  .config-key {
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #475569;
+  }
+
+  .config-val {
+    font-size: 0.85rem;
+    color: #1e293b;
+  }
+
+  .copy-box {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: #f1f5f9;
+    padding: 0.35rem 0.6rem;
+    border-radius: 0.375rem;
+  }
+
+  .copy-box code {
+    font-size: 0.8rem;
+    color: #0f172a;
+    word-break: break-all;
+  }
+
+  .btn-copy {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    padding: 0.2rem 0.5rem;
+    cursor: pointer;
+  }
+
+  /* Quick links */
+  .quick-links {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+
+  @media (min-width: 640px) {
+    .quick-links {
+      grid-template-columns: 1fr 1fr;
+    }
+  }
+
+  .quick-link-item {
+    padding: 1rem;
+    border-radius: 0.5rem;
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: border-color 0.2s;
+  }
+
+  .quick-link-item:hover {
+    border-color: #94a3b8;
+  }
+
+  .quick-link-title {
+    display: block;
+    font-weight: 700;
+    font-size: 0.95rem;
+    color: #0f172a;
+    margin-bottom: 0.25rem;
+  }
+
+  .quick-link-desc {
+    display: block;
+    font-size: 0.825rem;
+    color: #64748b;
+    line-height: 1.4;
+  }
+
+  .border-top {
+    border-top: 1px solid #e2e8f0;
+  }
+
+  .mt-4 { margin-top: 1rem; }
+  .pt-3 { padding-top: 0.75rem; }
+
+  .flex-between {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+</style>
+
+<script>
+  // Admin Login Handler
+  const loginForm = document.getElementById('adminLoginForm') as HTMLFormElement | null;
+  const loginError = document.getElementById('loginError');
+  const loginBtn = document.getElementById('loginBtn');
+
+  if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      if (loginError) loginError.style.display = 'none';
+      if (loginBtn) {
+        loginBtn.setAttribute('disabled', 'true');
+        loginBtn.textContent = 'Đang xác thực...';
+      }
+
+      const passwordInput = document.getElementById('adminPassword') as HTMLInputElement | null;
+      const password = passwordInput?.value || '';
+
+      try {
+        const res = await fetch('/api/admin/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ password })
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          window.location.reload();
+        } else {
+          if (loginError) {
+            loginError.textContent = data.error || 'Mật khẩu không chính xác.';
+            loginError.style.display = 'block';
+          }
+          if (loginBtn) {
+            loginBtn.removeAttribute('disabled');
+            loginBtn.textContent = 'Đăng nhập hệ thống';
+          }
+        }
+      } catch {
+        if (loginError) {
+          loginError.textContent = 'Không thể kết nối với máy chủ.';
+          loginError.style.display = 'block';
+        }
+        if (loginBtn) {
+          loginBtn.removeAttribute('disabled');
+          loginBtn.textContent = 'Đăng nhập hệ thống';
+        }
+      }
+    });
+  }
+
+  // Account switch confirm
+  const btnConfirm = document.getElementById('btnConfirmSwitch');
+  if (btnConfirm) {
+    btnConfirm.addEventListener('click', async () => {
+      if (!confirm('Bạn có chắc chắn muốn chuyển nơi nhận dữ liệu sang tài khoản Google mới này? Các form mới sẽ được ghi vào bảng tính mới.')) {
+        return;
+      }
+      btnConfirm.setAttribute('disabled', 'true');
+      btnConfirm.textContent = 'Đang chuyển đổi...';
+
+      try {
+        const res = await fetch('/api/admin/confirm-switch', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          alert(data.message);
+          window.location.href = '/admin/google-sheets?success=switched';
+        } else {
+          alert('Lỗi: ' + (data.error || 'Không thể chuyển đổi'));
+          btnConfirm.removeAttribute('disabled');
+          btnConfirm.textContent = 'Xác nhận chuyển sang tài khoản này';
+        }
+      } catch {
+        alert('Lỗi kết nối máy chủ');
+        btnConfirm.removeAttribute('disabled');
+      }
+    });
+  }
+
+  // Account switch cancel
+  const btnCancel = document.getElementById('btnCancelSwitch');
+  if (btnCancel) {
+    btnCancel.addEventListener('click', async () => {
+      if (!confirm('Bạn có chắc muốn hủy bỏ liên kết tài khoản mới?')) return;
+      try {
+        const res = await fetch('/api/admin/cancel-switch', { method: 'POST' });
+        const data = await res.json();
+        if (data.success) {
+          window.location.href = '/admin/google-sheets';
+        }
+      } catch {
+        alert('Lỗi khi hủy liên kết');
+      }
+    });
+  }
+
+  // Copy helper
+  document.querySelectorAll('.btn-copy').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const text = btn.getAttribute('data-copy');
+      if (text) {
+        await navigator.clipboard.writeText(text);
+        const originalText = btn.textContent;
+        btn.textContent = 'Đã chép!';
+        setTimeout(() => {
+          btn.textContent = originalText;
+        }, 2000);
+      }
+    });
+  });
+</script>

@@ -1,0 +1,39 @@
+---
+import SiteLayout from '@/layouts/SiteLayout.astro';
+import ServiceModuleSwitcher from '@/components/services/ServiceModuleSwitcher.astro';
+import SolutionsHero from '@/components/services/solutions/SolutionsHero.astro';
+import SolutionsTailored from '@/components/services/solutions/SolutionsTailored.astro';
+import SolutionsCriteria from '@/components/services/solutions/SolutionsCriteria.astro';
+import SolutionsProcess from '@/components/services/solutions/SolutionsProcess.astro';
+import SolutionsModes from '@/components/services/solutions/SolutionsModes.astro';
+import SolutionsCta from '@/components/services/solutions/SolutionsCta.astro';
+import { ROUTES } from '@/lib/routes';
+import { companyInfo } from '@/content/company';
+---
+
+<SiteLayout
+  title={`Giải pháp vận tải theo yêu cầu — ${companyInfo.shortName}`}
+  description="Tư vấn giải pháp vận tải tối ưu theo yêu cầu của Nam Hân: Hàng lẻ LTL, hàng ghép consolidation, hàng bao xe FTL, giám sát GPS 100%, kết nối thông suốt 63 tỉnh thành."
+  canonicalPath={ROUTES.SERVICE_SOLUTIONS}
+>
+  <!-- Service Module Quick Switcher -->
+  <ServiceModuleSwitcher currentRoute={ROUTES.SERVICE_SOLUTIONS} />
+
+  <!-- 1. Solutions Hero with Road Network Stats (Node 84:2305) -->
+  <SolutionsHero />
+
+  <!-- 2. Tailored Solutions & Principle Cards (Node 84:2346) -->
+  <SolutionsTailored />
+
+  <!-- 3. Evaluation Criteria: 5 Factors (Node 84:2383) -->
+  <SolutionsCriteria />
+
+  <!-- 4. Four-step Consultation Process (Node 84:2436) -->
+  <SolutionsProcess />
+
+  <!-- 5. Operational Transport Modes with Visual Cards (Node 84:2476) -->
+  <SolutionsModes />
+
+  <!-- 6. Bottom Tailored Advice CTA (Node 84:2532) -->
+  <SolutionsCta />
+</SiteLayout>

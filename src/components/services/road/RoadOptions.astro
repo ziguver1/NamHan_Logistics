@@ -1,0 +1,217 @@
+---
+const transportOptions = [
+  {
+    modeNum: 'HÌNH THỨC 01',
+    title: 'HÀNG LẺ (LTL)',
+    desc: 'Dành cho các lô hàng có khối lượng phù hợp với hình thức vận chuyển chung. Tiết kiệm tối đa chi phí cho các kiện hàng vừa và nhỏ.',
+    pill: 'Tối ưu chi phí theo từng kiện',
+    icon: 'grid',
+  },
+  {
+    modeNum: 'HÌNH THỨC 02',
+    title: 'HÀNG GHÉP',
+    desc: 'Kết hợp các lô hàng phù hợp trên cùng tuyến vận chuyển để tối ưu chi phí, tận dụng tối đa tải trọng và thể tích thùng xe.',
+    pill: 'Lịch trình ghép xe cố định trong ngày',
+    icon: 'merge',
+  },
+  {
+    modeNum: 'HÌNH THỨC 03',
+    title: 'HÀNG BAO XE (FTL)',
+    desc: 'Phương án sử dụng riêng phương tiện theo nhu cầu chuyên biệt của khách hàng. Chủ động hoàn toàn về thời gian khởi hành và tiến độ giao hàng.',
+    pill: 'Ưu tiên tuyến thẳng, giao nhận nhanh nhất',
+    icon: 'star',
+  },
+];
+---
+
+<section class="road-options-section" aria-label="Phương án vận chuyển linh hoạt">
+  <div class="container">
+    <div class="section-header-split">
+      <div class="header-left">
+        <div class="section-tag">MÔ HÌNH PHÂN BỔ</div>
+        <h2 class="section-title">Phương án vận chuyển linh hoạt</h2>
+      </div>
+      <p class="header-right-desc">
+        Cân đối hài hòa giữa chi phí và tốc độ vận chuyển theo từng quy mô kiện hàng của quý doanh nghiệp.
+      </p>
+    </div>
+
+    <div class="options-grid">
+      {transportOptions.map((opt) => (
+        <div class="option-card">
+          <div class="opt-icon-wrap" aria-hidden="true">
+            {opt.icon === 'grid' && (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="7" height="7"/>
+                <rect x="14" y="3" width="7" height="7"/>
+                <rect x="14" y="14" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/>
+              </svg>
+            )}
+            {opt.icon === 'merge' && (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="18" cy="18" r="3"/>
+                <circle cx="6" cy="6" r="3"/>
+                <path d="M6 21V9a9 9 0 0 0 9 9"/>
+              </svg>
+            )}
+            {opt.icon === 'star' && (
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polygon points="12 8 13.5 11 17 11.5 14.5 14 15 17.5 12 16 9 17.5 9.5 14 7 11.5 10.5 11 12 8"/>
+              </svg>
+            )}
+          </div>
+
+          <span class="opt-tag">{opt.modeNum}</span>
+          <h3 class="opt-title">{opt.title}</h3>
+          <p class="opt-desc">{opt.desc}</p>
+
+          <div class="opt-pill">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/>
+              <line x1="7" y1="7" x2="7.01" y2="7"/>
+            </svg>
+            <span>{opt.pill}</span>
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .road-options-section {
+    padding-top: var(--section-space);
+    padding-bottom: var(--section-space);
+    background-color: var(--color-bg-page);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .section-header-split {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+  }
+
+  @media (min-width: 768px) {
+    .section-header-split {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: flex-end;
+    }
+  }
+
+  .header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .section-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-brand-orange);
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 2.5vw + 0.75rem, 2.5rem);
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .header-right-desc {
+    font-size: var(--font-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    max-width: 28rem;
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+
+  @media (min-width: 768px) {
+    .options-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .option-card {
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: clamp(1.5rem, 3vw, 2rem);
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+    transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .option-card:hover {
+    transform: translateY(-3px);
+    border-color: #fed7aa;
+    box-shadow: 0 12px 20px -3px rgba(0, 0, 0, 0.06);
+  }
+
+  .opt-icon-wrap {
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-md);
+    background-color: #e0f2fe;
+    color: #0284c7;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.5rem;
+  }
+
+  .opt-tag {
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--color-brand-orange);
+    text-transform: uppercase;
+  }
+
+  .opt-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    line-height: 1.25;
+  }
+
+  .opt-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    flex-grow: 1;
+    margin-bottom: 0.5rem;
+  }
+
+  .opt-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #475569;
+    background-color: #f1f5f9;
+    padding: 0.5rem 0.875rem;
+    border-radius: var(--radius-md);
+    border: 1px solid #e2e8f0;
+  }
+
+  .opt-pill svg {
+    color: var(--color-brand-orange);
+    flex-shrink: 0;
+  }
+</style>

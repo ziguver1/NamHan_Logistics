@@ -1,0 +1,570 @@
+---
+/**
+ * Public Announcements List (Trang Bảng tin Công khai)
+ * SSR Route: Displays published official notices, pinned first, newest published date.
+ */
+import SiteLayout from '@/layouts/SiteLayout.astro';
+import { listAnnouncements } from '@/lib/server/news-storage';
+import { ROUTES } from '@/lib/routes';
+import { companyInfo } from '@/content/company';
+
+export const prerender = false;
+
+const url = new URL(Astro.request.url);
+const searchKeyword = url.searchParams.get('q') || '';
+
+// Only query published announcements for the public page
+const announcements = await listAnnouncements({
+  status: 'published',
+  search: searchKeyword,
+  includeDeleted: false
+});
+---
+
+<SiteLayout
+  title={`Bảng tin & Thông báo chính thức | ${companyInfo.shortName}`}
+  description="Cập nhật các thông báo điều hành, kế hoạch vận tải, chính sách dịch vụ và tin tức chính thức từ Nam Hân Logistics."
+  canonicalPath={ROUTES.NEWS}
+>
+  <main class="news-public-page">
+    <!-- Breadcrumb Bar -->
+    <div class="breadcrumb-bar">
+      <div class="container">
+        <nav aria-label="Breadcrumb">
+          <ol class="breadcrumb-list">
+            <li><a href={ROUTES.HOME} class="breadcrumb-link">Trang chủ</a></li>
+            <li class="breadcrumb-separator" aria-hidden="true">/</li>
+            <li class="breadcrumb-current" aria-current="page">Bảng tin</li>
+          </ol>
+        </nav>
+      </div>
+    </div>
+
+    <!-- Header Section -->
+    <section class="news-hero-section">
+      <div class="container">
+        <div class="news-hero-content">
+          <span class="section-tag">THÔNG BÁO CHÍNH THỨC</span>
+          <h1 class="news-hero-title">BẢNG TIN DOANH NGHIỆP</h1>
+          <p class="news-hero-desc">
+            Kênh phát ngôn và thông báo chính thức về kế hoạch vận hành, lịch trình xuất bến, quy chế dịch vụ và các thông tin quan trọng từ Nam Hân Logistics.
+          </p>
+
+          <!-- Search form -->
+          <form method="GET" action="/bang-tin/" class="news-search-form" role="search">
+            <div class="search-input-wrap">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon" aria-hidden="true">
+                <circle cx="11" cy="11" r="8"/>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+              </svg>
+              <input
+                type="text"
+                name="q"
+                value={searchKeyword}
+                placeholder="Tìm kiếm thông báo theo từ khóa..."
+                class="search-input"
+                aria-label="Tìm kiếm thông báo"
+              />
+              {searchKeyword && (
+                <a href="/bang-tin/" class="search-clear-btn" title="Xóa tìm kiếm">✕</a>
+              )}
+            </div>
+            <button type="submit" class="btn-search">Tìm kiếm</button>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Announcements Grid Section -->
+    <section class="news-list-section section">
+      <div class="container">
+        {searchKeyword && (
+          <div class="search-result-notice">
+            Kết quả tìm kiếm cho: <strong>"{searchKeyword}"</strong> ({announcements.length} kết quả)
+            <a href="/bang-tin/" class="clear-search-link">Xem tất cả</a>
+          </div>
+        )}
+
+        {announcements.length === 0 ? (
+          <div class="empty-bulletin">
+            <div class="empty-icon-box">
+              <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                <polyline points="14 2 14 8 20 8"/>
+                <line x1="16" y1="13" x2="8" y2="13"/>
+                <line x1="16" y1="17" x2="8" y2="17"/>
+                <polyline points="10 9 9 9 8 9"/>
+              </svg>
+            </div>
+            <h2 class="empty-title">Chưa có thông báo nào</h2>
+            <p class="empty-desc">
+              {searchKeyword
+                ? 'Không tìm thấy thông báo nào phù hợp với từ khóa của bạn. Vui lòng thử lại với từ khóa khác.'
+                : 'Hiện tại chưa có thông báo mới nào được đăng tải. Quý khách vui lòng quay lại sau.'}
+            </p>
+            {searchKeyword && (
+              <a href="/bang-tin/" class="btn btn-primary mt-3">Quay lại danh sách thông báo</a>
+            )}
+          </div>
+        ) : (
+          <div class="news-grid">
+            {announcements.map((post) => (
+              <article class={`news-card ${post.isPinned ? 'is-pinned-card' : ''}`}>
+                {post.coverImage?.url ? (
+                  <div class="card-media">
+                    <img
+                      src={post.coverImage.url}
+                      alt={post.coverImage.alt || post.title}
+                      class="card-img"
+                      loading="lazy"
+                    />
+                    {post.isPinned && <span class="badge-pinned">⭐ Ghim nổi bật</span>}
+                  </div>
+                ) : (
+                  <div class="card-media card-media-placeholder">
+                    <div class="brand-placeholder">
+                      <span class="placeholder-text">NAM HÂN LOGISTICS</span>
+                    </div>
+                    {post.isPinned && <span class="badge-pinned">⭐ Ghim nổi bật</span>}
+                  </div>
+                )}
+
+                <div class="card-body">
+                  <div class="card-meta">
+                    <time class="meta-date" datetime={post.publishedAt || post.createdAt}>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <rect width="18" height="18" x="3" y="4" rx="2" ry="2"/>
+                        <line x1="16" x2="16" y1="2" y2="6"/>
+                        <line x1="8" x2="8" y1="2" y2="6"/>
+                        <line x1="3" x2="21" y1="10" y2="10"/>
+                      </svg>
+                      {new Date(post.publishedAt || post.createdAt).toLocaleDateString('vi-VN')}
+                    </time>
+
+                    {Boolean(post.attachmentCount) && (
+                      <span class="meta-attachment">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                          <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <span>Tệp đính kèm</span>
+                      </span>
+                    )}
+                  </div>
+
+                  <h2 class="card-title">
+                    <a href={`/bang-tin/${post.slug}`} class="card-title-link">
+                      {post.title}
+                    </a>
+                  </h2>
+
+                  <p class="card-summary">{post.summary}</p>
+
+                  <div class="card-footer">
+                    <a href={`/bang-tin/${post.slug}`} class="card-readmore">
+                      <span>Xem toàn văn thông báo</span>
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+                        <line x1="5" y1="12" x2="19" y2="12"/>
+                        <polyline points="12 5 19 12 12 19"/>
+                      </svg>
+                    </a>
+                  </div>
+                </div>
+              </article>
+            ))}
+          </div>
+        )}
+      </div>
+    </section>
+  </main>
+</SiteLayout>
+
+<style>
+  .news-public-page {
+    background-color: #f8fafc;
+    min-height: 80vh;
+  }
+
+  /* Breadcrumb */
+  .breadcrumb-bar {
+    background: #ffffff;
+    border-bottom: 1px solid #e2e8f0;
+    padding: 0.75rem 0;
+  }
+
+  .breadcrumb-list {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.85rem;
+  }
+
+  .breadcrumb-link {
+    color: #64748b;
+    text-decoration: none;
+  }
+  .breadcrumb-link:hover {
+    color: #0284c7;
+    text-decoration: underline;
+  }
+
+  .breadcrumb-separator {
+    color: #cbd5e1;
+  }
+
+  .breadcrumb-current {
+    color: #0f172a;
+    font-weight: 600;
+  }
+
+  /* Hero Section */
+  .news-hero-section {
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    color: #ffffff;
+    padding: 3.5rem 0 3rem;
+    text-align: center;
+  }
+
+  .news-hero-content {
+    max-width: 720px;
+    margin: 0 auto;
+  }
+
+  .section-tag {
+    display: inline-block;
+    padding: 0.25rem 0.75rem;
+    background: rgba(2, 132, 199, 0.2);
+    color: #38bdf8;
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    border-radius: 9999px;
+    margin-bottom: 1rem;
+  }
+
+  .news-hero-title {
+    font-size: 2rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+    color: #ffffff;
+  }
+
+  @media (min-width: 768px) {
+    .news-hero-title {
+      font-size: 2.5rem;
+    }
+  }
+
+  .news-hero-desc {
+    color: #94a3b8;
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+  }
+
+  /* Search Form */
+  .news-search-form {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    max-width: 540px;
+    margin: 0 auto;
+  }
+
+  @media (min-width: 640px) {
+    .news-search-form {
+      flex-direction: row;
+    }
+  }
+
+  .search-input-wrap {
+    position: relative;
+    flex: 1;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 1rem;
+    color: #64748b;
+    pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.75rem 2.25rem 0.75rem 2.75rem;
+    border-radius: 8px;
+    border: 1px solid #334155;
+    background: #0f172a;
+    color: #ffffff;
+    font-size: 0.95rem;
+    outline: none;
+    transition: all 0.2s;
+  }
+
+  .search-input:focus {
+    border-color: #38bdf8;
+    box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.2);
+  }
+
+  .search-clear-btn {
+    position: absolute;
+    right: 0.75rem;
+    color: #94a3b8;
+    text-decoration: none;
+    font-weight: 700;
+    padding: 0.2rem 0.4rem;
+  }
+
+  .btn-search {
+    padding: 0.75rem 1.5rem;
+    background: #0284c7;
+    color: #ffffff;
+    font-weight: 700;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.15s;
+    font-size: 0.95rem;
+  }
+  .btn-search:hover {
+    background: #0369a1;
+  }
+
+  /* List Section */
+  .news-list-section {
+    padding: 3rem 0 5rem;
+  }
+
+  .search-result-notice {
+    margin-bottom: 2rem;
+    padding: 0.75rem 1rem;
+    background: #e0f2fe;
+    border-radius: 6px;
+    color: #0369a1;
+    font-size: 0.95rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .clear-search-link {
+    font-weight: 700;
+    color: #0284c7;
+    text-decoration: underline;
+  }
+
+  /* Grid */
+  .news-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.75rem;
+  }
+
+  @media (min-width: 640px) {
+    .news-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .news-grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  /* Card */
+  .news-card {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  .news-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+  }
+
+  .is-pinned-card {
+    border: 2px solid #f59e0b;
+    box-shadow: 0 4px 12px rgba(245, 158, 11, 0.15);
+  }
+
+  .card-media {
+    position: relative;
+    height: 190px;
+    overflow: hidden;
+    background: #f1f5f9;
+  }
+
+  .card-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s;
+  }
+
+  .news-card:hover .card-img {
+    transform: scale(1.03);
+  }
+
+  .card-media-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+  }
+
+  .brand-placeholder {
+    color: #94a3b8;
+    font-size: 0.85rem;
+    font-weight: 800;
+    letter-spacing: 0.1em;
+  }
+
+  .badge-pinned {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    background: #f59e0b;
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 0.25rem 0.6rem;
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .card-body {
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+  }
+
+  .card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.8rem;
+    color: #64748b;
+    margin-bottom: 0.6rem;
+  }
+
+  .meta-date {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+  }
+
+  .meta-attachment {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    color: #0369a1;
+    background: #e0f2fe;
+    padding: 0.15rem 0.45rem;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  .card-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: #0f172a;
+    margin-bottom: 0.6rem;
+  }
+
+  .card-title-link {
+    color: inherit;
+    text-decoration: none;
+  }
+  .card-title-link:hover {
+    color: #0284c7;
+    text-decoration: underline;
+  }
+
+  .card-summary {
+    color: #64748b;
+    font-size: 0.9rem;
+    line-height: 1.6;
+    margin-bottom: 1.25rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  .card-footer {
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
+  }
+
+  .card-readmore {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    color: #f95016;
+    font-weight: 700;
+    font-size: 0.875rem;
+    text-decoration: none;
+    transition: gap 0.15s;
+  }
+
+  .news-card:hover .card-readmore {
+    gap: 0.65rem;
+  }
+
+  /* Empty state */
+  .empty-bulletin {
+    background: #ffffff;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    padding: 4rem 1.5rem;
+    text-align: center;
+    max-width: 600px;
+    margin: 2rem auto;
+  }
+
+  .empty-icon-box {
+    color: #cbd5e1;
+    margin-bottom: 1rem;
+  }
+
+  .empty-title {
+    font-size: 1.35rem;
+    font-weight: 800;
+    color: #1e293b;
+    margin-bottom: 0.5rem;
+  }
+
+  .empty-desc {
+    color: #64748b;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .btn {
+    display: inline-flex;
+    padding: 0.65rem 1.25rem;
+    font-weight: 600;
+    border-radius: 6px;
+    text-decoration: none;
+  }
+  .btn-primary { background: #0284c7; color: #ffffff; }
+  .mt-3 { margin-top: 1rem; }
+</style>
+

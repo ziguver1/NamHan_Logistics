@@ -1,0 +1,27 @@
+---
+import SiteLayout from '@/layouts/SiteLayout.astro';
+import ServiceModuleSwitcher from '@/components/services/ServiceModuleSwitcher.astro';
+import ServicesHero from '@/components/services/ServicesHero.astro';
+import ServicesGrid from '@/components/services/ServicesGrid.astro';
+import ServicesCta from '@/components/services/ServicesCta.astro';
+import { ROUTES } from '@/lib/routes';
+import { companyInfo } from '@/content/company';
+---
+
+<SiteLayout
+  title={`Dịch vụ vận tải & Logistics — ${companyInfo.shortName}`}
+  description="Khám phá các dịch vụ vận tải đường bộ của Nam Hân Logistics: Vận chuyển liên tỉnh Bắc — Trung — Nam, Logistics & Giao nhận, Bốc xếp cơ giới và Tư vấn giải pháp vận tải tối ưu."
+  canonicalPath={ROUTES.SERVICES}
+>
+  <!-- 1. Service Module Switcher (Node 51:587) -->
+  <ServiceModuleSwitcher currentRoute={ROUTES.SERVICES} />
+
+  <!-- 2. Services Hero Section (Node 51:603) -->
+  <ServicesHero />
+
+  <!-- 3. Four Core Services Grid (Node 51:639) -->
+  <ServicesGrid />
+
+  <!-- 4. Consultation Call To Action (Node 51:724) -->
+  <ServicesCta />
+</SiteLayout>

@@ -1,0 +1,232 @@
+---
+import { ROUTES } from '@/lib/routes';
+import { companyInfo } from '@/content/company';
+---
+
+<section class="about-cta-section" aria-label="Kêu gọi hành động vận tải">
+  <div class="container">
+    <div class="cta-banner">
+      <div class="cta-badge">
+        <span class="badge-dot" aria-hidden="true"></span>
+        <span>KẾT NỐI VẬN TẢI DOANH NGHIỆP</span>
+      </div>
+
+      <h2 class="cta-title">Bạn đang tìm kiếm đối tác vận tải đáng tin cậy?</h2>
+      <p class="cta-desc">
+        Hãy để Nam Hân Logistics tối ưu hóa hành trình hàng hóa của doanh nghiệp bạn với tiến độ cam kết và chi phí cạnh tranh nhất.
+      </p>
+
+      <div class="cta-actions">
+        <a href={`tel:${companyInfo.hotline}`} class="btn-primary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+          <span>Liên hệ Nam Hân (0856 699 111)</span>
+        </a>
+
+        <a href={ROUTES.CONTACT} class="btn-secondary">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+          <span>Yêu cầu báo giá</span>
+        </a>
+      </div>
+
+      <!-- Quick Trust Indicators Row -->
+      <div class="cta-info-row">
+        <div class="info-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+          </svg>
+          <span>Hotline: 0856 699 111</span>
+        </div>
+        <div class="info-divider" aria-hidden="true"></div>
+        <div class="info-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+            <polyline points="22,6 12,13 2,6"/>
+          </svg>
+          <span>Email: {companyInfo.email}</span>
+        </div>
+        <div class="info-divider" aria-hidden="true"></div>
+        <div class="info-item">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+            <circle cx="12" cy="10" r="3"/>
+          </svg>
+          <span>Trụ sở: Bỉm Sơn, Thanh Hóa</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-cta-section {
+    padding-top: var(--section-space);
+    padding-bottom: var(--section-space);
+    background-color: var(--color-bg-page);
+  }
+
+  .cta-banner {
+    background: linear-gradient(135deg, var(--color-brand-navy) 0%, #1e293b 100%);
+    border-radius: var(--radius-xl);
+    padding: clamp(2.5rem, 6vw, 4rem) clamp(1.5rem, 4vw, 3rem);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+  }
+
+  .cta-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.375rem 0.875rem;
+    background-color: rgba(249, 80, 22, 0.2);
+    border: 1px solid rgba(249, 80, 22, 0.4);
+    border-radius: var(--radius-full);
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #fdba74;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.25rem;
+  }
+
+  .badge-dot {
+    width: 0.375rem;
+    height: 0.375rem;
+    border-radius: var(--radius-full);
+    background-color: var(--color-brand-orange);
+  }
+
+  .cta-title {
+    font-size: clamp(1.75rem, 3vw + 0.5rem, 2.75rem);
+    font-weight: 900;
+    color: #ffffff;
+    line-height: 1.2;
+    letter-spacing: -0.025em;
+    max-width: 42rem;
+    margin-bottom: 1rem;
+  }
+
+  .cta-desc {
+    font-size: var(--font-body);
+    color: #cbd5e1;
+    line-height: 1.6;
+    max-width: 38rem;
+    margin-bottom: 2rem;
+  }
+
+  .cta-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    width: 100%;
+    max-width: 32rem;
+    justify-content: center;
+    margin-bottom: 2.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .cta-actions {
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: var(--touch-target-min);
+    background-color: var(--color-brand-orange);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    padding: 0.875rem 1.75rem;
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 14px rgba(249, 80, 22, 0.35);
+    transition: all var(--transition-fast);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-brand-orange-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(249, 80, 22, 0.45);
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: var(--touch-target-min);
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    font-weight: 600;
+    font-size: 0.9375rem;
+    padding: 0.875rem 1.75rem;
+    border-radius: var(--radius-md);
+    backdrop-filter: blur(4px);
+    transition: all var(--transition-fast);
+  }
+
+  .btn-secondary:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+    border-color: #ffffff;
+  }
+
+  /* Info row */
+  .cta-info-row {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    width: 100%;
+    max-width: 44rem;
+  }
+
+  @media (min-width: 640px) {
+    .cta-info-row {
+      flex-direction: row;
+      justify-content: center;
+      gap: 1.5rem;
+    }
+  }
+
+  .info-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    color: #cbd5e1;
+  }
+
+  .info-item svg {
+    color: var(--color-brand-orange);
+  }
+
+  .info-divider {
+    display: none;
+    width: 1px;
+    height: 1rem;
+    background-color: rgba(255, 255, 255, 0.2);
+  }
+
+  @media (min-width: 640px) {
+    .info-divider {
+      display: block;
+    }
+  }
+</style>

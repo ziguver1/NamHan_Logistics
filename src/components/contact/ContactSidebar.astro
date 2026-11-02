@@ -1,0 +1,325 @@
+---
+/**
+ * Contact Sidebar Section (Figma Frame 101:1955)
+ * Design Reference: 08-lien-he.png
+ *
+ * Cards:
+ * 1. Process Card: "Cách Nam Hân xử lý yêu cầu" - 4 visual steps
+ * 2. Quick Contact Card: "Liên hệ nhanh" - Zalo, Hotline, Email action buttons
+ */
+import { companyInfo } from '@/content/company';
+---
+
+<aside class="contact-sidebar" aria-label="Thông tin quy trình và liên hệ hỗ trợ">
+  <!-- Card 1: Cách Nam Hân xử lý yêu cầu -->
+  <div class="sidebar-card process-card">
+    <div class="card-header">
+      <h3 class="card-title">Cách Nam Hân xử lý yêu cầu</h3>
+      <p class="card-subtitle">Chỉ 4 bước đơn giản, chúng tôi sẽ tư vấn giải pháp phù hợp.</p>
+    </div>
+
+    <div class="process-flow">
+      <!-- Step 1 -->
+      <div class="flow-step">
+        <div class="step-badge active">1</div>
+        <div class="step-icon-box">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+        </div>
+        <span class="step-label">Tiếp nhận<br />yêu cầu</span>
+      </div>
+
+      <div class="flow-arrow" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </div>
+
+      <!-- Step 2 -->
+      <div class="flow-step">
+        <div class="step-badge">2</div>
+        <div class="step-icon-box">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+          </svg>
+        </div>
+        <span class="step-label">Tư vấn<br />giải pháp</span>
+      </div>
+
+      <div class="flow-arrow" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </div>
+
+      <!-- Step 3 -->
+      <div class="flow-step">
+        <div class="step-badge">3</div>
+        <div class="step-icon-box">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+            <line x1="8" y1="12" x2="16" y2="12"/>
+            <line x1="12" y1="8" x2="12" y2="16"/>
+          </svg>
+        </div>
+        <span class="step-label">Báo giá<br />phù hợp</span>
+      </div>
+
+      <div class="flow-arrow" aria-hidden="true">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <line x1="5" y1="12" x2="19" y2="12"/>
+          <polyline points="12 5 19 12 12 19"/>
+        </svg>
+      </div>
+
+      <!-- Step 4 -->
+      <div class="flow-step">
+        <div class="step-badge">4</div>
+        <div class="step-icon-box">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 9V5a3 3 0 0 0-3-3l-4 9v11h11.28a2 2 0 0 0 2-1.7l1.38-9a2 2 0 0 0-2-2.3zM7 22H4a2 2 0 0 1-2-2v-7a2 2 0 0 1 2-2h3"/>
+          </svg>
+        </div>
+        <span class="step-label">Đồng hành<br />vận chuyển</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Card 2: Liên hệ nhanh -->
+  <div class="sidebar-card contact-fast-card">
+    <div class="card-header">
+      <h3 class="card-title">Liên hệ nhanh</h3>
+      <p class="card-subtitle">Bạn cũng có thể liên hệ trực tiếp qua các kênh dưới đây.</p>
+    </div>
+
+    <div class="contact-buttons-grid">
+      <!-- Zalo -->
+      <a
+        href={`https://zalo.me/${companyInfo.hotline}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        class="contact-action-btn btn-zalo"
+        aria-label="Liên hệ qua Zalo"
+      >
+        <span class="zalo-badge" aria-hidden="true">Zalo</span>
+        <span class="btn-text">Zalo</span>
+      </a>
+
+      <!-- Hotline -->
+      <a
+        href={`tel:${companyInfo.hotline}`}
+        class="contact-action-btn btn-hotline"
+        aria-label={`Gọi ngay Hotline ${companyInfo.hotline}`}
+      >
+        <svg class="action-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+        <span class="btn-text">Hotline</span>
+      </a>
+
+      <!-- Email -->
+      <a
+        href={`mailto:${companyInfo.email}`}
+        class="contact-action-btn btn-email"
+        aria-label={`Gửi email tới ${companyInfo.email}`}
+      >
+        <svg class="action-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+        <span class="btn-text">Email</span>
+      </a>
+    </div>
+  </div>
+</aside>
+
+<style>
+  .contact-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .sidebar-card {
+    background-color: #ffffff;
+    border-radius: var(--radius-xl, 20px);
+    border: 1px solid #eef2f6;
+    box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+    padding: clamp(1.25rem, 2vw, 1.5rem);
+  }
+
+  .card-header {
+    margin-bottom: 1.25rem;
+  }
+
+  .card-title {
+    font-family: var(--font-sans);
+    font-size: clamp(1.05rem, 1rem + 0.3vw, 1.1875rem);
+    font-weight: 700;
+    color: var(--color-brand-navy, #072238);
+    margin: 0 0 0.35rem 0;
+    letter-spacing: -0.01em;
+  }
+
+  .card-subtitle {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary, #64748b);
+    margin: 0;
+    line-height: 1.45;
+    letter-spacing: -0.01em;
+  }
+
+  /* Process Flow */
+  .process-flow {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.25rem;
+    position: relative;
+  }
+
+  .flow-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.625rem;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .step-badge {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: #bfdbfe;
+    color: #ffffff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .step-badge.active {
+    background-color: #1d68d8;
+    color: #ffffff;
+  }
+
+  .step-icon-box {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    background-color: #f0f7ff;
+    border: 1px solid #dbeafe;
+    color: #1d68d8;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform var(--transition-fast, 150ms ease);
+  }
+
+  .flow-step:hover .step-icon-box {
+    transform: translateY(-2px);
+    background-color: #dbeafe;
+  }
+
+  .step-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #0f172a;
+    line-height: 1.35;
+    word-break: break-word;
+  }
+
+  .flow-arrow {
+    display: flex;
+    align-items: center;
+    color: #cbd5e1;
+    margin-top: 4px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 480px) {
+    .process-flow {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem 0.75rem;
+    }
+
+    .flow-arrow {
+      display: none;
+    }
+  }
+
+  /* Quick Contact Buttons */
+  .contact-buttons-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.625rem;
+  }
+
+  .contact-action-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.625rem 0.4rem;
+    min-height: 42px;
+    border-radius: 8px;
+    background-color: #f0f7ff;
+    border: 1px solid #dbeafe;
+    color: #072238;
+    text-decoration: none;
+    font-size: 0.8125rem;
+    font-weight: 600;
+    transition: all var(--transition-fast, 150ms ease);
+  }
+
+  .contact-action-btn:hover {
+    background-color: #e0f0fe;
+    border-color: #bfdbfe;
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px -1px rgba(0, 0, 0, 0.05);
+  }
+
+  .contact-action-btn:focus-visible {
+    outline: 2px solid #1d68d8;
+    outline-offset: 2px;
+  }
+
+  .action-icon {
+    color: #1d68d8;
+    flex-shrink: 0;
+  }
+
+  .zalo-badge {
+    background-color: #0068ff;
+    color: #ffffff;
+    font-size: 0.5625rem;
+    font-weight: 800;
+    padding: 0.125rem 0.3125rem;
+    border-radius: 4px;
+    line-height: 1;
+    letter-spacing: -0.02em;
+  }
+
+  @media (max-width: 640px) {
+    .contact-buttons-grid {
+      grid-template-columns: 1fr;
+      gap: 0.5rem;
+    }
+
+    .contact-action-btn {
+      padding: 0.75rem 1rem;
+    }
+  }
+</style>

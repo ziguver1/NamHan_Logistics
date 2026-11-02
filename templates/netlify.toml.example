@@ -1,0 +1,9 @@
+# Rename to netlify.toml after project setup.
+# This template is for Astro STATIC output; do not add SSR adapter by default.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+# Add redirects for canonical www/apex domain only after domain choice approved.
+# Add security headers only after CSP/voice/forms QA.
+# Enable Netlify Forms detection in dashboard at Phase 2; HTML blueprint required.

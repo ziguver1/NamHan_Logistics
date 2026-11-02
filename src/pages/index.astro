@@ -1,0 +1,41 @@
+---
+import SiteLayout from '@/layouts/SiteLayout.astro';
+import HeroSection from '@/components/home/HeroSection.astro';
+import OverviewSection from '@/components/home/OverviewSection.astro';
+import ServicesSection from '@/components/home/ServicesSection.astro';
+import GreenLogisticsSection from '@/components/home/GreenLogisticsSection.astro';
+import TestimonialsSection from '@/components/home/TestimonialsSection.astro';
+import NewsSection from '@/components/home/NewsSection.astro';
+import HomeCtaSection from '@/components/home/HomeCtaSection.astro';
+import { ROUTES } from '@/lib/routes';
+import { companyInfo } from '@/content/company';
+
+export const prerender = false;
+---
+
+<SiteLayout
+  title={`${companyInfo.shortName} — Vận tải đường bộ & Logistics Bắc — Trung — Nam`}
+  description="Công ty vận tải Nam Hân Logistics: Dịch vụ vận chuyển hàng hóa Bắc — Trung — Nam an toàn, đúng hẹn, bốc xếp chuyên nghiệp và tối ưu chi phí."
+  canonicalPath={ROUTES.HOME}
+>
+  <!-- 1. Hero Section (Node 44:1456) -->
+  <HeroSection />
+
+  <!-- 2. Overview & Năng lực Đội xe (Node 44:1197) -->
+  <OverviewSection />
+
+  <!-- 3. Four Core Services (Node 44:1195) -->
+  <ServicesSection />
+
+  <!-- 4. Green Logistics & Sustainability (Node 44:1261) -->
+  <GreenLogisticsSection />
+
+  <!-- 5. Testimonials & Partner Trust (Node 44:1310) -->
+  <TestimonialsSection />
+
+  <!-- 6. News & Activities (Node 44:1513) -->
+  <NewsSection />
+
+  <!-- 7. Pre-Footer Call to Action (Node 44:1363) -->
+  <HomeCtaSection />
+</SiteLayout>

@@ -1,0 +1,253 @@
+---
+import { roadAssets } from '@/content/road-assets';
+import ImageSlot from '@/components/ui/ImageSlot.astro';
+
+const vehicleFleet = [
+  {
+    title: '01 – ĐẦU KÉO',
+    badge: 'TẢI LỚN',
+    image: roadAssets.vehicleHead,
+    desc: 'Đáp ứng năng lực kéo rơ-moóc chuyên dụng và vận tải hàng hóa khối lượng, tải trọng lớn trên cung đường dài.',
+    bullet: 'Tiêu chuẩn công nghiệp nặng ✓',
+    icon: 'head',
+  },
+  {
+    title: '02 – XE CONTAINER',
+    badge: "20' / 40'",
+    image: roadAssets.vehicleContainer,
+    desc: 'Phục vụ hàng đóng container nguyên seal nguyên kẹp, đảm bảo tuyệt đối tính an toàn và bảo mật cho hàng hóa.',
+    bullet: 'Nguyên đai nguyên kiện ✓',
+    icon: 'container',
+  },
+  {
+    title: '03 – XE TẢI THÙNG',
+    badge: 'THÙNG KÍN',
+    image: roadAssets.vehicleBox,
+    desc: 'Chuyên chở hàng hóa tiêu dùng, máy móc, linh kiện điện tử và thành phẩm công nghiệp cần che chắn kỹ lưỡng.',
+    bullet: 'Bạt kín chống thấm ✓',
+    icon: 'box',
+  },
+  {
+    title: '04 – XE BEN',
+    badge: 'HÀNG RỜI',
+    image: roadAssets.vehicleTipper,
+    desc: 'Phục vụ vận chuyển chuyên biệt các chủng loại nguyên vật liệu, vật liệu xây dựng và hàng công trình rời.',
+    bullet: 'Tự đổ thủy lực cơ giới ✓',
+    icon: 'tipper',
+  },
+];
+---
+
+<section class="road-vehicles-section" aria-label="Đội xe phục vụ vận chuyển">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">PHƯƠNG TIỆN CHUYÊN DỤNG</div>
+      <h2 class="section-title">Đội xe phục vụ vận chuyển</h2>
+      <p class="section-desc">
+        Đa dạng chủng loại phương tiện đạt chuẩn kiểm định an toàn kỹ thuật, bảo dưỡng định kỳ để đảm bảo hàng hóa thông suốt.
+      </p>
+    </div>
+
+    <div class="vehicles-grid">
+      {vehicleFleet.map((v) => (
+        <article class="vehicle-card">
+          <div class="card-media">
+            <ImageSlot
+              src={v.image?.src}
+              alt={v.image?.alt}
+              label={v.image?.label}
+              aspectRatio="16/10"
+              rounded="none"
+              class="vehicle-slot"
+            />
+          </div>
+
+          <div class="card-body">
+            <div class="vehicle-title-row">
+              <div class="vehicle-icon" aria-hidden="true">
+                {v.icon === 'head' && (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="1" y="3" width="15" height="13" rx="1"/>
+                    <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                    <circle cx="5.5" cy="18.5" r="2.5"/>
+                    <circle cx="18.5" cy="18.5" r="2.5"/>
+                  </svg>
+                )}
+                {v.icon === 'container' && (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+                    <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+                  </svg>
+                )}
+                {v.icon === 'box' && (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="1" y="4" width="14" height="12" rx="1"/>
+                    <path d="M15 8h4l3 3v5h-7V8z"/>
+                    <circle cx="5.5" cy="18.5" r="2.5"/>
+                    <circle cx="18.5" cy="18.5" r="2.5"/>
+                  </svg>
+                )}
+                {v.icon === 'tipper' && (
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 6 4 10l2 8h12l2-12z"/>
+                    <circle cx="7" cy="20" r="2"/>
+                    <circle cx="17" cy="20" r="2"/>
+                  </svg>
+                )}
+              </div>
+              <h3 class="vehicle-title">{v.title}</h3>
+              <span class="vehicle-badge">{v.badge}</span>
+            </div>
+
+            <p class="vehicle-desc">{v.desc}</p>
+
+            <div class="vehicle-bullet">
+              <span>{v.bullet}</span>
+            </div>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .road-vehicles-section {
+    padding-top: var(--section-space);
+    padding-bottom: var(--section-space);
+    background-color: #f8fafc;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .section-header {
+    text-align: center;
+    max-width: 44rem;
+    margin-inline: auto;
+    margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-brand-orange);
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 2.5vw + 0.75rem, 2.5rem);
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .section-desc {
+    font-size: var(--font-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .vehicles-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .vehicles-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .vehicles-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .vehicle-card {
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+    transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .vehicle-card:hover {
+    transform: translateY(-3px);
+    border-color: #fed7aa;
+    box-shadow: 0 10px 18px -3px rgba(0, 0, 0, 0.06);
+  }
+
+  .card-media {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+  }
+
+  .card-body {
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+    gap: 0.75rem;
+  }
+
+  .vehicle-title-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+
+  .vehicle-icon {
+    width: 1.875rem;
+    height: 1.875rem;
+    border-radius: var(--radius-sm);
+    background-color: #fff1eb;
+    color: var(--color-brand-orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .vehicle-title {
+    font-size: 0.9375rem;
+    font-weight: 800;
+    color: var(--color-brand-navy);
+  }
+
+  .vehicle-badge {
+    margin-left: auto;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    background-color: #e0f2fe;
+    color: #0369a1;
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .vehicle-desc {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    flex-grow: 1;
+  }
+
+  .vehicle-bullet {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #059669;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--color-border);
+  }
+</style>

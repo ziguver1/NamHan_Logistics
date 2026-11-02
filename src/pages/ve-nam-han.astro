@@ -1,0 +1,51 @@
+---
+import SiteLayout from '@/layouts/SiteLayout.astro';
+import AboutHero from '@/components/about/AboutHero.astro';
+import AboutIntro from '@/components/about/AboutIntro.astro';
+import AboutStats from '@/components/about/AboutStats.astro';
+import AboutFacilities from '@/components/about/AboutFacilities.astro';
+import AboutPeople from '@/components/about/AboutPeople.astro';
+import AboutNetwork from '@/components/about/AboutNetwork.astro';
+import AboutCapabilities from '@/components/about/AboutCapabilities.astro';
+import AboutIndustries from '@/components/about/AboutIndustries.astro';
+import AboutValues from '@/components/about/AboutValues.astro';
+import AboutCta from '@/components/about/AboutCta.astro';
+import { ROUTES } from '@/lib/routes';
+import { companyInfo } from '@/content/company';
+---
+
+<SiteLayout
+  title={`Về Nam Hân — ${companyInfo.shortName} Vận tải đường bộ nội địa`}
+  description="Tìm hiểu về Nam Hân Logistics: Quy mô đội xe, hệ thống depot Bắc Trung Bộ và Phía Nam, mạng lưới vận chuyển xuyên suốt Bắc — Nam và giá trị cốt lõi."
+  canonicalPath={ROUTES.ABOUT}
+>
+  <!-- 1. Hero Section (Node 92:734) -->
+  <AboutHero />
+
+  <!-- 2. Giới thiệu doanh nghiệp & Năng lực (Node 92:790) -->
+  <AboutIntro />
+
+  <!-- 3. Thông số vận hành & Quy mô (Node 92:846) -->
+  <AboutStats />
+
+  <!-- 4. Hệ thống bãi xe & Cơ sở vật chất (Node 92:900) -->
+  <AboutFacilities />
+
+  <!-- 5. Đội ngũ nhân sự & Nền tảng con người (Node 92:978) -->
+  <AboutPeople />
+
+  <!-- 6. Mạng lưới vận chuyển & Tuyến hành lang Bắc - Nam (Node 92:1032) -->
+  <AboutNetwork />
+
+  <!-- 7. Năng lực vận hành đường bộ B2B (Node 92:1133) -->
+  <AboutCapabilities />
+
+  <!-- 8. Các ngành hàng phục vụ (Node 92:1213) -->
+  <AboutIndustries />
+
+  <!-- 9. Giá trị Nam Hân theo đuổi (Node 92:1287) -->
+  <AboutValues />
+
+  <!-- 10. Kêu gọi hành động & Kết nối đối tác (Node 92:1327) -->
+  <AboutCta />
+</SiteLayout>

@@ -1,0 +1,332 @@
+---
+/**
+ * Logistics Route Inquiry Strip (Figma Node 84:2074)
+ * Lead Point 3: Route Inquiry Strip
+ * Compliance: Phase 1 Demo indicator + Progressive client validation
+ */
+---
+
+<section id="route-inquiry" class="route-inquiry-section" aria-labelledby="route-inquiry-heading">
+  <div class="container">
+    <div class="inquiry-card">
+      <div class="inquiry-content">
+        <span class="inquiry-tag">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+          <span>TRA CỨU NHANH LỘ TRÌNH & XE TẢI</span>
+        </span>
+
+        <h2 id="route-inquiry-heading" class="inquiry-title">
+          Kiểm tra khả năng tiếp nhận đơn hàng
+        </h2>
+
+        <p class="inquiry-desc">
+          Nhập thông tin điểm nhận và điểm giao để nhận phản hồi từ bộ phận điều phối Nam Hân trong 15 phút.
+        </p>
+      </div>
+
+      <form id="routeInquiryForm" class="inquiry-form" novalidate>
+        <div class="inquiry-fields">
+          <!-- Field 1: Điểm nhận hàng -->
+          <div class="inquiry-field-group">
+            <label for="originHub" class="field-label">Điểm nhận hàng (Kho gửi) <span class="required">*</span></label>
+            <div class="input-wrap">
+              <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                <polyline points="9 22 9 12 15 12 15 22"/>
+              </svg>
+              <input
+                type="text"
+                id="originHub"
+                name="originHub"
+                class="inquiry-input"
+                placeholder="VD: KCN Sóng Thần 1"
+                required
+              />
+            </div>
+            <span class="field-error" id="originHubError" aria-live="polite"></span>
+          </div>
+
+          <!-- Field 2: Điểm giao nhận -->
+          <div class="inquiry-field-group">
+            <label for="destinationHub" class="field-label">Điểm giao nhận (Kho nhận) <span class="required">*</span></label>
+            <div class="input-wrap">
+              <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <input
+                type="text"
+                id="destinationHub"
+                name="destinationHub"
+                class="inquiry-input"
+                placeholder="VD: KCN Đình Vũ, Hải Phòng"
+                required
+              />
+            </div>
+            <span class="field-error" id="destHubError" aria-live="polite"></span>
+          </div>
+
+          <!-- Submit Button -->
+          <div class="inquiry-field-group btn-col">
+            <button type="submit" class="btn-check-fleet">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <polygon points="5 3 19 12 5 21 5 3"/>
+              </svg>
+              <span>Kiểm tra xe có sẵn</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Phase 1 Demo Notice Banner -->
+        <div id="inquiryDemoStatus" class="inquiry-status-banner" role="status" aria-live="polite">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <div class="status-content">
+            <strong>Yêu cầu tra cứu đã ghi nhận (Thử nghiệm Phase 1):</strong>
+            <span>Hệ thống đang kiểm tra danh sách xe trên hành lang tuyến. Bộ phận điều vận sẽ phản hồi hoặc quý khách có thể liên hệ ngay Hotline <strong>1900 6868</strong> để kiểm tra tình trạng tức thời.</span>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Progressive Client Validation & Demo Feedback
+  const form = document.getElementById('routeInquiryForm') as HTMLFormElement | null;
+  const statusBanner = document.getElementById('inquiryDemoStatus');
+
+  if (form) {
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      let isValid = true;
+
+      // Validate originHub
+      const originInput = form.querySelector('#originHub') as HTMLInputElement | null;
+      const originError = form.querySelector('#originHubError');
+      if (originInput && originError) {
+        if (!originInput.value.trim()) {
+          originError.textContent = 'Vui lòng nhập điểm nhận hàng';
+          originInput.setAttribute('aria-invalid', 'true');
+          isValid = false;
+        } else {
+          originError.textContent = '';
+          originInput.removeAttribute('aria-invalid');
+        }
+      }
+
+      // Validate destinationHub
+      const destInput = form.querySelector('#destinationHub') as HTMLInputElement | null;
+      const destError = form.querySelector('#destHubError');
+      if (destInput && destError) {
+        if (!destInput.value.trim()) {
+          destError.textContent = 'Vui lòng nhập điểm giao nhận';
+          destInput.setAttribute('aria-invalid', 'true');
+          isValid = false;
+        } else {
+          destError.textContent = '';
+          destInput.removeAttribute('aria-invalid');
+        }
+      }
+
+      if (isValid && statusBanner) {
+        statusBanner.classList.add('is-visible');
+        statusBanner.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    });
+  }
+</script>
+
+<style>
+  .route-inquiry-section {
+    padding-top: clamp(2rem, 4vw, 3.5rem);
+    padding-bottom: clamp(3rem, 6vw, 4.5rem);
+    background-color: #f8fafc;
+  }
+
+  .inquiry-card {
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg, 16px);
+    padding: clamp(2rem, 4vw, 3rem);
+    box-shadow: 0 4px 20px rgba(11, 25, 44, 0.05);
+  }
+
+  .inquiry-content {
+    margin-bottom: 2rem;
+  }
+
+  .inquiry-tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-brand-orange);
+    margin-bottom: 0.625rem;
+  }
+
+  .inquiry-title {
+    font-size: clamp(1.625rem, 2.5vw + 0.25rem, 2.125rem);
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.625rem;
+  }
+
+  .inquiry-desc {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    max-width: 44rem;
+  }
+
+  /* Form Fields */
+  .inquiry-fields {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .inquiry-fields {
+      grid-template-columns: 1fr 1fr auto;
+      gap: 1.25rem;
+      align-items: flex-end;
+    }
+  }
+
+  .inquiry-field-group {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .field-label {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: var(--color-brand-navy);
+    margin-bottom: 0.5rem;
+  }
+
+  .required {
+    color: var(--color-brand-orange);
+  }
+
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-icon {
+    position: absolute;
+    left: 1rem;
+    color: #94a3b8;
+    pointer-events: none;
+  }
+
+  .inquiry-input {
+    width: 100%;
+    min-height: var(--touch-target-min, 44px);
+    padding: 0.625rem 1rem 0.625rem 2.5rem;
+    font-size: 0.875rem;
+    color: var(--color-brand-navy);
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-md);
+    transition: all var(--transition-fast);
+    outline: none;
+    font-family: inherit;
+  }
+
+  .inquiry-input::placeholder {
+    color: #94a3b8;
+  }
+
+  .inquiry-input:focus {
+    border-color: var(--color-brand-orange);
+    background-color: #ffffff;
+    box-shadow: 0 0 0 3px rgba(249, 80, 22, 0.12);
+  }
+
+  .inquiry-input[aria-invalid="true"] {
+    border-color: #ef4444;
+    background-color: #fef2f2;
+  }
+
+  .field-error {
+    font-size: 0.75rem;
+    color: #dc2626;
+    margin-top: 0.375rem;
+    min-height: 1rem;
+  }
+
+  .btn-check-fleet {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: var(--touch-target-min, 44px);
+    background-color: var(--color-brand-navy, #0b192c);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    padding: 0.75rem 1.75rem;
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    box-shadow: 0 4px 14px rgba(11, 25, 44, 0.2);
+    transition: all var(--transition-fast);
+    white-space: nowrap;
+    margin-bottom: 1.375rem; /* align with inputs error spacing */
+  }
+
+  .btn-check-fleet:hover {
+    background-color: #1a365d;
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(11, 25, 44, 0.3);
+  }
+
+  /* Status Banner */
+  .inquiry-status-banner {
+    display: none;
+    margin-top: 1rem;
+    padding: 1rem 1.25rem;
+    background-color: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: var(--radius-md);
+    color: #1e40af;
+    align-items: flex-start;
+    gap: 0.75rem;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+
+  .inquiry-status-banner.is-visible {
+    display: flex;
+  }
+
+  .inquiry-status-banner svg {
+    color: #2563eb;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+
+  .status-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+</style>

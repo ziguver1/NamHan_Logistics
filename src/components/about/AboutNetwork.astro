@@ -1,0 +1,487 @@
+---
+// src/components/about/AboutNetwork.astro
+---
+
+<section id="network" class="about-network-section" aria-labelledby="network-heading">
+  <div class="container network-container">
+    <div class="network-layout">
+      <!-- Left Column: Header + 4 Info Bars -->
+      <div class="network-info-col">
+        <div class="network-header">
+          <span class="eyebrow-tag">HÀNH TRÌNH XUYÊN SUỐT</span>
+          <h2 id="network-heading" class="section-title">Mạng lưới vận chuyển</h2>
+          <p class="section-desc">
+            Nam Hân tập trung phát triển năng lực vận tải đường bộ nội địa, kết nối các khu vực kinh tế và đáp ứng nhu cầu vận chuyển hàng hóa của khách hàng doanh nghiệp.
+          </p>
+        </div>
+
+        <!-- 4 Feature Bars -->
+        <div class="feature-bars-list" role="list" aria-label="Đặc điểm mạng lưới vận chuyển Nam Hân">
+          <!-- Bar 1: Route Split / Cao tốc & QL1A -->
+          <div class="feature-bar bar-light" role="listitem">
+            <div class="bar-left">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="bar-icon" aria-hidden="true">
+                <path d="M12 21v-5" />
+                <path d="M12 16c2.5 0 5-2 5-6V5" />
+                <path d="M14 7l3-3 3 3" />
+                <path d="M12 16c-2.5 0-5-2-5-6V5" stroke-dasharray="2 3" />
+                <path d="M4 7l3-3 3 3" />
+              </svg>
+              <span class="bar-label">Quốc Lộ 1A &amp; Cao Tốc Bắc - Nam</span>
+            </div>
+            <div class="bar-right">
+              <span class="pill-badge">THÔNG SUỐT</span>
+            </div>
+          </div>
+
+          <!-- Bar 2: Transfer Arrows / Tần suất xuất bến -->
+          <div class="feature-bar bar-light" role="listitem">
+            <div class="bar-left">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="bar-icon" aria-hidden="true">
+                <path d="M4 8h16" />
+                <path d="M15 4l5 4-5 4" />
+                <path d="M20 16H4" />
+                <path d="M9 12l-5 4 5 4" />
+              </svg>
+              <span class="bar-label">Tần suất xuất bến liên tục</span>
+            </div>
+            <div class="bar-right">
+              <span class="text-orange-tag">HÀNG NGÀY</span>
+            </div>
+          </div>
+
+          <!-- Bar 3: Speedometer / Thời gian chuyển tuyến -->
+          <div class="feature-bar bar-light" role="listitem">
+            <div class="bar-left">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="bar-icon" aria-hidden="true">
+                <path d="M4 17a8 8 0 1 1 16 0H4z" />
+                <path d="M12 17l4-5" stroke-width="2.5" />
+                <circle cx="12" cy="17" r="1.5" fill="currentColor" />
+              </svg>
+              <span class="bar-label">Thời gian chuyển tuyến chuẩn xác</span>
+            </div>
+            <div class="bar-right">
+              <span class="text-time-val">48 - 60 GIỜ</span>
+            </div>
+          </div>
+
+          <!-- Bar 4 (Dark Navy Card): Phủ sóng 63 tỉnh thành -->
+          <div class="feature-bar bar-dark" role="listitem">
+            <div class="bar-dark-top">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="bar-icon-orange" aria-hidden="true">
+                <path d="M12 3a6 6 0 0 0-6 6c0 4.5 6 10 6 10s6-5.5 6-10a6 6 0 0 0-6-6z" />
+                <circle cx="12" cy="9" r="2" fill="currentColor" />
+                <path d="M5 21h14" />
+              </svg>
+              <span class="bar-dark-title">Phủ sóng 63 tỉnh/thành</span>
+            </div>
+            <p class="bar-dark-desc">
+              Linh hoạt trung chuyển từ các trục trung tâm tới các khu công nghiệp, cụm cảng và kho bãi vệ tinh của đối tác.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Corridor Map Card -->
+      <div class="corridor-card-wrap">
+        <div class="corridor-card">
+          <!-- Card Header -->
+          <div class="corridor-header">
+            <h3 class="corridor-title">Sơ đồ hành lang Bắc – Trung – Nam</h3>
+            <span class="corridor-tag">Tuyến huyết mạch</span>
+          </div>
+
+          <!-- Route Map Visual -->
+          <div class="corridor-map-area">
+            <img
+              src="/images/about/corridor-map.webp"
+              alt="Sơ đồ hành lang vận chuyển Bắc - Trung - Nam kết nối Hà Nội, Trụ sở Bỉm Sơn, Đà Nẵng, Bãi xe Bình Dương, Bãi xe Q12 TP.HCM và Đồng bằng Sông Cửu Long"
+              width="596"
+              height="460"
+              class="corridor-map-img"
+              loading="lazy"
+              decoding="async"
+            />
+            <!-- Accessible list for screen readers & SEO -->
+            <ol class="visually-hidden">
+              <li>Hà Nội (Vùng kinh tế Bắc Bộ) - Đầu mối gom hàng phía Bắc</li>
+              <li>Trụ sở: Bỉm Sơn (Thanh Hóa) - Trụ sở chính &amp; Hub Depot Bắc Trung Bộ</li>
+              <li>Đà Nẵng (Hub Miền Trung) - Trạm tiếp vận &amp; trung chuyển kỹ thuật</li>
+              <li>Bãi xe: Bình Dương - Depot trung tâm kinh tế trọng điểm phía Nam</li>
+              <li>Bãi xe: Q12 - TP.HCM - Hub phân phối nội đô &amp; kết nối xuất nhập khẩu</li>
+              <li>Đồng bằng Sông Cửu Long - Mạng lưới chuyển tiếp các tỉnh Tây Nam Bộ</li>
+            </ol>
+          </div>
+
+          <!-- Bottom Corridor Stats -->
+          <div class="corridor-stats">
+            <div class="c-stat">
+              <span class="c-stat-val val-dark">1,800+ KM</span>
+              <span class="c-stat-lbl">Chiều dài hành lang phục vụ</span>
+            </div>
+            <div class="c-stat">
+              <span class="c-stat-val val-orange">GPS TRACKING</span>
+              <span class="c-stat-lbl">Giám sát xe trực tuyến</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-network-section {
+    padding-top: clamp(2.5rem, 5vw, 4.5rem);
+    padding-bottom: clamp(3rem, 6vw, 5rem);
+    background-color: var(--color-bg-page, #ffffff);
+    scroll-margin-top: 5rem;
+  }
+
+  .network-container {
+    width: 100%;
+    max-width: 1240px;
+    margin-inline: auto;
+    padding-inline: clamp(1rem, 3vw, 1.5rem);
+  }
+
+  .network-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  @media (min-width: 1024px) {
+    .network-layout {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: clamp(2rem, 3.5vw, 3.5rem);
+      align-items: center;
+    }
+  }
+
+  /* Left Column Header */
+  .network-info-col {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .network-header {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: clamp(1.25rem, 2.5vw, 1.75rem);
+  }
+
+  .eyebrow-tag {
+    font-size: 0.75rem;
+    font-weight: 800;
+    color: #a95b20;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 0.5rem;
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+    font-weight: 800;
+    color: #072238;
+    line-height: 1.22;
+    letter-spacing: -0.02em;
+    margin: 0 0 0.875rem 0;
+  }
+
+  .section-desc {
+    font-size: 0.9375rem;
+    color: #334155;
+    line-height: 1.6;
+    margin: 0;
+    max-width: 34rem;
+  }
+
+  /* Feature Bars List */
+  .feature-bars-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .feature-bar {
+    border-radius: 8px;
+    transition: transform var(--transition-fast, 0.2s ease), box-shadow var(--transition-fast, 0.2s ease);
+  }
+
+  .feature-bar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 16px rgba(7, 34, 56, 0.06);
+  }
+
+  /* Bars 1, 2, 3 (Light) */
+  .bar-light {
+    background-color: #f2f3ff;
+    padding: 0.875rem 1.125rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+  }
+
+  .bar-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .bar-icon {
+    color: #a95b20;
+    flex-shrink: 0;
+  }
+
+  .bar-label {
+    font-size: clamp(0.8125rem, 2.5vw, 0.9375rem);
+    font-weight: 700;
+    color: #072238;
+    line-height: 1.35;
+    word-break: break-word;
+  }
+
+  .bar-right {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+  }
+
+  .pill-badge {
+    background-color: #dae2fd;
+    color: #072238;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 0.3125rem 0.6875rem;
+    border-radius: 4px;
+    white-space: nowrap;
+  }
+
+  .text-orange-tag {
+    color: #a95b20;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .text-time-val {
+    color: #072238;
+    font-size: 0.875rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  /* Bar 4 (Dark Navy Card) */
+  .bar-dark {
+    background-color: #001026;
+    padding: 1.125rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+  }
+
+  .bar-dark:hover {
+    box-shadow: 0 8px 20px rgba(0, 16, 38, 0.25);
+  }
+
+  .bar-dark-top {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .bar-icon-orange {
+    color: #f97316;
+    flex-shrink: 0;
+  }
+
+  .bar-dark-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #ffffff;
+    line-height: 1.35;
+  }
+
+  .bar-dark-desc {
+    font-size: 0.8125rem;
+    color: #94a3b8;
+    line-height: 1.55;
+    margin: 0;
+    padding-left: calc(22px + 0.75rem);
+  }
+
+  @media (max-width: 480px) {
+    .bar-light {
+      padding: 0.625rem 0.75rem;
+      gap: 0.5rem;
+    }
+
+    .bar-left {
+      gap: 0.5rem;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .bar-label {
+      font-size: 0.8125rem;
+      line-height: 1.3;
+    }
+
+    .pill-badge {
+      font-size: 0.6875rem;
+      padding: 0.2rem 0.45rem;
+    }
+
+    .text-orange-tag {
+      font-size: 0.75rem;
+    }
+
+    .text-time-val {
+      font-size: 0.75rem;
+    }
+
+    .bar-dark {
+      padding: 0.875rem 0.75rem;
+    }
+
+    .bar-dark-desc {
+      padding-left: 0;
+      margin-top: 0.25rem;
+    }
+
+    .corridor-card {
+      padding: 1rem 0.75rem;
+    }
+  }
+
+  /* Right Column: Corridor Map Card */
+  .corridor-card-wrap {
+    width: 100%;
+    display: flex;
+  }
+
+  .corridor-card {
+    width: 100%;
+    background-color: #f2f3ff;
+    border-radius: 16px;
+    padding: clamp(1.25rem, 2.5vw, 1.875rem);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: 0 4px 16px rgba(7, 34, 56, 0.04);
+  }
+
+  .corridor-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  .corridor-title {
+    font-size: clamp(1rem, 2.2vw, 1.1875rem);
+    font-weight: 800;
+    color: #072238;
+    margin: 0;
+    line-height: 1.3;
+  }
+
+  .corridor-tag {
+    font-size: 0.8125rem;
+    font-weight: 700;
+    color: #a95b20;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  .corridor-map-area {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-block: 0.5rem;
+  }
+
+  .corridor-map-img {
+    width: 100%;
+    max-width: 480px;
+    height: auto;
+    object-fit: contain;
+    display: block;
+    margin-inline: auto;
+  }
+
+  .corridor-stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    text-align: center;
+    margin-top: 0.75rem;
+    padding-top: 0.875rem;
+    border-top: 1px solid rgba(7, 34, 56, 0.06);
+  }
+
+  .c-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .c-stat-val {
+    font-size: clamp(0.75rem, 3.2vw, 1.125rem);
+    font-weight: 800;
+    letter-spacing: 0.02em;
+    display: block;
+    line-height: 1.25;
+    white-space: nowrap;
+  }
+
+  .val-dark {
+    color: #072238;
+  }
+
+  .val-orange {
+    color: #a95b20;
+  }
+
+  .c-stat-lbl {
+    font-size: clamp(0.6875rem, 2.5vw, 0.75rem);
+    color: #475569;
+    margin-top: 0.25rem;
+    display: block;
+    line-height: 1.35;
+  }
+
+  /* Accessibility helper */
+  .visually-hidden {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .feature-bar {
+      transition: none;
+      transform: none !important;
+    }
+  }
+</style>

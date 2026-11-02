@@ -1,0 +1,143 @@
+---
+interface ProcessStep {
+  step: string;
+  title: string;
+  desc: string;
+}
+
+const steps: ProcessStep[] = [
+  {
+    step: '01',
+    title: 'Tiếp nhận yêu cầu',
+    desc: 'Thu thập chi tiết thông tin đơn hàng và yêu cầu từ đối tác.',
+  },
+  {
+    step: '02',
+    title: 'Phân tích nhu cầu',
+    desc: 'Đánh giá đặc tính hàng hóa, quãng đường và hạn mức thời gian.',
+  },
+  {
+    step: '03',
+    title: 'Đề xuất phương án',
+    desc: 'Đưa ra lựa chọn xe, phương án ghép hoặc bao xe kèm chi phí tối ưu.',
+  },
+  {
+    step: '04',
+    title: 'Xác nhận & triển khai',
+    desc: 'Khách hàng đồng thuận và Nam Hân tiến hành điều động phương tiện.',
+  },
+];
+---
+
+<section class="solutions-process-section" aria-labelledby="solutions-process-heading">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">HÀNH ĐỘNG KHÉP KÍN</span>
+      <h2 id="solutions-process-heading" class="section-title">
+        Quy trình tư vấn phương án
+      </h2>
+    </div>
+
+    <div class="process-grid">
+      {
+        steps.map((item) => (
+          <div class="process-card">
+            <span class="step-num">{item.step}</span>
+            <h3 class="step-title">{item.title}</h3>
+            <p class="step-desc">{item.desc}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .solutions-process-section {
+    padding-top: clamp(3rem, 6vw, 4.5rem);
+    padding-bottom: clamp(3rem, 6vw, 4.5rem);
+    background-color: #ffffff;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .section-header {
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .section-tag {
+    display: inline-block;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-brand-orange);
+    margin-bottom: 0.625rem;
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 2.5vw + 0.5rem, 2.375rem);
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+
+  .process-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .process-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .process-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+  }
+
+  .process-card {
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg, 16px);
+    padding: 2rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .process-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    border-color: rgba(249, 80, 22, 0.3);
+  }
+
+  .step-num {
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: var(--color-brand-orange);
+    margin-bottom: 1rem;
+    line-height: 1;
+  }
+
+  .step-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-brand-navy);
+    line-height: 1.35;
+    margin-bottom: 0.625rem;
+  }
+
+  .step-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    margin: 0;
+  }
+</style>

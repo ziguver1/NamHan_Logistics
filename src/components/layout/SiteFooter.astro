@@ -1,0 +1,475 @@
+---
+import { ROUTES } from '@/lib/routes';
+import { companyInfo, branchOffice } from '@/content/company';
+---
+
+<footer class="main-footer">
+  <!-- Top Body Section -->
+  <div class="footer-top">
+    <div class="container footer-grid">
+      <!-- Column 1: Brand Logo, Description & Socials -->
+      <div class="footer-col col-brand">
+        <a href={ROUTES.HOME} class="logo-box" aria-label="Nam Hân Logistics - Trang chủ">
+          <img
+            src="/images/logo-nam-han.webp"
+            alt="Nam Hân Logistics Logo"
+            width="81"
+            height="44"
+            class="logo-img"
+            loading="lazy"
+            decoding="async"
+          />
+        </a>
+
+        <p class="brand-text">
+          Nam Hân Logistics – Đối tác vận tải đường bộ tin cậy, kết nối hàng hóa doanh nghiệp trên toàn quốc.
+        </p>
+
+        <!-- Social Media Icons -->
+        <div class="social-links" aria-label="Liên kết mạng xã hội Nam Hân Logistics">
+          <a
+            href="https://facebook.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-btn btn-fb"
+            aria-label="Nam Hân Logistics trên Facebook"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+            </svg>
+          </a>
+
+          <a
+            href="https://linkedin.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-btn btn-in"
+            aria-label="Nam Hân Logistics trên LinkedIn"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+            </svg>
+          </a>
+
+          <a
+            href="https://youtube.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-btn btn-yt"
+            aria-label="Nam Hân Logistics trên YouTube"
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+              <path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+            </svg>
+          </a>
+
+          <a
+            href="https://zalo.me/0856699111"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="social-btn btn-zalo"
+            aria-label="Liên hệ Zalo Nam Hân Logistics"
+          >
+            <span class="zalo-text">Zalo</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Column 2: Company Info & Contact -->
+      <div class="footer-col col-company">
+        <h2 class="col-title">{companyInfo.name}</h2>
+        <ul class="contact-info-list">
+          <!-- Trụ sở -->
+          <li class="contact-row">
+            <span class="row-icon icon-pin" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+            </span>
+            <div class="row-text">
+              <strong class="text-white">Trụ sở:</strong>
+              <span class="text-muted">{companyInfo.address}</span>
+            </div>
+          </li>
+
+          <!-- Chi nhánh 2 -->
+          <li class="contact-row">
+            <span class="row-icon icon-building" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="16" height="20" x="4" y="2" rx="2" ry="2"/>
+                <path d="M9 22v-4h6v4"/>
+                <path d="M8 6h.01"/>
+                <path d="M16 6h.01"/>
+                <path d="M8 10h.01"/>
+                <path d="M16 10h.01"/>
+                <path d="M8 14h.01"/>
+                <path d="M16 14h.01"/>
+              </svg>
+            </span>
+            <div class="row-text">
+              <strong class="text-white">{branchOffice.name}:</strong>
+              <span class="text-muted">{branchOffice.address}</span>
+            </div>
+          </li>
+
+          <!-- Hotline -->
+          <li class="contact-row">
+            <span class="row-icon icon-phone" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+              </svg>
+            </span>
+            <div class="row-text">
+              <strong class="text-white">Hotline:</strong>
+              <a href={`tel:${companyInfo.hotline}`} class="contact-link">{companyInfo.hotline}</a>
+            </div>
+          </li>
+
+          <!-- Email -->
+          <li class="contact-row">
+            <span class="row-icon icon-email" aria-hidden="true">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect width="20" height="16" x="2" y="4" rx="2"/>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"/>
+              </svg>
+            </span>
+            <div class="row-text">
+              <strong class="text-white">Email:</strong>
+              <a href={`mailto:${companyInfo.email}`} class="contact-link">{companyInfo.email}</a>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <!-- Column 3: About Links -->
+      <div class="footer-col col-about">
+        <h2 class="col-title">VỀ CHÚNG TÔI</h2>
+        <ul class="nav-links-list">
+          <li><a href={ROUTES.ABOUT} class="footer-nav-link">Giới thiệu</a></li>
+          <li><a href={`${ROUTES.ABOUT}#tam-nhin-su-menh`} class="footer-nav-link">Tầm nhìn & Sứ mệnh</a></li>
+          <li><a href={`${ROUTES.ABOUT}#doi-ngu`} class="footer-nav-link">Đội ngũ</a></li>
+          <li><a href={`${ROUTES.ABOUT}#nang-luc`} class="footer-nav-link">Năng lực vận hành</a></li>
+          <li><a href={`${ROUTES.ABOUT}#khach-hang`} class="footer-nav-link">Khách hàng</a></li>
+          <li><a href={`${ROUTES.ABOUT}#chung-nhan`} class="footer-nav-link">Chứng nhận</a></li>
+          <li><a href={ROUTES.NEWS} class="footer-nav-link">Bảng tin</a></li>
+        </ul>
+      </div>
+
+      <!-- Column 4: Service Links -->
+      <div class="footer-col col-services">
+        <h2 class="col-title">DỊCH VỤ</h2>
+        <ul class="nav-links-list">
+          <li><a href={`${ROUTES.SERVICE_ROAD}#bac-nam`} class="footer-nav-link">Vận chuyển Bắc – Nam</a></li>
+          <li><a href={ROUTES.SERVICE_HANDLING} class="footer-nav-link">Quản lý kho hàng</a></li>
+          <li><a href={ROUTES.SERVICE_ROAD} class="footer-nav-link">Vận chuyển đường bộ</a></li>
+          <li><a href={`${ROUTES.SERVICE_ROAD}#ltl`} class="footer-nav-link">Hàng lẻ / LTL</a></li>
+          <li><a href={`${ROUTES.SERVICE_ROAD}#ftl`} class="footer-nav-link">Hàng nguyên xe / FTL</a></li>
+          <li><a href={ROUTES.SERVICE_SOLUTIONS} class="footer-nav-link">Dịch vụ giá trị gia tăng</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Copyright & Legal Bar -->
+  <div class="footer-bottom">
+    <div class="container bottom-flex">
+      <div class="copyright-text">
+        2026 Nam Hân Logistics. All Right Reserved.
+      </div>
+      <div class="legal-links">
+        <a href={ROUTES.HOME} class="legal-item">Sitemap</a>
+        <span class="sep" aria-hidden="true">|</span>
+        <a href={ROUTES.CONTACT} class="legal-item">Chính sách bảo mật</a>
+        <span class="sep" aria-hidden="true">|</span>
+        <a href={ROUTES.CONTACT} class="legal-item">Điều khoản sử dụng</a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .main-footer {
+    background-color: #0b1f38;
+    color: #b8bec6;
+    font-family: var(--font-sans);
+    margin-top: auto;
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  /* Footer Top Section */
+  .footer-top {
+    padding-top: 3rem;
+    padding-bottom: 2.75rem;
+  }
+
+  /* Grid Layout: Desktop 1280px Pixel-accurate to MainFooter.png */
+  .footer-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .footer-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 2.5rem;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .footer-grid {
+      /* Matching measured columns: 270px, 375px, 175px, 175px */
+      grid-template-columns: 280px 1.45fr 0.8fr 0.85fr;
+      gap: 2.5rem;
+    }
+  }
+
+  /* Column 1: Brand */
+  .col-brand {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .logo-box {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 96px;
+    height: 52px;
+    background-color: #ffffff;
+    border-radius: 6px;
+    padding: 4px 7px;
+    margin-bottom: 1.125rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    transition: transform var(--transition-fast);
+  }
+
+  .logo-box:hover {
+    transform: translateY(-1px);
+  }
+
+  .logo-img {
+    width: 81px;
+    height: 44px;
+    object-fit: contain;
+    display: block;
+  }
+
+  .brand-text {
+    font-size: 0.8125rem;
+    color: #94a3b8;
+    line-height: 1.55;
+    margin-bottom: 1.25rem;
+    max-width: 270px;
+  }
+
+  /* Social Icons Row */
+  .social-links {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .social-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    color: #ffffff;
+    transition: opacity var(--transition-fast), transform var(--transition-fast);
+    text-decoration: none;
+  }
+
+  .social-btn:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+
+  .btn-fb {
+    background-color: #0066cc;
+  }
+
+  .btn-in {
+    background-color: #0077b5;
+  }
+
+  .btn-yt {
+    background-color: #e62117;
+  }
+
+  .btn-zalo {
+    background-color: #0068ff;
+  }
+
+  .zalo-text {
+    font-size: 0.625rem;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    line-height: 1;
+  }
+
+  /* Column Headings */
+  .col-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 0.04em;
+    margin-bottom: 1.125rem;
+    line-height: 1.3;
+    text-transform: uppercase;
+  }
+
+  /* Column 2: Contact List */
+  .contact-info-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.875rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .contact-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.625rem;
+  }
+
+  .row-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #298cbc;
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+
+  .row-text {
+    font-size: 0.8125rem;
+    line-height: 1.5;
+  }
+
+  .text-white {
+    color: #ffffff;
+    font-weight: 700;
+    margin-right: 0.25rem;
+  }
+
+  .text-muted {
+    color: #b8bec6;
+  }
+
+  .contact-link {
+    color: #b8bec6;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .contact-link:hover {
+    color: #ffffff;
+    text-decoration: underline;
+  }
+
+  /* Columns 3 & 4: Nav Links List */
+  .nav-links-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.625rem;
+    margin: 0;
+    padding: 0;
+  }
+
+  .footer-nav-link {
+    color: #b8bec6;
+    text-decoration: none;
+    font-size: 0.8125rem;
+    display: inline-block;
+    transition: color var(--transition-fast), transform var(--transition-fast);
+  }
+
+  .footer-nav-link:hover {
+    color: #ffffff;
+    transform: translateX(2px);
+  }
+
+  /* Bottom Copyright & Legal Bar */
+  .footer-bottom {
+    background-color: #071526;
+    border-top: 1px solid #1a2534;
+    padding-block: 0.875rem;
+    font-size: 0.75rem;
+    color: #64748b;
+  }
+
+  .bottom-flex {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.625rem;
+    text-align: center;
+  }
+
+  @media (min-width: 768px) {
+    .bottom-flex {
+      flex-direction: row;
+      justify-content: space-between;
+      text-align: left;
+    }
+  }
+
+  .copyright-text {
+    color: #64748b;
+    font-size: 0.75rem;
+  }
+
+  .legal-links {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .legal-item {
+    color: #64748b;
+    text-decoration: none;
+    transition: color var(--transition-fast);
+    font-size: 0.75rem;
+  }
+
+  .legal-item:hover {
+    color: #94a3b8;
+  }
+
+  .sep {
+    color: #2a3b4d;
+    user-select: none;
+  }
+
+  /* Responsive Adjustments for Mobile (<768px) */
+  @media (max-width: 767px) {
+    .footer-top {
+      padding-top: 2.25rem;
+      padding-bottom: 2rem;
+    }
+
+    .brand-text {
+      max-width: 100%;
+    }
+
+    .footer-nav-link {
+      padding-block: 0.25rem;
+      min-height: 28px;
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .social-btn {
+      width: 32px;
+      height: 32px;
+    }
+  }
+</style>

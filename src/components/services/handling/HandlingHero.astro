@@ -1,0 +1,487 @@
+---
+import { ROUTES } from '@/lib/routes';
+import { handlingAssets } from '@/content/handling-assets';
+import ImageSlot from '@/components/ui/ImageSlot.astro';
+
+const heroImage = handlingAssets.hero;
+---
+
+<section class="handling-hero-section" aria-labelledby="handling-hero-heading">
+  <!-- Top Breadcrumb & Badge Row -->
+  <div class="container hero-top-bar">
+    <nav class="breadcrumb-nav" aria-label="Đường dẫn điều hướng">
+      <ol class="breadcrumb-list">
+        <li class="breadcrumb-item">
+          <a href={ROUTES.HOME} class="breadcrumb-link">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+              <polyline points="9 22 9 12 15 12 15 22"/>
+            </svg>
+            <span>Trang chủ</span>
+          </a>
+        </li>
+        <li class="breadcrumb-separator" aria-hidden="true">›</li>
+        <li class="breadcrumb-item">
+          <a href={ROUTES.SERVICES} class="breadcrumb-link">Dịch vụ</a>
+        </li>
+        <li class="breadcrumb-separator" aria-hidden="true">›</li>
+        <li class="breadcrumb-item is-current" aria-current="page">Bốc xếp & Hỗ trợ vận tải</li>
+      </ol>
+    </nav>
+
+    <div class="service-code-badge" aria-label="Mã phân loại dịch vụ">
+      <span class="badge-dot" aria-hidden="true">●</span>
+      <span class="badge-text">DỊCH VỤ 03 // LOGISTICS HẬU CẦN</span>
+    </div>
+  </div>
+
+  <!-- Main Hero Content -->
+  <div class="container hero-grid">
+    <!-- Left Column: Copy & CTAs -->
+    <div class="hero-left">
+      <div class="sub-badge">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <rect x="1" y="3" width="15" height="13" rx="1"/>
+          <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+          <circle cx="5.5" cy="18.5" r="2.5"/>
+          <circle cx="18.5" cy="18.5" r="2.5"/>
+        </svg>
+        <span>HỖ TRỢ VẬN HÀNH KHO BÃI & TẬP KẾT TẢI</span>
+      </div>
+
+      <h1 id="handling-hero-heading" class="hero-title">
+        Bốc xếp & Hỗ trợ vận tải
+      </h1>
+
+      <p class="hero-desc">
+        Hỗ trợ bốc xếp, tập kết và xử lý hàng hóa trong quá trình vận chuyển. Nam Hân Logistics cung ứng giải pháp cơ giới và thủ công chuyên nghiệp, bảo vệ toàn vẹn từng kiện hàng trên mọi lộ trình.
+      </p>
+
+      <div class="hero-actions">
+        <a href={ROUTES.CONTACT} class="btn-primary">
+          <span>Liên hệ Nam Hân</span>
+          <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M4.167 10h11.666m-4.166-4.167L15.833 10l-4.166 4.167"/>
+          </svg>
+        </a>
+
+        <a href="#quote-form" class="btn-secondary">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+            <polyline points="10 9 9 9 8 9"/>
+          </svg>
+          <span>Yêu cầu báo giá</span>
+        </a>
+      </div>
+
+      <!-- 3 Quick Features -->
+      <div class="hero-features-row">
+        <div class="feat-box">
+          <span class="feat-tag">01 / CƠ GIỚI</span>
+          <strong class="feat-heading">Xe nâng & Bàn nâng</strong>
+          <span class="feat-sub">Tải trọng đa dạng từ 1.5 đến 10 tấn</span>
+        </div>
+
+        <div class="feat-box">
+          <span class="feat-tag">02 / CHẰNG BUỘC</span>
+          <strong class="feat-heading">Chèn lót chuẩn tải</strong>
+          <span class="feat-sub">Dây cảo, màng quấn PE & đệm khí</span>
+        </div>
+
+        <div class="feat-box">
+          <span class="feat-tag">03 / TRUNG CHUYỂN</span>
+          <strong class="feat-heading">Bãi tập kết liên tỉnh</strong>
+          <span class="feat-sub">Phân loại kiện theo lộ trình giao</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column: Media Card with Overlays -->
+    <div class="hero-right">
+      <div class="media-wrapper">
+        <ImageSlot
+          src={heroImage.src}
+          alt={heroImage.alt}
+          width={heroImage.width}
+          height={heroImage.height}
+          label={heroImage.label}
+          aspectRatio="16/11"
+          class="hero-media-slot"
+        />
+
+        <!-- Dark Bottom Overlay Bar -->
+        <div class="media-bottom-bar">
+          <div class="bar-left">
+            <strong class="bar-title">Đội ngũ Nam Hân</strong>
+            <span class="bar-desc">100% tài xế & phụ xe được chứng chỉ nghề</span>
+          </div>
+          <div class="bar-right">
+            <span class="iso-badge">ISO 9001</span>
+          </div>
+        </div>
+
+        <!-- Floating Badge: Pallet & Dây cảo -->
+        <div class="floating-pallet-card">
+          <div class="pallet-icon-box" aria-hidden="true">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="7" width="20" height="14" rx="2" ry="2"/>
+              <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/>
+            </svg>
+          </div>
+          <div class="pallet-info">
+            <strong class="pallet-title">PALLET & DÂY CẢO</strong>
+            <p class="pallet-desc">Cố định hàng hóa kiên cố trước khi xe lăn bánh.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .handling-hero-section {
+    background-color: #f8fafc;
+    border-bottom: 1px solid var(--color-border);
+    padding-top: 1.5rem;
+    padding-bottom: clamp(3rem, 6vw, 4.5rem);
+  }
+
+  .hero-top-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  @media (min-width: 640px) {
+    .hero-top-bar {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+
+  /* Breadcrumb */
+  .breadcrumb-list {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    font-size: 0.875rem;
+  }
+
+  .breadcrumb-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    color: var(--color-text-secondary);
+    text-decoration: none;
+    transition: color var(--transition-fast);
+  }
+
+  .breadcrumb-link:hover {
+    color: var(--color-brand-orange);
+  }
+
+  .breadcrumb-separator {
+    color: var(--color-border-strong);
+    user-select: none;
+  }
+
+  .breadcrumb-item.is-current {
+    color: var(--color-brand-orange);
+    font-weight: 700;
+  }
+
+  .service-code-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: #475569;
+    background-color: #ffffff;
+    padding: 0.375rem 0.875rem;
+    border-radius: var(--radius-full);
+    border: 1px solid var(--color-border);
+    align-self: flex-start;
+  }
+
+  .badge-dot {
+    color: var(--color-brand-orange);
+    font-size: 0.875rem;
+  }
+
+  /* Main Hero Grid */
+  .hero-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .hero-grid {
+      grid-template-columns: 1.15fr 0.85fr;
+      gap: 3.5rem;
+    }
+  }
+
+  .sub-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background-color: #eef2ff;
+    color: #4338ca;
+    padding: 0.4rem 0.875rem;
+    border-radius: var(--radius-md);
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    margin-bottom: 1.25rem;
+    border: 1px solid #e0e7ff;
+  }
+
+  .hero-title {
+    font-size: clamp(2rem, 3.5vw + 0.5rem, 3.25rem);
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    line-height: 1.18;
+    letter-spacing: -0.02em;
+    margin-bottom: 1.25rem;
+  }
+
+  .hero-desc {
+    font-size: 1rem;
+    color: var(--color-text-secondary);
+    line-height: 1.65;
+    margin-bottom: 2rem;
+    max-width: 36rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2.5rem;
+  }
+
+  @media (min-width: 500px) {
+    .hero-actions {
+      flex-direction: row;
+      align-items: center;
+    }
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: var(--touch-target-min, 44px);
+    background-color: var(--color-brand-orange);
+    color: #ffffff;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    padding: 0.875rem 1.75rem;
+    border-radius: var(--radius-md);
+    box-shadow: 0 4px 14px rgba(249, 80, 22, 0.25);
+    transition: all var(--transition-fast);
+    text-decoration: none;
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-brand-orange-hover);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 18px rgba(249, 80, 22, 0.35);
+  }
+
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    min-height: var(--touch-target-min, 44px);
+    background-color: #ffffff;
+    color: var(--color-brand-navy);
+    border: 1px solid var(--color-border-strong);
+    font-weight: 700;
+    font-size: 0.9375rem;
+    padding: 0.875rem 1.75rem;
+    border-radius: var(--radius-md);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+    transition: all var(--transition-fast);
+    text-decoration: none;
+  }
+
+  .btn-secondary:hover {
+    background-color: var(--color-bg-muted);
+    border-color: var(--color-brand-navy);
+  }
+
+  /* 3 Feature Boxes */
+  .hero-features-row {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  @media (min-width: 600px) {
+    .hero-features-row {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .feat-box {
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 1.125rem 1rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  }
+
+  .feat-tag {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--color-brand-orange);
+    text-transform: uppercase;
+    margin-bottom: 0.375rem;
+  }
+
+  .feat-heading {
+    font-size: 0.9375rem;
+    font-weight: 700;
+    color: var(--color-brand-navy);
+    line-height: 1.35;
+    margin-bottom: 0.25rem;
+  }
+
+  .feat-sub {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    line-height: 1.45;
+  }
+
+  /* Media Wrapper */
+  .media-wrapper {
+    position: relative;
+    border-radius: var(--radius-lg, 16px);
+    overflow: visible;
+  }
+
+  :global(.hero-media-slot) {
+    border-radius: var(--radius-lg, 16px);
+    overflow: hidden;
+    box-shadow: 0 12px 32px rgba(11, 25, 44, 0.08);
+  }
+
+  .media-bottom-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: linear-gradient(to top, rgba(11, 25, 44, 0.95), rgba(11, 25, 44, 0.75));
+    color: #ffffff;
+    padding: 1rem 1.25rem;
+    border-bottom-left-radius: var(--radius-lg, 16px);
+    border-bottom-right-radius: var(--radius-lg, 16px);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .bar-left {
+    display: flex;
+    flex-direction: column;
+    gap: 0.125rem;
+  }
+
+  .bar-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: #ffffff;
+  }
+
+  .bar-desc {
+    font-size: 0.75rem;
+    color: #cbd5e1;
+  }
+
+  .iso-badge {
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    color: #38bdf8;
+    background-color: rgba(56, 189, 248, 0.15);
+    border: 1px solid rgba(56, 189, 248, 0.3);
+    padding: 0.25rem 0.625rem;
+    border-radius: var(--radius-sm);
+    white-space: nowrap;
+  }
+
+  /* Floating Pallet Card */
+  .floating-pallet-card {
+    position: absolute;
+    bottom: -1.5rem;
+    left: -1rem;
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 0.875rem 1rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+    max-width: 19rem;
+    z-index: 2;
+  }
+
+  @media (max-width: 639px) {
+    .floating-pallet-card {
+      position: relative;
+      bottom: auto;
+      left: auto;
+      margin-top: 1rem;
+      max-width: 100%;
+    }
+  }
+
+  .pallet-icon-box {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 0.5rem;
+    background-color: #fff7ed;
+    color: var(--color-brand-orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .pallet-title {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--color-brand-orange);
+    margin-bottom: 0.125rem;
+  }
+
+  .pallet-desc {
+    font-size: 0.75rem;
+    color: var(--color-text-secondary);
+    line-height: 1.4;
+    margin: 0;
+  }
+</style>

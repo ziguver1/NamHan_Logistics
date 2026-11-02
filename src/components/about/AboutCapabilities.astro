@@ -1,0 +1,210 @@
+---
+const capabilities = [
+  {
+    num: '01',
+    title: 'Đội xe & phương tiện',
+    desc: 'Sở hữu đội xe tải thùng kín, xe bạt đa tải trọng và xe đầu kéo container hiện đại, đáp ứng đa dạng yêu cầu vận chuyển từ hàng khô, hàng tiêu dùng đến hàng công nghiệp nặng.',
+    bullets: [
+      'Xe tải thùng bạt, thùng kín 5T – 18T',
+      'Đầu kéo container 20ft, 40ft, 45ft',
+      'Bảo dưỡng & kiểm định nghiêm ngặt định kỳ',
+    ],
+  },
+  {
+    num: '02',
+    title: 'Điều phối linh hoạt',
+    desc: 'Hệ thống phân bổ phương tiện theo thời gian thực, có khả năng tăng cường xe theo mùa cao điểm và bố trí ghép chuyến linh hoạt nhằm tối ưu chi phí cho khách hàng.',
+    bullets: [
+      'Điều vận thông minh 24/7 qua phần mềm chuyên dụng',
+      'Khả năng huy động xe dự phòng khẩn cấp',
+      'Linh hoạt thay đổi lộ trình tránh ùn tắc',
+    ],
+  },
+  {
+    num: '03',
+    title: 'Vận tải B2B',
+    desc: 'Chuyên biệt phục vụ các tập đoàn, doanh nghiệp sản xuất và thương mại điện tử với hợp đồng dài hạn, hóa đơn VAT đầy đủ và chính sách công nợ linh hoạt.',
+    bullets: [
+      'Hợp đồng pháp lý minh bạch, bảo vệ quyền lợi 100%',
+      'Xuất hóa đơn VAT điện tử chuẩn xác theo chuyến',
+      'Quy trình thanh toán và đối soát công nợ rõ ràng',
+    ],
+  },
+  {
+    num: '04',
+    title: 'Phục vụ toàn quốc',
+    desc: 'Khả năng giao nhận hàng tận nơi (Door to Door) khắp các tỉnh thành, kết nối từ kho nhà máy đến kho đại lý hoặc các cảng biển xuất nhập khẩu.',
+    bullets: [
+      'Giao nhận Door-to-Door chuẩn xác từng kiện',
+      'Biên bản bàn giao và POD số hóa',
+      'Mạng lưới kết nối xuyên suốt 3 miền Bắc – Trung – Nam',
+    ],
+  },
+];
+---
+
+<section class="about-capabilities-section" aria-label="Năng lực vận hành Nam Hân">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">GIẢI PHÁP ĐƯỜNG BỘ</div>
+      <h2 class="section-title">Năng lực vận hành</h2>
+      <p class="section-desc">
+        Hạ tầng đồng bộ và phương thức quản lý linh hoạt tạo nên lợi thế cạnh tranh của Nam Hân Logistics.
+      </p>
+    </div>
+
+    <div class="capabilities-grid">
+      {capabilities.map((cap) => (
+        <div class="cap-card">
+          <div class="cap-header">
+            <span class="cap-num">{cap.num}</span>
+            <h3 class="cap-title">{cap.title}</h3>
+          </div>
+          <p class="cap-desc">{cap.desc}</p>
+          <ul class="cap-bullets">
+            {cap.bullets.map((b) => (
+              <li>
+                <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="check-icon" aria-hidden="true">
+                  <polyline points="4 11 8 15 16 6"/>
+                </svg>
+                <span>{b}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-capabilities-section {
+    padding-top: var(--section-space);
+    padding-bottom: var(--section-space);
+    background-color: #f8fafc;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .section-header {
+    text-align: center;
+    max-width: 44rem;
+    margin-inline: auto;
+    margin-bottom: clamp(2.5rem, 5vw, 3.5rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-brand-orange);
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 2.5vw + 0.75rem, 2.5rem);
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .section-desc {
+    font-size: var(--font-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .capabilities-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .capabilities-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+  }
+
+  .cap-card {
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-xl);
+    padding: clamp(1.5rem, 3vw, 2.25rem);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .cap-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px -3px rgba(0, 0, 0, 0.06);
+    border-color: #fed7aa;
+  }
+
+  .cap-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .cap-num {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--color-brand-orange);
+    background-color: #fff1eb;
+    width: 3rem;
+    height: 3rem;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .cap-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+    color: var(--color-brand-navy);
+  }
+
+  .cap-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .cap-bullets {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: auto;
+    padding-top: 0.75rem;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .cap-bullets li {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    font-size: 0.8125rem;
+    color: #475569;
+    line-height: 1.45;
+  }
+
+  .check-icon {
+    color: var(--color-brand-orange);
+    flex-shrink: 0;
+    margin-top: 0.125rem;
+  }
+</style>

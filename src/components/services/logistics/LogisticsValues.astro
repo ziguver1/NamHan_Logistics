@@ -1,0 +1,194 @@
+---
+const values = [
+  {
+    icon: 'process',
+    title: 'Quy trình rõ ràng',
+    desc: 'Mọi bước giao nhận từ lập phiếu điều xe đến ký nhận biên bản đều được quản lý minh bạch và chuẩn mực theo quy chuẩn công nghiệp.',
+  },
+  {
+    icon: 'speed',
+    title: 'Phối hợp linh hoạt',
+    desc: 'Thích ứng nhanh chóng với tiến độ sản xuất đột xuất và lịch xuất nhập hàng liên tục của nhà máy, xưởng chế xuất.',
+  },
+  {
+    icon: 'support',
+    title: 'Hỗ trợ tư vấn',
+    desc: 'Đội ngũ điều vận tận tâm, luôn chủ động phân tích bài toán gom hàng để đưa ra giải pháp tiết kiệm chi phí tối đa cho doanh nghiệp.',
+  },
+  {
+    icon: 'radar',
+    title: 'Theo dõi giao nhận',
+    desc: 'Cập nhật liên tục tình trạng di chuyển và vị trí định vị hàng hóa qua hệ thống quản lý đơn hàng chuyên biệt của Nam Hân.',
+  },
+];
+---
+
+<section class="logistics-values-section" aria-labelledby="logistics-values-heading">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">LỢI ÍCH HỢP TÁC</span>
+      <h2 id="logistics-values-heading" class="section-title">
+        Giá trị dành cho khách hàng
+      </h2>
+      <p class="section-desc">
+        Nam Hân Logistics cam kết mang đến giá trị thực tế thông qua tính ổn định, an toàn và tinh thần trách nhiệm trong từng chuyến xe.
+      </p>
+    </div>
+
+    <div class="values-grid">
+      {
+        values.map((item) => (
+          <div class="value-card">
+            <div class="value-icon-box" aria-hidden="true">
+              {item.icon === 'process' && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="4" y1="21" x2="4" y2="14"/>
+                  <line x1="4" y1="10" x2="4" y2="3"/>
+                  <line x1="12" y1="21" x2="12" y2="12"/>
+                  <line x1="12" y1="8" x2="12" y2="3"/>
+                  <line x1="20" y1="21" x2="20" y2="16"/>
+                  <line x1="20" y1="12" x2="20" y2="3"/>
+                  <line x1="1" y1="14" x2="7" y2="14"/>
+                  <line x1="9" y1="8" x2="15" y2="8"/>
+                  <line x1="17" y1="16" x2="23" y2="16"/>
+                </svg>
+              )}
+              {item.icon === 'speed' && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2v4"/>
+                  <path d="m4.93 4.93 2.83 2.83"/>
+                  <path d="M2 12h4"/>
+                  <path d="m4.93 19.07 2.83-2.83"/>
+                  <path d="M12 22v-4"/>
+                  <path d="m19.07 19.07-2.83-2.83"/>
+                  <path d="M22 12h-4"/>
+                  <path d="m19.07 4.93-2.83 2.83"/>
+                </svg>
+              )}
+              {item.icon === 'support' && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 18v-6a9 9 0 0 1 18 0v6"/>
+                  <path d="M21 19a2 2 0 0 1-2 2h-1a2 2 0 0 1-2-2v-3a2 2 0 0 1 2-2h3zM3 19a2 2 0 0 0 2 2h1a2 2 0 0 0 2-2v-3a2 2 0 0 0-2-2H3z"/>
+                </svg>
+              )}
+              {item.icon === 'radar' && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <circle cx="12" cy="12" r="6"/>
+                  <circle cx="12" cy="12" r="2"/>
+                </svg>
+              )}
+            </div>
+
+            <h3 class="value-title">{item.title}</h3>
+            <p class="value-desc">{item.desc}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .logistics-values-section {
+    padding-top: clamp(3rem, 6vw, 4.5rem);
+    padding-bottom: clamp(3rem, 6vw, 4.5rem);
+    background-color: #f8fafc;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .section-header {
+    text-align: center;
+    max-width: 44rem;
+    margin-inline: auto;
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .section-tag {
+    display: inline-block;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-brand-orange);
+    margin-bottom: 0.625rem;
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 2.5vw + 0.5rem, 2.375rem);
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+    margin-bottom: 0.75rem;
+  }
+
+  .section-desc {
+    font-size: 0.9375rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .values-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 640px) {
+    .values-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .values-grid {
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1.5rem;
+    }
+  }
+
+  .value-card {
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg, 16px);
+    padding: 1.75rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .value-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    border-color: rgba(249, 80, 22, 0.3);
+  }
+
+  .value-icon-box {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.5rem;
+    background-color: #eef2ff;
+    color: #4f46e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .value-title {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-brand-navy);
+    line-height: 1.35;
+    margin-bottom: 0.625rem;
+  }
+
+  .value-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    margin: 0;
+  }
+</style>

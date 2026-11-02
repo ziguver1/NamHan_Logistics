@@ -1,0 +1,183 @@
+---
+const criteria = [
+  {
+    icon: 'category',
+    label: 'LOẠI HÀNG HÓA',
+    desc: 'Hàng tiêu dùng, nông sản, máy móc cơ khí hay linh kiện công nghiệp.',
+  },
+  {
+    icon: 'scale',
+    label: 'KHỐI LƯỢNG',
+    desc: 'Từ vài kiện lẻ, hàng ghép vài tấn đến hàng trăm tấn nguyên chuyến.',
+  },
+  {
+    icon: 'pin',
+    label: 'TUYẾN ĐƯỜNG',
+    desc: 'Vận chuyển nội đô, liên tỉnh hoặc tuyến trục dài Bắc – Trung – Nam.',
+  },
+  {
+    icon: 'truck',
+    label: 'PHƯƠNG TIỆN',
+    desc: 'Đầu kéo container, xe tải thùng bạt, xe thùng kín hoặc xe chuyên dụng.',
+  },
+  {
+    icon: 'clock',
+    label: 'THỜI GIAN GIAO NHẬN',
+    desc: 'Lịch giao hẹn giờ chính xác hoặc tiến độ vận chuyển thường nhật.',
+  },
+];
+---
+
+<section class="solutions-criteria-section" aria-labelledby="solutions-criteria-heading">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">BỘ TIÊU CHÍ ĐÁNH GIÁ</span>
+      <h2 id="solutions-criteria-heading" class="section-title">
+        Các yếu tố trong phương án vận chuyển
+      </h2>
+    </div>
+
+    <div class="criteria-grid">
+      {
+        criteria.map((item) => (
+          <div class="criteria-card">
+            <div class="criteria-icon" aria-hidden="true">
+              {item.icon === 'category' && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2l7 12H5l7-12z"/>
+                  <circle cx="18" cy="18" r="4"/>
+                  <rect x="3" y="14" width="7" height="7"/>
+                </svg>
+              )}
+              {item.icon === 'scale' && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                  <line x1="3" y1="6" x2="21" y2="6"/>
+                  <path d="M16 10a4 4 0 0 1-8 0"/>
+                </svg>
+              )}
+              {item.icon === 'pin' && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+              )}
+              {item.icon === 'truck' && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="1" y="3" width="15" height="13"/>
+                  <polygon points="16 8 20 8 23 11 23 16 16 16 8"/>
+                  <circle cx="5.5" cy="18.5" r="2.5"/>
+                  <circle cx="18.5" cy="18.5" r="2.5"/>
+                </svg>
+              )}
+              {item.icon === 'clock' && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"/>
+                  <polyline points="12 6 12 12 16 14"/>
+                </svg>
+              )}
+            </div>
+
+            <h3 class="criteria-label">{item.label}</h3>
+            <p class="criteria-desc">{item.desc}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .solutions-criteria-section {
+    padding-top: clamp(3rem, 6vw, 4.5rem);
+    padding-bottom: clamp(3rem, 6vw, 4.5rem);
+    background-color: #f8fafc;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .section-header {
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .section-tag {
+    display: inline-block;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-brand-orange);
+    margin-bottom: 0.625rem;
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 2.5vw + 0.5rem, 2.375rem);
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+
+  .criteria-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+  }
+
+  @media (min-width: 600px) {
+    .criteria-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .criteria-grid {
+      grid-template-columns: repeat(5, 1fr);
+      gap: 1.25rem;
+    }
+  }
+
+  .criteria-card {
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg, 16px);
+    padding: 1.75rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .criteria-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+    border-color: rgba(249, 80, 22, 0.3);
+  }
+
+  .criteria-icon {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.5rem;
+    background-color: #eef2ff;
+    color: #4f46e5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.25rem;
+  }
+
+  .criteria-label {
+    font-size: 0.8125rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: var(--color-brand-navy);
+    line-height: 1.35;
+    margin-bottom: 0.5rem;
+  }
+
+  .criteria-desc {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+    margin: 0;
+  }
+</style>

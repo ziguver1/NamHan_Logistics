@@ -1,0 +1,360 @@
+---
+import { ROUTES } from '@/lib/routes';
+
+interface OverviewStat {
+  icon: 'truck' | 'box' | 'depot' | 'clock' | 'fleet';
+  value: string;
+  label: string;
+}
+
+const stats: OverviewStat[] = [
+  {
+    icon: 'truck',
+    value: '73+ xe',
+    label: 'ĐỘI XE TẢI CÁC TẢI TRỌNG',
+  },
+  {
+    icon: 'box',
+    value: '10 xe/ngày',
+    label: 'NĂNG LỰC XUẤT BẾN MỖI NGÀY',
+  },
+  {
+    icon: 'depot',
+    value: '2 bãi xe',
+    label: 'TẠI TP.HCM VÀ BÌNH DƯƠNG',
+  },
+  {
+    icon: 'clock',
+    value: '32 giờ',
+    label: 'THỜI GIAN VẬN CHUYỂN HN – HCM',
+  },
+  {
+    icon: 'fleet',
+    value: '10 trucks/day',
+    label: 'NĂNG LỰC VẬN CHUYỂN QUỐC NỘI',
+  },
+];
+---
+
+<section id="overview" class="overview-section" aria-labelledby="overview-heading">
+  <div class="container overview-container">
+    <!-- Left Column: Content, Stats & CTA -->
+    <div class="overview-content">
+      <h2 id="overview-heading" class="overview-title">
+        Giải pháp Logistics tích hợp cho doanh nghiệp <br class="br-desktop" />của bạn
+      </h2>
+
+      <p class="overview-desc">
+        Nam Hân Logistics là doanh nghiệp chuyên về vận tải đường bộ và cung cấp các giải pháp logistics toàn diện, phục vụ nhu cầu vận chuyển hàng hóa của doanh nghiệp trên toàn quốc. Với đội xe hiện đại, mạng lưới kho bãi và đội ngũ chuyên nghiệp, chúng tôi cam kết mang đến dịch vụ an toàn – đúng hẹn – hiệu quả – chi phí hợp lý, đồng hành cùng sự phát triển của khách hàng.
+      </p>
+
+      <!-- 5 Stats / Capabilities List -->
+      <div class="stats-list">
+        {stats.map((item) => (
+          <div class="stat-row">
+            <div class="stat-icon-wrap" aria-hidden="true">
+              {item.icon === 'truck' && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M10 17h4V5H2v12h3" />
+                  <path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5v8h1" />
+                  <circle cx="7.5" cy="17.5" r="2.5" />
+                  <circle cx="17.5" cy="17.5" r="2.5" />
+                </svg>
+              )}
+              {item.icon === 'box' && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" />
+                  <polyline points="3.27 6.96 12 12.01 20.73 6.96" />
+                  <line x1="12" y1="22.08" x2="12" y2="12" />
+                </svg>
+              )}
+              {item.icon === 'depot' && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 21h18" />
+                  <path d="M5 21V9l7-5 7 5v12" />
+                  <path d="M9 21v-6h6v6" />
+                </svg>
+              )}
+              {item.icon === 'clock' && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10" />
+                  <polyline points="12 6 12 12 16 14" />
+                </svg>
+              )}
+              {item.icon === 'fleet' && (
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2" />
+                  <path d="M15 18H9" />
+                  <path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14" />
+                  <circle cx="17" cy="18" r="2" />
+                  <circle cx="7" cy="18" r="2" />
+                </svg>
+              )}
+            </div>
+            <div class="stat-meta">
+              <span class="stat-value">{item.value}</span>
+              <span class="stat-label">{item.label}</span>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <!-- Action Button -->
+      <div class="overview-action">
+        <a href={ROUTES.ABOUT} class="btn-overview-about">
+          <span>Giới thiệu về Nam Hân</span>
+          <span class="btn-arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Right Column: Media Collage (3 Images) -->
+    <div class="overview-media">
+      <div class="gallery-main">
+        <img
+          src="/images/home/overview-top.webp"
+          alt="Xe container Nam Hân Logistics vận chuyển trên đường"
+          class="gallery-img"
+          width="584"
+          height="329"
+          loading="lazy"
+          decoding="async"
+        />
+      </div>
+      <div class="gallery-sub">
+        <div class="gallery-sub-card">
+          <img
+            src="/images/home/overview-bot-left.webp"
+            alt="Bốc xếp hàng hóa tại kho Nam Hân"
+            class="gallery-img"
+            width="286"
+            height="215"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <div class="gallery-sub-card">
+          <img
+            src="/images/home/overview-bot-right.webp"
+            alt="Bãi xe kho bãi Nam Hân Logistics"
+            class="gallery-img"
+            width="286"
+            height="215"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .overview-section {
+    background-color: var(--color-bg-page, #ffffff);
+    padding-top: clamp(3rem, 6vw, 5rem);
+    padding-bottom: clamp(3rem, 6vw, 5rem);
+    scroll-margin-top: 5rem;
+    border-bottom: 1px solid var(--color-border, #e2e8f0);
+  }
+
+  .overview-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2.5rem;
+    align-items: center;
+  }
+
+  @media (min-width: 1024px) {
+    .overview-container {
+      grid-template-columns: 1fr 1.08fr;
+      gap: 3.5rem;
+    }
+  }
+
+  /* Left Content */
+  .overview-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .overview-title {
+    font-size: clamp(1.5rem, 2.5vw, 2.125rem);
+    font-weight: 800;
+    color: #0b4e83;
+    line-height: 1.28;
+    margin: 0 0 1.25rem 0;
+    letter-spacing: -0.015em;
+  }
+
+  .br-desktop {
+    display: none;
+  }
+
+  @media (min-width: 640px) {
+    .br-desktop {
+      display: inline;
+    }
+  }
+
+  .overview-desc {
+    font-size: 0.9375rem;
+    color: #475569;
+    line-height: 1.65;
+    margin: 0 0 1.75rem 0;
+    max-width: 36rem;
+  }
+
+  /* Stats List */
+  .stats-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1.125rem;
+    margin-bottom: 2rem;
+  }
+
+  .stat-row {
+    display: flex;
+    align-items: center;
+    gap: 0.875rem;
+  }
+
+  .stat-icon-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    flex-shrink: 0;
+    color: #0070ba;
+  }
+
+  .stat-meta {
+    display: flex;
+    align-items: baseline;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  @media (min-width: 480px) {
+    .stat-meta {
+      display: grid;
+      grid-template-columns: 7.75rem 1fr;
+      align-items: center;
+      gap: 1rem;
+    }
+  }
+
+  .stat-value {
+    font-size: 1.0625rem;
+    font-weight: 800;
+    color: #0b2545;
+    white-space: nowrap;
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #475569;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  /* Action Button */
+  .overview-action {
+    display: flex;
+    align-items: center;
+  }
+
+  .btn-overview-about {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: var(--touch-target-min, 44px);
+    padding: 0.5rem 1.25rem;
+    background-color: transparent;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    color: #0070ba;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color var(--transition-fast, 150ms ease),
+                border-color var(--transition-fast, 150ms ease),
+                color var(--transition-fast, 150ms ease);
+  }
+
+  .btn-overview-about:hover {
+    background-color: #f0f7ff;
+    border-color: #0070ba;
+    color: #005a96;
+  }
+
+  .btn-overview-about:active {
+    background-color: #e0f2fe;
+  }
+
+  .btn-overview-about:focus-visible {
+    outline: 2px solid #0070ba;
+    outline-offset: 2px;
+  }
+
+  .btn-arrow {
+    display: inline-block;
+    transition: transform var(--transition-fast, 150ms ease);
+  }
+
+  .btn-overview-about:hover .btn-arrow {
+    transform: translateX(3px);
+  }
+
+  /* Right Media Collage */
+  .overview-media {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    width: 100%;
+  }
+
+  .gallery-main {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .gallery-main .gallery-img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    display: block;
+  }
+
+  .gallery-sub {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+
+  .gallery-sub-card {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  }
+
+  .gallery-sub-card .gallery-img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 4 / 3;
+    object-fit: cover;
+    display: block;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .btn-overview-about,
+    .btn-arrow {
+      transition: none;
+      transform: none !important;
+    }
+  }
+</style>

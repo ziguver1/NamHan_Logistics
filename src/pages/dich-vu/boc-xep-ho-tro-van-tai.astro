@@ -1,0 +1,43 @@
+---
+import SiteLayout from '@/layouts/SiteLayout.astro';
+import ServiceModuleSwitcher from '@/components/services/ServiceModuleSwitcher.astro';
+import HandlingHero from '@/components/services/handling/HandlingHero.astro';
+import HandlingOverview from '@/components/services/handling/HandlingOverview.astro';
+import HandlingActivities from '@/components/services/handling/HandlingActivities.astro';
+import HandlingProcess from '@/components/services/handling/HandlingProcess.astro';
+import HandlingValues from '@/components/services/handling/HandlingValues.astro';
+import HandlingQuoteForm from '@/components/services/handling/HandlingQuoteForm.astro';
+import HandlingCta from '@/components/services/handling/HandlingCta.astro';
+import { ROUTES } from '@/lib/routes';
+import { companyInfo } from '@/content/company';
+---
+
+<SiteLayout
+  title={`Bốc xếp & Hỗ trợ vận tải — ${companyInfo.shortName}`}
+  description="Dịch vụ bốc xếp, tập kết kho bãi và hỗ trợ cơ giới chuyên nghiệp của Nam Hân Logistics: Xe nâng, xe cẩu, bàn nâng thủy lực, chèn lót dây cảo an toàn hàng hóa 100%."
+  canonicalPath={ROUTES.SERVICE_HANDLING}
+>
+  <!-- Service Module Quick Switcher -->
+  <ServiceModuleSwitcher currentRoute={ROUTES.SERVICE_HANDLING} />
+
+  <!-- 1. Handling Hero Section (Node 84:1103) -->
+  <HandlingHero />
+
+  <!-- 2. Handling Overview & 2x2 Feature Grid (Node 84:1178) -->
+  <HandlingOverview />
+
+  <!-- 3. Four Core Handling Activities (Node 84:1235) -->
+  <HandlingActivities />
+
+  <!-- 4. Four-step Handling Operation Process (Node 84:1327) -->
+  <HandlingProcess />
+
+  <!-- 5. Service Values & Depot Infrastructure Callout (Node 84:1403) -->
+  <HandlingValues />
+
+  <!-- 6. Quick Handling Quote Form (Node 84:1470 - Lead Point 2) -->
+  <HandlingQuoteForm />
+
+  <!-- 7. Bottom 24/7 Dispatch CTA Banner (Node 84:1516) -->
+  <HandlingCta />
+</SiteLayout>

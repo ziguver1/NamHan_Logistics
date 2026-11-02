@@ -1,0 +1,47 @@
+---
+import SiteLayout from '@/layouts/SiteLayout.astro';
+import ServiceModuleSwitcher from '@/components/services/ServiceModuleSwitcher.astro';
+import RoadHero from '@/components/services/road/RoadHero.astro';
+import RoadOverview from '@/components/services/road/RoadOverview.astro';
+import RoadVehicles from '@/components/services/road/RoadVehicles.astro';
+import RoadOptions from '@/components/services/road/RoadOptions.astro';
+import RoadRoutes from '@/components/services/road/RoadRoutes.astro';
+import RoadProcess from '@/components/services/road/RoadProcess.astro';
+import RoadStats from '@/components/services/road/RoadStats.astro';
+import RoadCta from '@/components/services/road/RoadCta.astro';
+import { ROUTES } from '@/lib/routes';
+import { companyInfo } from '@/content/company';
+---
+
+<SiteLayout
+  title={`Vận tải đường bộ nội địa — ${companyInfo.shortName}`}
+  description="Dịch vụ vận tải đường bộ chuyên tuyến Bắc — Trung — Nam của Nam Hân Logistics: Đội xe đầu kéo, container 20'/40', xe tải thùng, xe ben; giám sát GPS 24/7, cam kết an toàn & đúng tiến độ."
+  canonicalPath={ROUTES.SERVICE_ROAD}
+>
+  <!-- Service Module Quick Switcher -->
+  <ServiceModuleSwitcher currentRoute={ROUTES.SERVICE_ROAD} />
+
+  <!-- 1. Road Freight Hero (Node 84:427) -->
+  <RoadHero />
+
+  <!-- 2. Road Freight Overview (Node 84:484) -->
+  <RoadOverview />
+
+  <!-- 3. Fleet & Vehicles (Node 84:534) -->
+  <RoadVehicles />
+
+  <!-- 4. Freight Allocation Models (Node 84:624) -->
+  <RoadOptions />
+
+  <!-- 5. Transit Network & Hub Corridor (Node 84:683) -->
+  <RoadRoutes />
+
+  <!-- 6. Professional 4-step Process (Node 84:797) -->
+  <RoadProcess />
+
+  <!-- 7. Transport Capacity Stats (Node 84:867) -->
+  <RoadStats />
+
+  <!-- 8. Bottom CTA Banner (Node 84:911) -->
+  <RoadCta />
+</SiteLayout>

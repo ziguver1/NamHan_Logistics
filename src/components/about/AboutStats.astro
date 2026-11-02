@@ -1,0 +1,167 @@
+---
+const stats = [
+  {
+    number: '70-80',
+    category: 'TÀI LỰC',
+    title: 'Nhân sự & tài xế',
+    desc: 'Lực lượng tài xế đường dài chuyên nghiệp cùng đội ngũ điều hành tâm huyết.',
+  },
+  {
+    number: '2+',
+    category: 'HẠ TẦNG',
+    title: 'Bãi xe chính',
+    desc: 'Depot tại Thanh Hóa (Bỉm Sơn) và Bình Dương, kết nối trực tiếp các cụm KCN.',
+  },
+  {
+    number: '63',
+    category: 'ĐỘ PHỦ',
+    title: 'Tỉnh/thành có thể phục vụ',
+    desc: 'Khả năng tiếp nhận và chuyển tiếp hàng hóa liên tỉnh thông suốt Bắc - Nam.',
+  },
+  {
+    number: 'B2B',
+    category: 'MỤC TIÊU',
+    title: 'Khách hàng doanh nghiệp',
+    desc: 'Tập trung phục vụ các nhà máy sản xuất, doanh nghiệp FDI và sàn phân phối.',
+  },
+];
+---
+
+<section class="about-stats-section" aria-label="Thông số vận hành Nam Hân">
+  <div class="container">
+    <div class="section-header">
+      <div class="section-tag">THÔNG SỐ VẬN HÀNH</div>
+      <h2 class="section-title">Quy mô năng lực vững vàng</h2>
+      <p class="section-desc">
+        Những con số phản ánh quy mô và năng lực tổ chức mạng lưới vận tải đường bộ của Nam Hân.
+      </p>
+    </div>
+
+    <div class="stats-grid">
+      {stats.map((item) => (
+        <div class="stat-card">
+          <div class="stat-top">
+            <span class="stat-category">{item.category}</span>
+          </div>
+          <div class="stat-number">{item.number}</div>
+          <h3 class="stat-title">{item.title}</h3>
+          <p class="stat-desc">{item.desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .about-stats-section {
+    padding-top: var(--section-space);
+    padding-bottom: var(--section-space);
+    background-color: #f8fafc;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .section-header {
+    text-align: center;
+    max-width: 42rem;
+    margin-inline: auto;
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .section-tag {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-brand-orange);
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 2.5vw + 0.75rem, 2.5rem);
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+
+  .section-desc {
+    font-size: var(--font-body);
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    .stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 1024px) {
+    .stats-grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+  }
+
+  .stat-card {
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 1.75rem 1.5rem;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.03);
+    display: flex;
+    flex-direction: column;
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.06);
+    border-color: #fed7aa;
+  }
+
+  .stat-top {
+    margin-bottom: 0.75rem;
+  }
+
+  .stat-category {
+    display: inline-block;
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--color-brand-orange);
+    background-color: #fff1eb;
+    padding: 0.2rem 0.5rem;
+    border-radius: var(--radius-sm);
+  }
+
+  .stat-number {
+    font-size: clamp(2.25rem, 3vw, 2.75rem);
+    font-weight: 900;
+    color: var(--color-brand-navy);
+    line-height: 1.1;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.03em;
+  }
+
+  .stat-title {
+    font-size: 1.0625rem;
+    font-weight: 700;
+    color: var(--color-brand-navy);
+    margin-bottom: 0.5rem;
+  }
+
+  .stat-desc {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    line-height: 1.55;
+  }
+</style>

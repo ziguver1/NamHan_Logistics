@@ -1,0 +1,182 @@
+---
+interface StatCard {
+  value: string;
+  label: string;
+  desc: string;
+  highlight?: boolean;
+}
+
+const stats: StatCard[] = [
+  {
+    value: '500+',
+    label: 'Khách hàng tin tưởng',
+    desc: 'Hợp tác dài lâu cùng các tập đoàn sản xuất, nhà máy phân phối và doanh nghiệp thương mại toàn quốc.',
+  },
+  {
+    value: '8.000+',
+    label: 'Tấn hàng hóa / tháng',
+    desc: 'Sản lượng lưu thông luân chuyển đều đặn qua các trục trung chuyển lớn giữa ba miền đất nước.',
+    highlight: true,
+  },
+  {
+    value: '8 NĂM+',
+    label: 'Kinh nghiệm hoạt động',
+    desc: 'Bề dày thực chiến kiểm soát cung đường, am hiểu đặc thù vận chuyển cho từng loại mặt hàng công nghiệp.',
+  },
+];
+---
+
+<section class="road-stats-section" aria-labelledby="road-stats-heading">
+  <div class="container">
+    <div class="section-header">
+      <span class="section-tag">CHỈ SỐ HỒ SƠ NĂNG LỰC</span>
+      <h2 id="road-stats-heading" class="section-title">Năng lực vận tải</h2>
+    </div>
+
+    <div class="stats-grid">
+      {
+        stats.map((item, idx) => (
+          <div class="stat-card">
+            <div class={`icon-badge ${item.highlight ? 'badge-orange' : 'badge-slate'}`}>
+              {idx === 0 && (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                  <circle cx="9" cy="7" r="4"/>
+                  <path d="M23 21v-2a4 4 0 0 0-3-3.87"/>
+                  <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                </svg>
+              )}
+              {idx === 1 && (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/>
+                  <line x1="3" y1="6" x2="21" y2="6"/>
+                  <path d="M16 10a4 4 0 0 1-8 0"/>
+                </svg>
+              )}
+              {idx === 2 && (
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                  <polyline points="3 3 3 8 8 8"/>
+                  <polyline points="12 7 12 12 15 15"/>
+                </svg>
+              )}
+            </div>
+
+            <div class={`stat-value ${item.highlight ? 'text-highlight' : ''}`}>{item.value}</div>
+            <h3 class="stat-label">{item.label}</h3>
+            <p class="stat-desc">{item.desc}</p>
+          </div>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .road-stats-section {
+    padding-top: clamp(3rem, 6vw, 4.5rem);
+    padding-bottom: clamp(3rem, 6vw, 4.5rem);
+    background-color: #ffffff;
+  }
+
+  .section-header {
+    text-align: center;
+    margin-bottom: clamp(2rem, 4vw, 3rem);
+  }
+
+  .section-tag {
+    display: inline-block;
+    font-size: 0.8125rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-brand-orange);
+    margin-bottom: 0.625rem;
+  }
+
+  .section-title {
+    font-size: clamp(1.75rem, 2.5vw + 0.5rem, 2.375rem);
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+  }
+
+  @media (min-width: 768px) {
+    .stats-grid {
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.5rem;
+    }
+  }
+
+  .stat-card {
+    background-color: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg, 16px);
+    padding: 2.25rem 1.75rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    transition: transform var(--transition-fast), box-shadow var(--transition-fast);
+  }
+
+  .stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.08);
+  }
+
+  .icon-badge {
+    width: 3.25rem;
+    height: 3.25rem;
+    border-radius: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 1.5rem;
+  }
+
+  .badge-slate {
+    background-color: #f1f5f9;
+    color: var(--color-brand-navy);
+  }
+
+  .badge-orange {
+    background-color: #fff7ed;
+    color: var(--color-brand-orange);
+  }
+
+  .stat-value {
+    font-size: clamp(2.25rem, 3.5vw, 3rem);
+    font-weight: 800;
+    line-height: 1.1;
+    color: var(--color-brand-navy);
+    letter-spacing: -0.02em;
+    margin-bottom: 0.625rem;
+  }
+
+  .stat-value.text-highlight {
+    color: var(--color-brand-orange);
+  }
+
+  .stat-label {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--color-brand-navy);
+    margin-bottom: 0.75rem;
+  }
+
+  .stat-desc {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    max-width: 24rem;
+  }
+</style>

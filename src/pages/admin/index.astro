@@ -1,0 +1,775 @@
+---
+/**
+ * Admin Panel - Announcements Management (Quản lý Bảng tin)
+ * SSR Route: Protected by administrative session.
+ */
+import SiteLayout from '@/layouts/SiteLayout.astro';
+import AdminHeader from '@/components/admin/AdminHeader.astro';
+import AdminLoginForm from '@/components/admin/AdminLoginForm.astro';
+import { isAuthenticatedAdmin } from '@/lib/server/admin-auth';
+import { listAnnouncements } from '@/lib/server/news-storage';
+
+export const prerender = false;
+
+const request = Astro.request;
+const isAdmin = await isAuthenticatedAdmin(request);
+const url = new URL(request.url);
+
+const currentTab = url.searchParams.get('tab') || 'all';
+const searchKeyword = url.searchParams.get('q') || '';
+
+// Load list
+const announcements = isAdmin
+  ? await listAnnouncements({
+      status: currentTab === 'all' ? 'all' : (currentTab as any),
+      search: searchKeyword,
+      includeDeleted: currentTab === 'deleted'
+    })
+  : [];
+
+// Count stats
+const allItems = isAdmin ? await listAnnouncements({ status: 'all', includeDeleted: true }) : [];
+const countAll = allItems.filter((a) => a.status !== 'deleted').length;
+const countPublished = allItems.filter((a) => a.status === 'published').length;
+const countDraft = allItems.filter((a) => a.status === 'draft').length;
+const countDeleted = allItems.filter((a) => a.status === 'deleted').length;
+---
+
+<SiteLayout
+  title="Quản lý Bảng tin | Nam Hân Logistics Admin"
+  description="Trang quản lý thông báo, bản tin chính thức của Nam Hân Logistics."
+>
+  {isAdmin && <AdminHeader activeTab="news" />}
+
+  <main class="admin-main">
+    <div class="container admin-container">
+      {!isAdmin ? (
+        <AdminLoginForm />
+      ) : (
+        <div class="news-manager-wrap">
+          <!-- Top Bar -->
+          <div class="manager-top-bar">
+            <div>
+              <h1 class="page-title">Quản lý Bảng tin & Thông báo</h1>
+              <p class="page-subtitle">Đăng tải, chỉnh sửa và quản lý các thông báo điều hành chính thức của doanh nghiệp.</p>
+            </div>
+            <div class="top-actions">
+              <a href="/admin/bang-tin/editor" class="btn btn-primary">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <line x1="12" y1="5" x2="12" y2="19"/>
+                  <line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                <span>Tạo thông báo mới</span>
+              </a>
+
+              <a href="/api/news/backup" download class="btn btn-outline" title="Tải xuống tệp sao lưu toàn bộ thông báo">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="7 10 12 15 17 10"/>
+                  <line x1="12" y1="15" x2="12" y2="3"/>
+                </svg>
+                <span>Sao lưu JSON</span>
+              </a>
+
+              <button type="button" id="btnImportBackup" class="btn btn-outline" title="Khôi phục thông báo từ tệp JSON">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                  <polyline points="17 8 12 3 7 8"/>
+                  <line x1="12" y1="3" x2="12" y2="15"/>
+                </svg>
+                <span>Khôi phục</span>
+              </button>
+              <input type="file" id="backupFileInput" accept=".json,application/json" style="display: none;" />
+            </div>
+          </div>
+
+          <!-- Filter & Search Toolbar -->
+          <div class="filter-toolbar">
+            <div class="tabs-group" role="tablist">
+              <a href="/admin/?tab=all" class={`tab-btn ${currentTab === 'all' ? 'active' : ''}`}>
+                Tất cả <span class="tab-count">{countAll}</span>
+              </a>
+              <a href="/admin/?tab=published" class={`tab-btn ${currentTab === 'published' ? 'active' : ''}`}>
+                Đã đăng <span class="tab-count">{countPublished}</span>
+              </a>
+              <a href="/admin/?tab=draft" class={`tab-btn ${currentTab === 'draft' ? 'active' : ''}`}>
+                Bản nháp <span class="tab-count">{countDraft}</span>
+              </a>
+              <a href="/admin/?tab=deleted" class={`tab-btn ${currentTab === 'deleted' ? 'active' : ''}`}>
+                Thùng rác <span class="tab-count">{countDeleted}</span>
+              </a>
+            </div>
+
+            <form method="GET" action="/admin/" class="search-form">
+              <input type="hidden" name="tab" value={currentTab} />
+              <div class="search-input-box">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon">
+                  <circle cx="11" cy="11" r="8"/>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                </svg>
+                <input
+                  type="text"
+                  name="q"
+                  value={searchKeyword}
+                  placeholder="Tìm theo tiêu đề..."
+                  class="search-input"
+                />
+                {searchKeyword && (
+                  <a href={`/admin/?tab=${currentTab}`} class="search-clear" title="Xóa tìm kiếm">✕</a>
+                )}
+              </div>
+            </form>
+          </div>
+
+          <!-- Announcements Table -->
+          <div class="table-card">
+            {announcements.length === 0 ? (
+              <div class="empty-state">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="empty-icon">
+                  <path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/>
+                  <line x1="9" y1="9" x2="15" y2="9"/>
+                  <line x1="9" y1="13" x2="15" y2="13"/>
+                </svg>
+                <h3 class="empty-title">Không tìm thấy thông báo nào</h3>
+                <p class="empty-text">
+                  {searchKeyword ? 'Không có bài viết nào khớp với từ khóa tìm kiếm.' : 'Chưa có thông báo trong mục này.'}
+                </p>
+                <a href="/admin/bang-tin/editor" class="btn btn-primary btn-sm mt-3">Tạo thông báo mới</a>
+              </div>
+            ) : (
+              <div class="table-responsive">
+                <table class="announcements-table">
+                  <thead>
+                    <tr>
+                      <th style="width: 44px;">Ghim</th>
+                      <th>Tiêu đề & Đường dẫn</th>
+                      <th style="width: 130px;">Trạng thái</th>
+                      <th style="width: 140px;">Ngày đăng</th>
+                      <th style="width: 220px;" class="text-right">Thao tác</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {announcements.map((item) => (
+                      <tr class={`row-item ${item.isPinned ? 'is-pinned-row' : ''}`}>
+                        <td class="text-center">
+                          <button
+                            type="button"
+                            class={`btn-pin ${item.isPinned ? 'pinned' : ''}`}
+                            data-id={item.id}
+                            title={item.isPinned ? 'Bỏ ghim' : 'Ghim lên đầu'}
+                            aria-label={item.isPinned ? 'Bỏ ghim' : 'Ghim lên đầu'}
+                          >
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill={item.isPinned ? '#f59e0b' : 'none'} stroke={item.isPinned ? '#f59e0b' : 'currentColor'} stroke-width="2">
+                              <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                            </svg>
+                          </button>
+                        </td>
+
+                        <td>
+                          <div class="item-title-wrap">
+                            <a href={`/admin/bang-tin/editor?id=${item.id}`} class="item-title-link">
+                              {item.title}
+                            </a>
+                            <div class="item-slug">
+                              <code>/bang-tin/{item.slug}</code>
+                              {item.coverImage && <span class="badge-tag">Có ảnh</span>}
+                              {Boolean(item.attachmentCount) && <span class="badge-tag">Có đính kèm</span>}
+                            </div>
+                          </div>
+                        </td>
+
+                        <td>
+                          {item.status === 'published' && <span class="badge-status status-published">🟢 Đã đăng</span>}
+                          {item.status === 'draft' && <span class="badge-status status-draft">🟡 Bản nháp</span>}
+                          {item.status === 'deleted' && <span class="badge-status status-deleted">🔴 Đã xóa</span>}
+                        </td>
+
+                        <td>
+                          <span class="date-text">
+                            {item.publishedAt
+                              ? new Date(item.publishedAt).toLocaleDateString('vi-VN')
+                              : new Date(item.createdAt).toLocaleDateString('vi-VN')}
+                          </span>
+                        </td>
+
+                        <td class="text-right">
+                          <div class="actions-cell">
+                            {item.status !== 'deleted' ? (
+                              <>
+                                <a
+                                  href={`/admin/bang-tin/editor?id=${item.id}`}
+                                  class="action-btn btn-edit"
+                                  title="Chỉnh sửa thông báo"
+                                >
+                                  Sửa
+                                </a>
+
+                                <a
+                                  href={`/bang-tin/${item.slug}?preview=true`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  class="action-btn btn-preview"
+                                  title="Xem trước giao diện"
+                                >
+                                  Xem
+                                </a>
+
+                                {item.status === 'published' ? (
+                                  <button
+                                    type="button"
+                                    class="action-btn btn-status-toggle"
+                                    data-id={item.id}
+                                    data-action="unpublish"
+                                    title="Gỡ bài xuống (chuyển về nháp)"
+                                  >
+                                    Gỡ
+                                  </button>
+                                ) : (
+                                  <button
+                                    type="button"
+                                    class="action-btn btn-status-toggle"
+                                    data-id={item.id}
+                                    data-action="publish"
+                                    title="Đăng thông báo lên website"
+                                  >
+                                    Đăng
+                                  </button>
+                                )}
+
+                                <button
+                                  type="button"
+                                  class="action-btn btn-trash"
+                                  data-id={item.id}
+                                  data-action="trash"
+                                  title="Chuyển vào thùng rác"
+                                >
+                                  Xóa
+                                </button>
+                              </>
+                            ) : (
+                              <>
+                                <button
+                                  type="button"
+                                  class="action-btn btn-restore"
+                                  data-id={item.id}
+                                  data-action="restore"
+                                  title="Khôi phục thông báo về bản nháp"
+                                >
+                                  Khôi phục
+                                </button>
+
+                                <button
+                                  type="button"
+                                  class="action-btn btn-hard-delete"
+                                  data-id={item.id}
+                                  data-action="delete"
+                                  title="Xóa vĩnh viễn không thể phục hồi"
+                                >
+                                  Xóa hẳn
+                                </button>
+                              </>
+                            )}
+                          </div>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
+  </main>
+</SiteLayout>
+
+<style>
+  .admin-main {
+    background-color: #f8fafc;
+    min-height: calc(100vh - 120px);
+    padding: 2rem 1rem 4rem;
+  }
+
+  .admin-container {
+    max-width: 1160px;
+    margin: 0 auto;
+  }
+
+  .manager-top-bar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    margin-bottom: 1.75rem;
+  }
+
+  @media (min-width: 768px) {
+    .manager-top-bar {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+
+  .page-title {
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin-bottom: 0.25rem;
+  }
+
+  .page-subtitle {
+    color: #64748b;
+    font-size: 0.95rem;
+  }
+
+  .top-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    padding: 0.55rem 1rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+
+  .btn-primary {
+    background: #0284c7;
+    color: #ffffff;
+  }
+  .btn-primary:hover {
+    background: #0369a1;
+  }
+
+  .btn-outline {
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    color: #334155;
+  }
+  .btn-outline:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+  }
+
+  .btn-sm {
+    padding: 0.4rem 0.75rem;
+    font-size: 0.825rem;
+  }
+
+  /* Filter toolbar */
+  .filter-toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .filter-toolbar {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+
+  .tabs-group {
+    display: flex;
+    gap: 0.35rem;
+    overflow-x: auto;
+    padding-bottom: 4px;
+  }
+
+  .tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.45rem 0.85rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: #64748b;
+    text-decoration: none;
+    border-radius: 9999px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    white-space: nowrap;
+    transition: all 0.15s;
+  }
+
+  .tab-btn:hover {
+    color: #0f172a;
+    border-color: #cbd5e1;
+  }
+
+  .tab-btn.active {
+    background: #0f172a;
+    color: #ffffff;
+    border-color: #0f172a;
+  }
+
+  .tab-count {
+    display: inline-block;
+    padding: 0.1rem 0.45rem;
+    font-size: 0.75rem;
+    border-radius: 9999px;
+    background: rgba(0, 0, 0, 0.08);
+  }
+
+  .tab-btn.active .tab-count {
+    background: rgba(255, 255, 255, 0.2);
+  }
+
+  .search-form {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .search-input-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 0.75rem;
+    color: #94a3b8;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.45rem 2rem 0.45rem 2.25rem;
+    font-size: 0.875rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    background: #ffffff;
+    outline: none;
+  }
+
+  .search-input:focus {
+    border-color: #0284c7;
+    box-shadow: 0 0 0 2px rgba(2, 132, 199, 0.15);
+  }
+
+  .search-clear {
+    position: absolute;
+    right: 0.75rem;
+    color: #94a3b8;
+    text-decoration: none;
+    font-weight: 700;
+  }
+
+  /* Table Card */
+  .table-card {
+    background: #ffffff;
+    border-radius: 0.75rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.03);
+    overflow: hidden;
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+  }
+
+  .announcements-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    text-align: left;
+  }
+
+  .announcements-table th {
+    background: #f8fafc;
+    padding: 0.75rem 1rem;
+    font-weight: 700;
+    color: #475569;
+    border-bottom: 1px solid #e2e8f0;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  .announcements-table td {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #f1f5f9;
+    vertical-align: middle;
+  }
+
+  .row-item:hover {
+    background-color: #f8fafc;
+  }
+
+  .is-pinned-row {
+    background-color: #fffdf5;
+  }
+
+  .btn-pin {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.25rem;
+    color: #94a3b8;
+    border-radius: 4px;
+    transition: transform 0.15s;
+  }
+  .btn-pin:hover {
+    transform: scale(1.15);
+  }
+
+  .item-title-link {
+    font-weight: 700;
+    color: #0f172a;
+    text-decoration: none;
+    font-size: 0.925rem;
+    line-height: 1.35;
+    display: inline-block;
+  }
+
+  .item-title-link:hover {
+    color: #0284c7;
+    text-decoration: underline;
+  }
+
+  .item-slug {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-top: 0.25rem;
+  }
+
+  .item-slug code {
+    font-size: 0.75rem;
+    color: #64748b;
+    background: #f1f5f9;
+    padding: 0.1rem 0.35rem;
+    border-radius: 4px;
+  }
+
+  .badge-tag {
+    font-size: 0.7rem;
+    color: #0369a1;
+    background: #e0f2fe;
+    padding: 0.1rem 0.4rem;
+    border-radius: 4px;
+    font-weight: 600;
+  }
+
+  .badge-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.6rem;
+    border-radius: 9999px;
+    font-size: 0.775rem;
+    font-weight: 700;
+  }
+
+  .status-published {
+    background: #ecfdf5;
+    color: #065f46;
+  }
+  .status-draft {
+    background: #fffbeb;
+    color: #92400e;
+  }
+  .status-deleted {
+    background: #fef2f2;
+    color: #991b1b;
+  }
+
+  .date-text {
+    font-size: 0.825rem;
+    color: #64748b;
+  }
+
+  .actions-cell {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 0.35rem;
+  }
+
+  .action-btn {
+    padding: 0.3rem 0.55rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 4px;
+    border: 1px solid #cbd5e1;
+    background: #ffffff;
+    color: #334155;
+    cursor: pointer;
+    text-decoration: none;
+    transition: all 0.15s;
+  }
+
+  .action-btn:hover {
+    background: #f1f5f9;
+    border-color: #94a3b8;
+  }
+
+  .btn-trash {
+    color: #dc2626;
+    border-color: #fecaca;
+  }
+  .btn-trash:hover {
+    background: #fef2f2;
+    border-color: #f87171;
+  }
+
+  .btn-restore {
+    color: #059669;
+    border-color: #a7f3d0;
+  }
+  .btn-restore:hover {
+    background: #ecfdf5;
+  }
+
+  .btn-hard-delete {
+    color: #ffffff;
+    background: #dc2626;
+    border-color: #dc2626;
+  }
+  .btn-hard-delete:hover {
+    background: #b91c1c;
+  }
+
+  .text-right { text-align: right; }
+  .text-center { text-align: center; }
+  .mt-3 { margin-top: 0.75rem; }
+
+  /* Empty state */
+  .empty-state {
+    text-align: center;
+    padding: 3.5rem 1rem;
+  }
+
+  .empty-icon {
+    color: #cbd5e1;
+    margin-bottom: 0.75rem;
+  }
+
+  .empty-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 0.35rem;
+  }
+
+  .empty-text {
+    color: #64748b;
+    font-size: 0.9rem;
+  }
+</style>
+
+<script>
+  // Pin toggling
+  document.querySelectorAll('.btn-pin').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const id = btn.getAttribute('data-id');
+      if (!id) return;
+      try {
+        const res = await fetch('/api/news/status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, action: 'toggle-pin' })
+        });
+        const data = await res.json();
+        if (data.success) {
+          window.location.reload();
+        } else {
+          alert(data.error || 'Lỗi ghim bài');
+        }
+      } catch {
+        alert('Lỗi kết nối máy chủ');
+      }
+    });
+  });
+
+  // Action buttons (publish, unpublish, trash, restore, delete)
+  document.querySelectorAll('.btn-status-toggle, .btn-trash, .btn-restore, .btn-hard-delete').forEach((btn) => {
+    btn.addEventListener('click', async () => {
+      const id = btn.getAttribute('data-id');
+      const action = btn.getAttribute('data-action');
+      if (!id || !action) return;
+
+      if (action === 'delete') {
+        if (!confirm('HÀNH ĐỘNG NÀY KHÔNG THỂ PHỤC HỒI!\nBạn có chắc chắn muốn xóa vĩnh viễn thông báo này không?')) {
+          return;
+        }
+      } else if (action === 'trash') {
+        if (!confirm('Bạn có chắc muốn chuyển thông báo này vào thùng rác?')) {
+          return;
+        }
+      }
+
+      try {
+        const res = await fetch('/api/news/status', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ id, action })
+        });
+        const data = await res.json();
+        if (data.success) {
+          window.location.reload();
+        } else {
+          alert('Lỗi: ' + (data.error || 'Không thể thực hiện'));
+        }
+      } catch {
+        alert('Lỗi kết nối');
+      }
+    });
+  });
+
+  // Restore from JSON file
+  const btnImport = document.getElementById('btnImportBackup');
+  const fileInput = document.getElementById('backupFileInput') as HTMLInputElement | null;
+
+  if (btnImport && fileInput) {
+    btnImport.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', async () => {
+      const file = fileInput.files?.[0];
+      if (!file) return;
+
+      if (!confirm(`Bạn có chắc muốn khôi phục dữ liệu từ tệp "${file.name}"? Dữ liệu mới sẽ được ghi đè/bổ sung vào hệ thống.`)) {
+        fileInput.value = '';
+        return;
+      }
+
+      try {
+        const text = await file.text();
+        const json = JSON.parse(text);
+
+        const res = await fetch('/api/news/backup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(json)
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          alert(data.message || 'Khôi phục thành công!');
+          window.location.reload();
+        } else {
+          alert('Lỗi khôi phục: ' + (data.error || 'Dữ liệu không hợp lệ'));
+        }
+      } catch (err: any) {
+        alert('Lỗi đọc tệp sao lưu: ' + err.message);
+      } finally {
+        fileInput.value = '';
+      }
+    });
+  }
+</script>
+

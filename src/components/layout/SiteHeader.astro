@@ -1,0 +1,437 @@
+---
+import { ROUTES } from '@/lib/routes';
+import { mainNavigation, headerCTA } from '@/content/navigation';
+import { companyInfo } from '@/content/company';
+
+interface Props {
+  currentPath?: string;
+}
+
+const { currentPath = '/' } = Astro.props;
+---
+
+<header class="site-header">
+  <div class="container header-inner">
+    <!-- Brand Logo -->
+    <a href={ROUTES.HOME} class="brand-logo" aria-label={`${companyInfo.shortName} - Trang chủ`}>
+      <img
+        src="/images/logo-nam-han.webp"
+        alt="Nam Hân Logistics Logo"
+        width="81"
+        height="44"
+        class="header-logo-img"
+      />
+    </a>
+
+    <!-- Mobile Menu Toggle Button (Touch Target >= 44x44px) -->
+    <button
+      type="button"
+      id="mobile-menu-toggle"
+      class="mobile-toggle"
+      aria-expanded="false"
+      aria-controls="primary-navigation"
+      aria-label="Mở menu điều hướng"
+    >
+      <span class="hamburger-box" aria-hidden="true">
+        <span class="hamburger-inner"></span>
+      </span>
+      <span class="sr-only">Menu</span>
+    </button>
+
+    <!-- Navigation Menu (Desktop & Mobile Drawer) -->
+    <nav id="primary-navigation" class="site-nav" aria-label="Điều hướng chính">
+      <ul class="nav-list">
+        {mainNavigation.map((item) => (
+          <li class={`nav-item ${item.children ? 'has-dropdown' : ''}`}>
+            <a
+              href={item.href}
+              class={`nav-link ${currentPath === item.href ? 'active' : ''}`}
+              aria-current={currentPath === item.href ? 'page' : undefined}
+            >
+              {item.label}
+              {item.children && (
+                <svg class="dropdown-chevron" width="12" height="12" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              )}
+            </a>
+            {item.children && (
+              <ul class="dropdown-menu">
+                {item.children.map((sub) => (
+                  <li>
+                    <a
+                      href={sub.href}
+                      class={`dropdown-link ${currentPath === sub.href ? 'active' : ''}`}
+                      aria-current={currentPath === sub.href ? 'page' : undefined}
+                    >
+                      {sub.label}
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ul>
+
+      <!-- Header CTA in Nav -->
+      <div class="nav-cta-wrap">
+        <a href={headerCTA.href} class="btn-header-cta">
+          <span>{headerCTA.label}</span>
+          <span class="cta-arrow" aria-hidden="true">&rarr;</span>
+        </a>
+      </div>
+    </nav>
+  </div>
+</header>
+
+<script>
+  // Progressive enhancement for mobile menu drawer
+  const toggleBtn = document.getElementById('mobile-menu-toggle');
+  const navMenu = document.getElementById('primary-navigation');
+
+  if (toggleBtn && navMenu) {
+    const toggleMenu = () => {
+      const isExpanded = toggleBtn.getAttribute('aria-expanded') === 'true';
+      toggleBtn.setAttribute('aria-expanded', String(!isExpanded));
+      toggleBtn.setAttribute('aria-label', isExpanded ? 'Mở menu điều hướng' : 'Đóng menu điều hướng');
+      navMenu.classList.toggle('is-open', !isExpanded);
+      document.body.classList.toggle('menu-open', !isExpanded);
+    };
+
+    toggleBtn.addEventListener('click', toggleMenu);
+
+    // Close on Escape key
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && navMenu.classList.contains('is-open')) {
+        toggleMenu();
+        toggleBtn.focus();
+      }
+    });
+
+    // Close when clicking nav links on mobile
+    const links = navMenu.querySelectorAll('a');
+    links.forEach((link) => {
+      link.addEventListener('click', () => {
+        if (navMenu.classList.contains('is-open')) {
+          toggleMenu();
+        }
+      });
+    });
+  }
+</script>
+
+<style>
+  .site-header {
+    background-color: var(--color-bg-page);
+    border-bottom: 1px solid var(--color-border);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 4.5rem;
+  }
+
+  /* Brand Logo */
+  .brand-logo {
+    display: flex;
+    align-items: center;
+    min-height: var(--touch-target-min);
+  }
+
+  .header-logo-img {
+    height: 40px;
+    width: auto;
+    object-fit: contain;
+    display: block;
+  }
+
+  .logo-mark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    background-color: var(--color-brand-navy);
+    color: var(--color-text-inverse);
+    font-weight: 800;
+    font-size: 1.125rem;
+    border-radius: var(--radius-sm);
+    letter-spacing: -0.02em;
+  }
+
+  .logo-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.1;
+  }
+
+  .logo-title {
+    font-size: 1.125rem;
+    font-weight: 800;
+    color: var(--color-brand-navy);
+    letter-spacing: -0.01em;
+  }
+
+  .logo-sub {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    color: var(--color-brand-orange);
+    letter-spacing: 0.12em;
+  }
+
+  /* Mobile Toggle Button */
+  .mobile-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: var(--touch-target-min);
+    height: var(--touch-target-min);
+    background: transparent;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+  }
+
+  .hamburger-box {
+    width: 1.25rem;
+    height: 0.875rem;
+    position: relative;
+    display: block;
+  }
+
+  .hamburger-inner,
+  .hamburger-inner::before,
+  .hamburger-inner::after {
+    width: 100%;
+    height: 2px;
+    background-color: var(--color-brand-navy);
+    position: absolute;
+    transition: transform var(--transition-fast);
+  }
+
+  .hamburger-inner {
+    top: 50%;
+    transform: translateY(-50%);
+  }
+
+  .hamburger-inner::before {
+    content: '';
+    top: -6px;
+  }
+
+  .hamburger-inner::after {
+    content: '';
+    bottom: -6px;
+  }
+
+  /* Mobile Navigation Drawer Default (max-width: 1023px) */
+  @media (max-width: 1023px) {
+    .site-nav {
+      position: fixed;
+      top: 4.5rem;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-color: var(--color-bg-page);
+      display: none;
+      flex-direction: column;
+      padding: 1.5rem var(--page-gutter);
+      overflow-y: auto;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .site-nav.is-open {
+      display: flex;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: var(--touch-target-min);
+      padding: 0.5rem 0;
+      font-size: 1.125rem;
+      font-weight: 600;
+      color: var(--color-brand-navy);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .nav-link.active {
+      color: var(--color-brand-orange);
+    }
+
+    .dropdown-menu {
+      list-style: none;
+      padding-left: 1rem;
+      margin-top: 0.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+    }
+
+    .dropdown-link {
+      display: block;
+      min-height: var(--touch-target-min);
+      padding: 0.5rem 0;
+      font-size: 0.9375rem;
+      color: var(--color-text-secondary);
+    }
+
+    .dropdown-link.active {
+      color: var(--color-brand-orange);
+      font-weight: 600;
+    }
+
+    .nav-cta-wrap {
+      margin-top: 1.5rem;
+    }
+
+    .btn-header-cta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.375rem;
+      width: 100%;
+      min-height: var(--touch-target-min);
+      background-color: var(--color-brand-orange);
+      color: var(--color-text-inverse);
+      font-weight: 600;
+      border-radius: var(--radius-full);
+      padding: 0.75rem 1.5rem;
+    }
+  }
+
+  /* Desktop Navigation (min-width: 1024px) */
+  @media (min-width: 1024px) {
+    .mobile-toggle {
+      display: none;
+    }
+
+    .site-nav {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+    }
+
+    .nav-list {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      gap: 1.75rem;
+    }
+
+    .nav-item {
+      position: relative;
+    }
+
+    .nav-link {
+      display: inline-flex;
+      align-items: center;
+      position: relative;
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: var(--color-brand-navy);
+      padding: 0.5rem 0;
+      transition: color var(--transition-fast);
+    }
+
+    .nav-link:hover {
+      color: #0070ba;
+    }
+
+    .nav-link.active {
+      color: #0070ba;
+      font-weight: 600;
+    }
+
+    .nav-link.active::after {
+      content: '';
+      position: absolute;
+      bottom: -6px;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background-color: #0070ba;
+      border-radius: 2px;
+    }
+
+    .dropdown-chevron {
+      display: none;
+    }
+
+    /* Desktop dropdown */
+    .dropdown-menu {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      min-width: 15rem;
+      background-color: var(--color-bg-page);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      list-style: none;
+      padding: 0.5rem;
+      display: none;
+      flex-direction: column;
+      gap: 0.25rem;
+      z-index: 10;
+    }
+
+    .nav-item:hover .dropdown-menu,
+    .nav-item:focus-within .dropdown-menu {
+      display: flex;
+    }
+
+    .dropdown-link {
+      display: block;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+      color: var(--color-text-secondary);
+      border-radius: var(--radius-sm);
+      transition: all var(--transition-fast);
+    }
+
+    .dropdown-link:hover,
+    .dropdown-link.active {
+      background-color: var(--color-bg-muted);
+      color: #0070ba;
+      font-weight: 500;
+    }
+
+    .btn-header-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.375rem;
+      min-height: 2.625rem;
+      background-color: var(--color-brand-orange);
+      color: var(--color-text-inverse);
+      font-size: 0.875rem;
+      font-weight: 600;
+      padding: 0.5625rem 1.375rem;
+      border-radius: var(--radius-full);
+      transition: background-color var(--transition-fast), transform var(--transition-fast);
+      box-shadow: 0 2px 8px rgba(249, 80, 22, 0.25);
+      white-space: nowrap;
+    }
+
+    .btn-header-cta:hover {
+      background-color: var(--color-brand-orange-hover);
+      color: var(--color-text-inverse);
+      transform: translateY(-1px);
+    }
+  }
+</style>

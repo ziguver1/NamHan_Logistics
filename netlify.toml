@@ -1,0 +1,5 @@
+# Netlify configuration for Astro STATIC output
+# Static build: publish dist, no SSR adapter
+[build]
+  command = "npm run build"
+  publish = "dist"

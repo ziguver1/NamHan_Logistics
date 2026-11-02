@@ -1,0 +1,43 @@
+---
+import SiteLayout from '@/layouts/SiteLayout.astro';
+import ServiceModuleSwitcher from '@/components/services/ServiceModuleSwitcher.astro';
+import LogisticsHero from '@/components/services/logistics/LogisticsHero.astro';
+import LogisticsIntro from '@/components/services/logistics/LogisticsIntro.astro';
+import LogisticsActivities from '@/components/services/logistics/LogisticsActivities.astro';
+import LogisticsProcess from '@/components/services/logistics/LogisticsProcess.astro';
+import LogisticsValues from '@/components/services/logistics/LogisticsValues.astro';
+import LogisticsRouteInquiry from '@/components/services/logistics/LogisticsRouteInquiry.astro';
+import LogisticsCta from '@/components/services/logistics/LogisticsCta.astro';
+import { ROUTES } from '@/lib/routes';
+import { companyInfo } from '@/content/company';
+---
+
+<SiteLayout
+  title={`Logistics & Giao nhận — ${companyInfo.shortName}`}
+  description="Dịch vụ Logistics & Giao nhận toàn diện của Nam Hân: Điều phối vận tải, giao nhận Door-to-Door, gom hàng lẻ LTL, độ chính xác lịch trình 99.4%, phản hồi dưới 15 phút."
+  canonicalPath={ROUTES.SERVICE_LOGISTICS}
+>
+  <!-- Service Module Quick Switcher -->
+  <ServiceModuleSwitcher currentRoute={ROUTES.SERVICE_LOGISTICS} />
+
+  <!-- 1. Hero Banner with Stats Strip (Node 84:1738) -->
+  <LogisticsHero />
+
+  <!-- 2. Intro & Warehouse Distribution Hub (Node 84:1806) -->
+  <LogisticsIntro />
+
+  <!-- 3. Four Core Operational Activities (Node 84:1864) -->
+  <LogisticsActivities />
+
+  <!-- 4. Four-step Seamless Process (Node 84:1953) -->
+  <LogisticsProcess />
+
+  <!-- 5. Customer Cooperation Value (Node 84:2028) -->
+  <LogisticsValues />
+
+  <!-- 6. Route Inquiry Strip (Node 84:2074 - Lead Point 3) -->
+  <LogisticsRouteInquiry />
+
+  <!-- 7. Bottom Dispatch Call To Action (Node 84:2113) -->
+  <LogisticsCta />
+</SiteLayout>
