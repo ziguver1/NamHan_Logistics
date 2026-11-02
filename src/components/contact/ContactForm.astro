@@ -193,6 +193,27 @@ import { companyInfo } from '@/content/company';
       </div>
     </div>
 
+    <!-- Field: Ghi chú thêm (Notes - Tùy chọn) -->
+    <div class="form-group">
+      <label for="contactNotes" class="form-label">Ghi chú thêm (nếu có)</label>
+      <div class="textarea-with-icon">
+        <span class="textarea-icon" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+        </span>
+        <textarea
+          id="contactNotes"
+          name="notes"
+          class="form-textarea form-textarea-sm"
+          rows="2"
+          placeholder="Yêu cầu bốc xếp, lưu ý đặc biệt về hàng hóa, thời gian giao nhận mong muốn..."
+        ></textarea>
+      </div>
+      <span class="field-error" id="contactNotesError" aria-live="polite"></span>
+    </div>
+
     <!-- Voice Input UI Banner (Node 101:1937) -->
     <div class="voice-input-banner" id="voiceBannerContainer">
       <button
@@ -262,7 +283,7 @@ import { companyInfo } from '@/content/company';
     border-radius: var(--radius-xl, 20px);
     border: 1px solid #eef2f6;
     box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
-    padding: clamp(1.5rem, 3.5vw, 2.25rem);
+    padding: clamp(1rem, 3.5vw, 2.25rem);
     height: 100%;
     display: flex;
     flex-direction: column;
@@ -456,6 +477,10 @@ import { companyInfo } from '@/content/company';
     transition: border-color var(--transition-fast, 150ms ease), box-shadow var(--transition-fast, 150ms ease);
   }
 
+  .form-textarea-sm {
+    min-height: 64px;
+  }
+
   .form-textarea::placeholder {
     color: #94a3b8;
     font-size: 0.84375rem;
@@ -552,6 +577,7 @@ import { companyInfo } from '@/content/company';
 
   .voice-text-content {
     flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     gap: 0.125rem;
@@ -724,6 +750,7 @@ import { companyInfo } from '@/content/company';
     const cargoDescription = document.getElementById('cargoDescription') as HTMLTextAreaElement | null;
     const cargoWeight = document.getElementById('cargoWeight') as HTMLInputElement | null;
     const contactPhone = document.getElementById('contactPhone') as HTMLInputElement | null;
+    const contactNotes = document.getElementById('contactNotes') as HTMLTextAreaElement | null;
     const statusBanner = document.getElementById('contactFormStatus');
     const statusTitle = document.getElementById('statusTitle');
     const statusMessage = document.getElementById('statusMessage');
@@ -781,7 +808,7 @@ import { companyInfo } from '@/content/company';
     }
 
     // Clear validation error on input
-    [clientName, pickupLocation, deliveryLocation, cargoDescription, contactPhone].forEach((field) => {
+    [clientName, pickupLocation, deliveryLocation, cargoDescription, cargoWeight, contactPhone, contactNotes].forEach((field) => {
       field?.addEventListener('input', () => {
         field.classList.remove('is-invalid');
         field.removeAttribute('aria-invalid');
@@ -807,6 +834,7 @@ import { companyInfo } from '@/content/company';
       const activeRadio = form.querySelector<HTMLInputElement>('input[name="customerType"]:checked');
       const customerType = activeRadio?.value || 'business';
       const currentRequestId = ensureRequestId();
+      const notesEl = document.getElementById('contactNotes') as HTMLTextAreaElement | null;
 
       const payload = {
         requestId: currentRequestId,
@@ -817,6 +845,7 @@ import { companyInfo } from '@/content/company';
         cargoDescription: cargoDescription?.value.trim() || '',
         cargoWeight: cargoWeight?.value.trim() || '',
         contactPhone: contactPhone?.value.trim() || '',
+        notes: notesEl?.value.trim() || '',
         sourceUrl: '/lien-he/',
         company_tax_id_bypass: (document.getElementById('company_tax_id_bypass') as HTMLInputElement)?.value || ''
       };

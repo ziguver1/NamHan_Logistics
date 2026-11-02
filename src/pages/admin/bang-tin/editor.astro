@@ -23,6 +23,8 @@ const isEditing = Boolean(article);
 <SiteLayout
   title={isEditing ? `Sửa: ${article?.title} | Admin Nam Hân` : 'Tạo thông báo mới | Admin Nam Hân'}
   description="Trình biên tập thông báo, bảng tin điều hành Nam Hân Logistics."
+  hidePublicNav={true}
+  noindex={true}
 >
   {isAdmin && <AdminHeader activeTab="news" />}
 

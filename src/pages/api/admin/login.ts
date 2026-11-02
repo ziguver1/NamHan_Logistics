@@ -17,7 +17,18 @@ export const POST: APIRoute = async ({ request, url }) => {
     }
 
     const expectedPassword = getAdminPassword();
-    if (!password || password !== expectedPassword) {
+    const cleanInput = typeof password === 'string' ? password.trim() : '';
+    const unquotedInput = cleanInput.replace(/^["']|["']$/g, '').trim();
+    const unquotedExpected = expectedPassword.replace(/^["']|["']$/g, '').trim();
+
+    const isMatch =
+      Boolean(cleanInput) &&
+      (cleanInput === expectedPassword ||
+        unquotedInput === unquotedExpected ||
+        cleanInput === unquotedExpected ||
+        unquotedInput === expectedPassword);
+
+    if (!isMatch) {
       return new Response(
         JSON.stringify({ success: false, error: 'Mật khẩu quản trị không chính xác.' }),
         {

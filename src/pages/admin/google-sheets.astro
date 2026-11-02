@@ -2,13 +2,15 @@
 /**
  * Admin Panel for Google Sheets Form Reception Management
  * SSR route: Protected by administrative session.
+ * Dedicated channel: Google Apps Script Web App
  */
 import SiteLayout from '@/layouts/SiteLayout.astro';
 import AdminHeader from '@/components/admin/AdminHeader.astro';
 import AdminLoginForm from '@/components/admin/AdminLoginForm.astro';
 import { isAuthenticatedAdmin } from '@/lib/server/admin-auth';
 import { getConfig } from '@/lib/server/storage';
-import { isGoogleConfigured, getGoogleClientId } from '@/lib/server/google-client';
+import fs from 'node:fs/promises';
+import path from 'node:path';
 
 export const prerender = false;
 
@@ -17,21 +19,37 @@ const isAdmin = await isAuthenticatedAdmin(request);
 const url = new URL(request.url);
 
 const successParam = url.searchParams.get('success');
-const noticeParam = url.searchParams.get('notice');
 const errorParam = url.searchParams.get('error');
 
 const config = isAdmin ? await getConfig() : null;
-const googleConfigured = isGoogleConfigured();
-const clientId = getGoogleClientId();
-const redirectUri = `${url.origin}/api/auth/google/callback`;
+const appsConn = config?.appsScriptConnection;
+const isConnected = appsConn?.status === 'active';
 
-const activeConn = config?.activeConnection;
-const pendingConn = config?.pendingConnection;
+// Pre-load Apps Script source files so they render instantly into the in-browser code editor
+let initialCodeGs = '';
+let initialAppsscriptJson = '';
+
+if (isAdmin) {
+  try {
+    const codePath = path.resolve('./integrations/google-apps-script/Code.gs');
+    const jsonPath = path.resolve('./integrations/google-apps-script/appsscript.json');
+    const [c, m] = await Promise.all([
+      fs.readFile(codePath, 'utf8').catch(() => ''),
+      fs.readFile(jsonPath, 'utf8').catch(() => '')
+    ]);
+    initialCodeGs = c;
+    initialAppsscriptJson = m;
+  } catch (err) {
+    console.error('[Admin Apps Script] Error reading script files:', err);
+  }
+}
 ---
 
 <SiteLayout
   title="Quản trị kết nối Google Sheets | Nam Hân Logistics"
   description="Trang cấu hình kết nối Google Sheets nhận dữ liệu form liên hệ tự động cho Nam Hân Logistics."
+  hidePublicNav={true}
+  noindex={true}
 >
   {isAdmin && <AdminHeader activeTab="google-sheets" />}
 
@@ -48,38 +66,26 @@ const pendingConn = config?.pendingConnection;
             <div class="admin-badge">HỆ THỐNG NỘI BỘ</div>
             <h1 class="admin-title">Cấu hình tiếp nhận Google Sheets</h1>
             <p class="admin-desc">
-              Quản lý luồng tiếp nhận yêu cầu báo giá vận chuyển và tự động ghi vào bảng tính Google Sheets.
+              Tự động lưu yêu cầu vận chuyển từ biểu mẫu website vào Google Sheets qua Google Apps Script Web App.
             </p>
           </header>
+
           {/* Notifications */}
           {successParam && (
             <div class="alert alert-success" role="alert">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
                 <polyline points="22 4 12 14.01 9 11.01"/>
               </svg>
               <div>
-                <strong>Kết nối thành công!</strong> Bảng tính "Khách hàng Nam Hân" đã được tạo trong Google Drive của bạn và sẵn sàng tiếp nhận yêu cầu.
-              </div>
-            </div>
-          )}
-
-          {noticeParam === 'account_pending_confirm' && (
-            <div class="alert alert-warning" role="alert">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"/>
-                <line x1="12" y1="8" x2="12" y2="12"/>
-                <line x1="12" y1="16" x2="12.01" y2="16"/>
-              </svg>
-              <div>
-                <strong>Tài khoản mới đã cấp quyền và tạo bảng thành công!</strong> Kết nối cũ vẫn đang hoạt động. Vui lòng bấm "Xác nhận chuyển sang tài khoản này" ở khung bên dưới để chính thức đổi nơi nhận.
+                <strong>Thao tác thành công!</strong> Cấu hình tiếp nhận Google Sheets đã được cập nhật an toàn.
               </div>
             </div>
           )}
 
           {errorParam && (
             <div class="alert alert-danger" role="alert">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <circle cx="12" cy="12" r="10"/>
                 <line x1="15" y1="9" x2="9" y2="15"/>
                 <line x1="9" y1="9" x2="15" y2="15"/>
@@ -90,197 +96,520 @@ const pendingConn = config?.pendingConnection;
             </div>
           )}
 
-          {/* Pending Account Switch Stage */}
-          {pendingConn && (
-            <section class="card card-pending" aria-labelledby="pending-heading">
-              <div class="card-badge-pending">CHỜ XÁC NHẬN CHUYỂN ĐỔI</div>
-              <h2 id="pending-heading" class="card-title">Tài khoản Google mới đã sẵn sàng</h2>
-              <p class="card-desc">
-                Bạn đã cấp quyền thành công cho tài khoản Google mới và hệ thống đã tạo sẵn bảng tính. Bảng cũ vẫn đang ghi dữ liệu bình thường cho đến khi bạn xác nhận chuyển.
+          {/* Current Active Channel Status Banner */}
+          <div class={`active-channel-banner ${isConnected ? 'banner-active' : 'banner-warning'}`}>
+            <div class="banner-icon">
+              {isConnected ? (
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+                  <polyline points="22 4 12 14.01 9 11.01"/>
+                </svg>
+              ) : (
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <line x1="12" y1="8" x2="12" y2="12"/>
+                  <line x1="12" y1="16" x2="12.01" y2="16"/>
+                </svg>
+              )}
+            </div>
+            <div class="banner-content">
+              <div class="banner-title">
+                {isConnected
+                  ? '🟢 Kênh đang nhận dữ liệu: Google Apps Script Web App (Đang hoạt động)'
+                  : '⚪ Kênh tiếp nhận Google Sheets chưa được kết nối'}
+              </div>
+              <p class="banner-desc">
+                {isConnected
+                  ? 'Mỗi lượt gửi từ form website sẽ được gửi bảo mật qua Web App và tự động ghi thẳng vào bảng tính Google Sheets theo thời gian thực (chống trùng lặp, chống formula injection).'
+                  : 'Vui lòng làm theo hướng dẫn từng bước bên dưới để tạo bảng tính, dán mã kịch bản và kết nối URL Web App.'}
               </p>
+            </div>
+          </div>
 
-              <div class="connection-details">
-                <div class="detail-row">
-                  <span class="detail-label">Tài khoản mới:</span>
-                  <strong class="detail-value text-primary">{pendingConn.accountEmail}</strong>
+          {/* Section 1: Active Connection Status Card (If configured) */}
+          {isConnected && appsConn && (
+            <section class="card mb-4" aria-labelledby="apps-status-heading">
+              <div class="card-header-flex">
+                <div>
+                  <h2 id="apps-status-heading" class="card-title">Trạng thái kết nối Google Sheets hiện tại</h2>
+                  <p class="card-subtitle">Kịch bản Web App tiếp nhận dữ liệu và tự động ghi vào trang tính.</p>
                 </div>
-                <div class="detail-row">
-                  <span class="detail-label">Tên bảng tính mới:</span>
-                  <span class="detail-value">{pendingConn.sheetTitle}</span>
-                </div>
-                <div class="detail-row">
-                  <span class="detail-label">Link bảng tính mới:</span>
-                  <a href={pendingConn.spreadsheetUrl} target="_blank" rel="noopener noreferrer" class="link-external">
-                    <span>Mở Google Sheets</span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                      <polyline points="15 3 21 3 21 9"/>
-                      <line x1="10" y1="14" x2="21" y2="3"/>
-                    </svg>
-                  </a>
+                <div class="badges-group">
+                  <span class="badge badge-active">🟢 Đang nhận form</span>
                 </div>
               </div>
 
-              <div class="action-buttons-group">
-                <button type="button" id="btnConfirmSwitch" class="btn btn-success">
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="20 6 9 17 4 12"/>
+              <div class="connection-details">
+                <div class="detail-row">
+                  <span class="detail-label">Tên bảng tính:</span>
+                  <strong class="detail-value">{appsConn.sheetTitle || 'Khách hàng Nam Hân'}</strong>
+                </div>
+
+                <div class="detail-row">
+                  <span class="detail-label">URL Web App:</span>
+                  <code class="detail-code text-truncate">{appsConn.webAppUrl}</code>
+                </div>
+
+                <div class="detail-row">
+                  <span class="detail-label">Khóa kết nối:</span>
+                  <span class="detail-value text-muted">•••••••••••••••• (Đã mã hóa AES-256 an toàn)</span>
+                </div>
+
+                <div class="detail-row">
+                  <span class="detail-label">Thời gian kết nối:</span>
+                  <span class="detail-value">{new Date(appsConn.connectedAt).toLocaleString('vi-VN')}</span>
+                </div>
+
+                {appsConn.sheetUrl && (
+                  <div class="detail-row">
+                    <span class="detail-label">Mở Google Sheets:</span>
+                    <a href={appsConn.sheetUrl} target="_blank" rel="noopener noreferrer" class="link-external">
+                      <span>Mở trực tiếp bảng tính</span>
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                        <polyline points="15 3 21 3 21 9"/>
+                        <line x1="10" y1="14" x2="21" y2="3"/>
+                      </svg>
+                    </a>
+                  </div>
+                )}
+              </div>
+
+              <div class="action-buttons-group mt-3 pt-3 border-top">
+                <button type="button" id="btnRetestAppsScript" class="btn btn-outline">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
                   </svg>
-                  <span>Xác nhận chuyển sang tài khoản này</span>
-                </button>
-                <button type="button" id="btnCancelSwitch" class="btn btn-secondary">
-                  <span>Hủy bỏ và giữ kết nối cũ</span>
+                  <span>Kiểm tra lại kết nối</span>
                 </button>
               </div>
             </section>
           )}
 
-          {/* Active Connection Status Card */}
-          <section class="card" aria-labelledby="active-heading">
+          {/* Section 2: Setup / Update Form Card */}
+          <section class="card mb-4" aria-labelledby="apps-setup-heading">
+            <h2 id="apps-setup-heading" class="card-title">
+              {isConnected ? 'Cập nhật cấu hình kết nối Web App' : 'Thiết lập kết nối Google Sheets (Apps Script)'}
+            </h2>
+            <p class="card-subtitle">
+              Điền URL Web App và Khóa kết nối bí mật đã được sinh từ menu "Nam Hân" trong Google Sheets.
+            </p>
+
+            {/* Dynamic Alert Box for AJAX Actions */}
+            <div id="appsScriptAlert" class="alert mt-3" style="display: none;" role="alert"></div>
+
+            <form id="appsScriptForm" class="apps-form mt-4">
+              <div class="form-group">
+                <label for="webAppUrl" class="form-label required">URL Ứng dụng Web (Web App URL)</label>
+                <input
+                  type="url"
+                  id="webAppUrl"
+                  name="webAppUrl"
+                  class="form-input"
+                  placeholder="https://script.google.com/macros/s/AKfycb.../exec"
+                  value={appsConn?.webAppUrl || ''}
+                  required
+                />
+                <small class="form-hint">
+                  Lấy từ nút: <strong>Triển khai (Deploy) &rarr; Quản lý bản triển khai &rarr; URL ứng dụng web (kết thúc bằng /exec)</strong>.
+                </small>
+              </div>
+
+              <div class="form-group">
+                <label for="apiKey" class="form-label required">Khóa kết nối bí mật (Connection Key)</label>
+                <div class="password-input-wrap">
+                  <input
+                    type="password"
+                    id="apiKey"
+                    name="apiKey"
+                    class="form-input password-input"
+                    placeholder="nhl_sec_..."
+                    required
+                  />
+                  <button type="button" id="btnToggleApiKey" class="btn-toggle-pw" title="Ẩn/Hiện khóa">
+                    👁️
+                  </button>
+                </div>
+                <small class="form-hint">
+                  Lấy từ bảng tính: Bấm menu <strong>"🚛 Nam Hân" &rarr; "🔑 Kiểm tra cấu hình & Khóa kết nối"</strong> để sao chép.
+                </small>
+              </div>
+
+              <div class="form-group">
+                <label for="sheetUrl" class="form-label">Đường dẫn Google Sheets (Tùy chọn)</label>
+                <input
+                  type="url"
+                  id="sheetUrl"
+                  name="sheetUrl"
+                  class="form-input"
+                  placeholder="https://docs.google.com/spreadsheets/d/.../edit"
+                  value={appsConn?.sheetUrl || ''}
+                />
+                <small class="form-hint">
+                  Dán link bảng tính để thuận tiện mở xem nhanh từ giao diện quản trị này.
+                </small>
+              </div>
+
+              <div class="form-actions mt-4 pt-3 border-top">
+                <button type="button" id="btnTestAppsScript" class="btn btn-outline">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"/>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+                  </svg>
+                  <span>Kiểm tra kết nối</span>
+                </button>
+
+                <button type="button" id="btnSaveAppsScript" class="btn btn-primary">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                    <polyline points="17 21 17 13 7 13 7 21"/>
+                    <polyline points="7 3 7 8 15 8"/>
+                  </svg>
+                  <span>Lưu & Kích hoạt nhận dữ liệu</span>
+                </button>
+              </div>
+            </form>
+          </section>
+
+          {/* Section 3: In-Browser Code Editor & Viewer */}
+          <section class="card mb-4" aria-labelledby="editor-heading">
             <div class="card-header-flex">
               <div>
-                <h2 id="active-heading" class="card-title">Trạng thái kết nối tiếp nhận</h2>
-                <p class="card-subtitle">Bảng tính đang nhận dữ liệu từ biểu mẫu gửi yêu cầu vận chuyển.</p>
-              </div>
-              <div>
-                {activeConn?.status === 'active' ? (
-                  <span class="badge badge-active">🟢 Đang hoạt động</span>
-                ) : activeConn?.status === 'needs_reauth' ? (
-                  <span class="badge badge-warning">🟡 Cần cấp quyền lại</span>
-                ) : (
-                  <span class="badge badge-inactive">⚪ Chưa kết nối</span>
-                )}
+                <div class="tag-badge">TRÌNH CHỈNH SỬA & SAO CHÉP MÃ</div>
+                <h2 id="editor-heading" class="card-title mt-1">Mã kịch bản Google Apps Script</h2>
+                <p class="card-subtitle">
+                  Bạn có thể xem, chỉnh sửa trực tiếp mã nguồn tại đây, bấm lưu để lưu vào website hoặc sao chép 1-click để dán vào Google Sheet.
+                </p>
               </div>
             </div>
 
-            {activeConn ? (
-              <div class="connection-details">
-                <div class="detail-row">
-                  <span class="detail-label">Tài khoản Google:</span>
-                  <strong class="detail-value">{activeConn.accountEmail}</strong>
-                </div>
-                <div class="detail-row">
-                  <span class="detail-label">Tên bảng tính:</span>
-                  <span class="detail-value">{activeConn.sheetTitle}</span>
-                </div>
-                <div class="detail-row">
-                  <span class="detail-label">ID bảng tính:</span>
-                  <code class="detail-code">{activeConn.spreadsheetId}</code>
-                </div>
-                <div class="detail-row">
-                  <span class="detail-label">Thời gian kết nối:</span>
-                  <span class="detail-value">{new Date(activeConn.connectedAt).toLocaleString('vi-VN')}</span>
-                </div>
-                <div class="detail-row">
-                  <span class="detail-label">Link bảng tính trực tiếp:</span>
-                  <a href={activeConn.spreadsheetUrl} target="_blank" rel="noopener noreferrer" class="btn btn-outline btn-sm link-btn">
-                    <span>Mở Google Sheets</span>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
-                      <polyline points="15 3 21 3 21 9"/>
-                      <line x1="10" y1="14" x2="21" y2="3"/>
+            {/* Code action status notice */}
+            <div id="codeAlert" class="alert mt-2" style="display: none;" role="alert"></div>
+
+            <div class="code-editor-wrapper">
+              <div class="code-editor-header">
+                <div class="code-file-tabs">
+                  <button type="button" class="code-tab-btn active" id="tabCodeGs">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                      <polyline points="14 2 14 8 20 8"/>
                     </svg>
-                  </a>
-                </div>
-
-                {activeConn.status === 'needs_reauth' && (
-                  <div class="alert alert-warning mt-4">
-                    <strong>Chú ý:</strong> Quyền truy cập Google đã hết hạn hoặc bị thu hồi ({activeConn.lastError || 'Token expired'}). Vui lòng bấm kết nối lại bên dưới để làm mới quyền truy cập.
-                  </div>
-                )}
-
-                <div class="mt-4 pt-3 border-top">
-                  <a href="/api/auth/google/login" class="btn btn-primary">
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-                      <circle cx="9" cy="7" r="4"/>
-                      <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-                      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
+                    <span>Code.gs (Kịch bản chính)</span>
+                  </button>
+                  <button type="button" class="code-tab-btn" id="tabManifest">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <polyline points="16 18 22 12 16 6"/>
+                      <polyline points="8 6 2 12 8 18"/>
                     </svg>
-                    <span>{activeConn.status === 'needs_reauth' ? 'Cấp quyền lại cho tài khoản' : 'Đổi sang tài khoản Google khác'}</span>
-                  </a>
+                    <span>appsscript.json (Cấu hình)</span>
+                  </button>
                 </div>
-              </div>
-            ) : (
-              <div class="empty-state">
-                <div class="empty-icon">
-                  <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M14.5 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7.5L14.5 2z"/>
-                    <polyline points="14 2 14 8 20 8"/>
-                    <line x1="12" y1="18" x2="12" y2="12"/>
-                    <line x1="9" y1="15" x2="15" y2="15"/>
-                  </svg>
-                </div>
-                <h3 class="empty-title">Chưa có bảng tính nào được kết nối</h3>
-                <p class="empty-desc">
-                  Bấm nút bên dưới để đăng nhập tài khoản Google. Hệ thống sẽ tự động tạo bảng tính "Khách hàng Nam Hân" với đầy đủ 10 cột dữ liệu và kết nối với biểu mẫu website.
-                </p>
 
-                {googleConfigured ? (
-                  <a href="/api/auth/google/login" class="btn btn-primary btn-lg">
-                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                      <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/>
-                      <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/>
+                <div class="code-actions">
+                  <button type="button" class="btn-code-action btn-copy-code" id="btnCopyCode" title="Sao chép toàn bộ mã vào bộ nhớ tạm">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <rect width="14" height="14" x="8" y="8" rx="2" ry="2"/>
+                      <path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h10c1.1 0 2 .9 2 2"/>
                     </svg>
-                    <span>Kết nối Google Sheets ngay</span>
-                  </a>
-                ) : (
-                  <div class="alert alert-warning">
-                    <strong>Chưa hoàn tất cấu hình Google Cloud:</strong> Cần khai báo <code>GOOGLE_CLIENT_ID</code> và <code>GOOGLE_CLIENT_SECRET</code> trong biến môi trường trước khi kết nối. Xem chi tiết tại mục bên dưới.
-                  </div>
-                )}
-              </div>
-            )}
-          </section>
+                    <span id="copyCodeText">Sao chép mã (1 Click)</span>
+                  </button>
 
-          {/* Environment & Google Cloud Setup Guide Card */}
-          <section class="card" aria-labelledby="config-heading">
-            <h2 id="config-heading" class="card-title">Thông tin cấu hình Google Cloud</h2>
-            <p class="card-subtitle">Các thông số kỹ thuật phục vụ khai báo trên Google Cloud Console.</p>
+                  <button type="button" class="btn-code-action btn-save-code" id="btnSaveCode" title="Lưu thay đổi trực tiếp vào hệ thống">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+                      <polyline points="17 21 17 13 7 13 7 21"/>
+                      <polyline points="7 3 7 8 15 8"/>
+                    </svg>
+                    <span id="saveCodeText">Lưu vào hệ thống</span>
+                  </button>
 
-            <div class="config-table">
-              <div class="config-row">
-                <span class="config-key">Redirect URI (Authorized redirect URIs):</span>
-                <div class="copy-box">
-                  <code>{redirectUri}</code>
-                  <button type="button" class="btn-copy" data-copy={redirectUri} aria-label="Sao chép Redirect URI">
-                    Sao chép
+                  <button type="button" class="btn-code-action btn-reload-code" id="btnReloadCode" title="Tải lại mã gốc từ máy chủ">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8"/>
+                      <path d="M21 3v5h-5"/>
+                      <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16"/>
+                      <path d="M8 16H3v5"/>
+                    </svg>
+                    <span>Nạp lại</span>
                   </button>
                 </div>
               </div>
-              <div class="config-row">
-                <span class="config-key">Google Client ID:</span>
-                <span class="config-val">{clientId ? `${clientId.slice(0, 16)}...` : 'Chưa cấu hình'}</span>
+
+              {/* Textareas for editing */}
+              <div class="code-editor-body">
+                <textarea
+                  id="editorCodeGs"
+                  class="code-textarea active"
+                  spellcheck="false"
+                  placeholder="Đang tải mã nguồn Code.gs..."
+                >{initialCodeGs}</textarea>
+
+                <textarea
+                  id="editorManifest"
+                  class="code-textarea"
+                  spellcheck="false"
+                  placeholder="Đang tải tệp appsscript.json..."
+                >{initialAppsscriptJson}</textarea>
               </div>
-              <div class="config-row">
-                <span class="config-key">Google Client Secret:</span>
-                <span class="config-val">{googleConfigured ? '•••••••••••••••• (Đã cấu hình)' : 'Chưa cấu hình'}</span>
+            </div>
+
+            {/* Feature Highlights built into Code.gs */}
+            <div class="code-features-grid mt-3">
+              <div class="feature-pill">
+                <span class="pill-icon">📐</span>
+                <span class="pill-text">Tự động giãn dòng <strong>42px</strong> & căn giữa <em>(vertical-align: middle)</em></span>
               </div>
-              <div class="config-row">
-                <span class="config-key">Phạm vi quyền (OAuth Scopes):</span>
-                <span class="config-val"><code>https://www.googleapis.com/auth/drive.file</code> (Tối thiểu, an toàn)</span>
+              <div class="feature-pill">
+                <span class="pill-icon">0️⃣</span>
+                <span class="pill-text">Khóa dạng chuỗi cho <strong>SĐT & Mã yêu cầu</strong> <em>(giữ nguyên số 0 đầu)</em></span>
+              </div>
+              <div class="feature-pill">
+                <span class="pill-icon">📋</span>
+                <span class="pill-text">Tự tạo dropdown <strong>4 Trạng thái xử lý</strong></span>
+              </div>
+              <div class="feature-pill">
+                <span class="pill-icon">📝</span>
+                <span class="pill-text">Nhận trường <strong>Ghi chú</strong> (Cột 13) từ form liên hệ website</span>
+              </div>
+              <div class="feature-pill">
+                <span class="pill-icon">🛡️</span>
+                <span class="pill-text">Chống trùng lặp dữ liệu bằng <strong>LockService 25 giây</strong></span>
+              </div>
+              <div class="feature-pill">
+                <span class="pill-icon">🛡️</span>
+                <span class="pill-text">Chống chèn mã độc <strong>Formula Injection (=, +, -, @)</strong></span>
               </div>
             </div>
           </section>
 
-          {/* Quick Actions & Handover */}
+          {/* Section 4: Expanded Step-by-Step Master Guide (For Non-Programmers) */}
+          <section class="card mb-4" aria-labelledby="guide-heading">
+            <div class="card-header-flex">
+              <div>
+                <div class="tag-badge tag-guide">HƯỚNG DẪN DỄ HIỂU</div>
+                <h2 id="guide-heading" class="card-title mt-1">Cẩm nang hướng dẫn cài đặt & bàn giao chi tiết</h2>
+                <p class="card-subtitle">
+                  Dành riêng cho người quản trị không cần biết code. Hãy làm theo đúng 7 bước đơn giản bên dưới:
+                </p>
+              </div>
+            </div>
+
+            <div class="steps-flow">
+              {/* Step 1 */}
+              <div class="guide-step-card">
+                <div class="step-badge">BƯỚC 1</div>
+                <div class="step-content">
+                  <h3 class="step-title">Tạo bảng tính Google Sheets mới</h3>
+                  <p class="step-desc">
+                    Truy cập vào <a href="https://sheets.google.com" target="_blank" rel="noopener noreferrer" class="link-inline">Google Sheets (sheets.google.com) ↗</a>, đăng nhập tài khoản Google của công ty hoặc tài khoản của bạn, sau đó bấm <strong>+ Bảng tính trống (Blank)</strong>. Đặt tên file, ví dụ: <code>Khách hàng Nam Hân Logistics</code>.
+                  </p>
+                </div>
+              </div>
+
+              {/* Step 2 */}
+              <div class="guide-step-card">
+                <div class="step-badge">BƯỚC 2</div>
+                <div class="step-content">
+                  <h3 class="step-title">Mở Apps Script & Dán mã nguồn</h3>
+                  <div class="step-desc">
+                    <ol class="step-sublist">
+                      <li>Trên thanh menu trên cùng của Google Sheet, bấm <strong>Tiện ích mở rộng (Extensions)</strong> &rarr; chọn <strong>Apps Script</strong>.</li>
+                      <li>Trong màn hình soạn thảo code mở ra, hãy xóa hết đoạn mã mẫu <code>function myFunction() &#123;&#125;</code> có sẵn.</li>
+                      <li>Quay lại trang này, nhìn lên khung <strong>Mã kịch bản Google Apps Script</strong> ở trên và bấm nút <strong>"📋 Sao chép mã (1 Click)"</strong>.</li>
+                      <li>Dán toàn bộ mã vừa sao chép vào ô soạn thảo của Google Apps Script.</li>
+                      <li>Bấm biểu tượng 💾 <strong>Lưu dự án</strong> (hoặc nhấn phím tắt <code>Ctrl + S</code>).</li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 3 */}
+              <div class="guide-step-card highlight-step">
+                <div class="step-badge badge-danger">BƯỚC 3 (QUAN TRỌNG)</div>
+                <div class="step-content">
+                  <h3 class="step-title">Khởi tạo bảng & Cấp quyền Google</h3>
+                  <div class="step-desc">
+                    <ol class="step-sublist">
+                      <li>Quay lại tab Google Sheet và bấm <strong>Tải lại trang (F5)</strong>.</li>
+                      <li>Bạn sẽ thấy xuất hiện một menu mới có tên là <strong>"🚛 Nam Hân"</strong> nằm cạnh menu Trợ giúp.</li>
+                      <li>Bấm menu <strong>"🚛 Nam Hân" &rarr; chọn "⚙️ Khởi tạo / Kiểm tra cấu hình bảng"</strong>.</li>
+                      <li>Một cửa sổ nhỏ hiện lên thông báo <em>"Cần được cấp quyền" (Authorization Required)</em>. Bấm <strong>Tiếp tục (Continue)</strong> &rarr; Chọn tài khoản Google của bạn.</li>
+                    </ol>
+
+                    <div class="alert alert-callout mt-2">
+                      <div class="callout-header">
+                        <strong>⚠️ HƯỚNG DẪN VƯỢT QUA MÀN HÌNH CẢNH BÁO "Google chưa xác minh ứng dụng này":</strong>
+                      </div>
+                      <p class="callout-text">
+                        Khi Google hiện màn hình cảnh báo có dấu chấm than đỏ <em>"Google chưa xác minh ứng dụng này" (Google hasn't verified this app)</em>: Đừng lo lắng, đây là cảnh báo chuẩn của Google cho code tự viết.
+                      </p>
+                      <ul class="callout-steps">
+                        <li>Bấm vào dòng chữ nhỏ <strong>"Nâng cao" (Advanced)</strong> ở góc dưới bên trái màn hình cảnh báo.</li>
+                        <li>Bấm tiếp vào liên kết <strong>"Đi tới Kịch bản tiếp nhận Nam Hân Logistics (không an toàn)"</strong> / <em>"Go to ... (unsafe)"</em>.</li>
+                        <li>Kéo xuống và bấm nút <strong>"Cho phép" (Allow)</strong>.</li>
+                      </ul>
+                      <p class="callout-sub">
+                        <em>Sau khi cấp quyền xong, Google Sheet sẽ tự động kẻ 13 cột với màu xanh thương hiệu Nam Hân, tự động ghim hàng tiêu đề, tạo bộ lọc, tạo dropdown trạng thái và sinh mã khóa bí mật.</em>
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 4 */}
+              <div class="guide-step-card">
+                <div class="step-badge">BƯỚC 4</div>
+                <div class="step-content">
+                  <h3 class="step-title">Triển khai Web App (Nhận dữ liệu)</h3>
+                  <div class="step-desc">
+                    <ol class="step-sublist">
+                      <li>Quay lại tab Apps Script, nhìn lên góc trên bên phải bấm nút màu xanh <strong>Triển khai (Deploy)</strong> &rarr; chọn <strong>Bản triển khai mới (New deployment)</strong>.</li>
+                      <li>Bấm vào biểu tượng Bánh răng ⚙️ (Chọn loại) &rarr; Chọn <strong>Ứng dụng web (Web app)</strong>.</li>
+                      <li>
+                        Cấu hình chính xác 2 mục bắt buộc sau:
+                        <ul class="sub-bullets">
+                          <li><strong>Thực thi dưới dạng (Execute as):</strong> Chọn <code>Tôi (địa_chỉ_email_của_bạn)</code>.</li>
+                          <li><strong>Ai có quyền truy cập (Who has access):</strong> Chọn <code>Bất kỳ ai (Anyone)</code> <em>(Bắt buộc để máy chủ website có thể gửi dữ liệu vào mà không bị Google chặn).</em></li>
+                        </ul>
+                      </li>
+                      <li>Bấm nút <strong>Triển khai (Deploy)</strong>.</li>
+                      <li>Sao chép đường link ở mục <strong>URL ứng dụng web</strong> (đường link kết thúc bằng chữ <code>/exec</code>).</li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 5 */}
+              <div class="guide-step-card">
+                <div class="step-badge">BƯỚC 5</div>
+                <div class="step-content">
+                  <h3 class="step-title">Lấy Khóa kết nối & Hoàn tất trên website</h3>
+                  <div class="step-desc">
+                    <ol class="step-sublist">
+                      <li>Quay lại tab Google Sheet, bấm menu <strong>"🚛 Nam Hân" &rarr; chọn "🔑 Kiểm tra cấu hình & Khóa kết nối"</strong>.</li>
+                      <li>Một hộp thoại hiện ra, hãy sao chép toàn bộ chuỗi <strong>Khóa kết nối bí mật</strong> (dạng <code>nhl_sec_...</code>).</li>
+                      <li>Quay lại trang quản trị này, dán <strong>URL Web App</strong> (bước 4) và <strong>Khóa kết nối</strong> (bước 5) vào biểu mẫu ở khung phía trên.</li>
+                      <li>Bấm nút <strong>"Kiểm tra kết nối"</strong>. Khi có thông báo màu xanh thành công, hãy bấm <strong>"Lưu & Kích hoạt nhận dữ liệu"</strong>. Hoàn tất!</li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 6 */}
+              <div class="guide-step-card highlight-step">
+                <div class="step-badge badge-warning">BƯỚC 6 (KHI CẬP NHẬT CODE)</div>
+                <div class="step-content">
+                  <h3 class="step-title">Cách cập nhật mã mới cho Google Sheets (Dành cho lần sau)</h3>
+                  <div class="step-desc">
+                    <p>
+                      Khi bạn chỉnh sửa mã nguồn trực tiếp trong ô soạn thảo ở trên (hoặc copy code mới), để Google Sheets thực sự chạy mã mới, <strong>BẮT BUỘC</strong> phải làm theo 4 thao tác sau:
+                    </p>
+                    <ol class="step-sublist">
+                      <li>Bấm <strong>"Lưu vào hệ thống"</strong> trên web & bấm <strong>"📋 Sao chép mã"</strong>.</li>
+                      <li>Vào tab Apps Script, dán đè lên toàn bộ code cũ và bấm Lưu (<code>Ctrl + S</code>).</li>
+                      <li>
+                        Nhìn lên góc trên bên phải, bấm nút <strong>Triển khai (Deploy)</strong> &rarr; Chọn <strong>Quản lý bản triển khai (Manage deployments)</strong>.
+                      </li>
+                      <li>
+                        Bấm vào biểu tượng <strong>Cây bút chì ✏️ (Chỉnh sửa / Edit)</strong> ở góc trên bên phải của bảng triển khai:
+                        <ul class="sub-bullets">
+                          <li>Tại dòng <strong>Phiên bản (Version)</strong>: Bấm vào menu thả xuống và chọn <strong>"Phiên bản mới" (New version)</strong>.</li>
+                          <li>Bấm nút màu xanh <strong>Triển khai (Deploy)</strong> & bấm <strong>Xong (Done)</strong>.</li>
+                        </ul>
+                      </li>
+                    </ol>
+                    <div class="alert alert-tip mt-2">
+                      💡 <strong>Mẹo sống còn:</strong> Nếu không chọn <em>"Phiên bản mới" (New version)</em>, Google sẽ mãi mãi chạy phiên bản code cũ và không áp dụng bất kỳ thay đổi nào mới sửa!
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Step 7 */}
+              <div class="guide-step-card">
+                <div class="step-badge">BƯỚC 7</div>
+                <div class="step-content">
+                  <h3 class="step-title">Tối ưu chiều cao dòng & Làm đẹp bảng bất cứ lúc nào</h3>
+                  <p class="step-desc">
+                    Trong quá trình sử dụng Google Sheet, nếu có dòng nào chữ bị chật hoặc muốn giãn cách dòng 42px thông thoáng và căn giữa thẳng thớm, bạn chỉ cần mở Google Sheet và bấm:
+                    <br />
+                    <strong>Menu "🚛 Nam Hân" &rarr; "✨ Tối ưu chiều cao & Làm đẹp bảng"</strong>. Bảng tính sẽ tự động làm mới giao diện ngay lập tức mà không làm mất bất kỳ dữ liệu nào.
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Troubleshooting / FAQ Accordion */}
+            <div class="faq-container mt-4 pt-4 border-top">
+              <h3 class="faq-heading">❓ Các câu hỏi & Xử lý sự cố thường gặp (FAQ)</h3>
+
+              <details class="faq-item">
+                <summary class="faq-summary">
+                  <span>Bấm "Kiểm tra kết nối" báo lỗi: "Khóa kết nối bí mật không chính xác hoặc đã bị thay đổi"?</span>
+                </summary>
+                <div class="faq-answer">
+                  <p>
+                    Khóa kết nối được tạo ngẫu nhiên và lưu bên trong Script Properties của Google Sheet. Bạn hãy vào lại Google Sheet, bấm menu <strong>"🚛 Nam Hân" &rarr; "🔑 Kiểm tra cấu hình & Khóa kết nối"</strong>, sao chép lại toàn bộ chuỗi ký tự hiển thị trong hộp thoại rồi dán lại vào ô "Khóa kết nối bí mật" trên web này.
+                  </p>
+                </div>
+              </details>
+
+              <details class="faq-item">
+                <summary class="faq-summary">
+                  <span>Khách gửi form báo thành công nhưng không thấy dòng mới xuất hiện trong Sheet?</span>
+                </summary>
+                <div class="faq-answer">
+                  <p>
+                    Nguyên nhân phổ biến nhất là lúc Triển khai Web App bạn chưa chọn <strong>"Ai có quyền truy cập: Bất kỳ ai" (Anyone)</strong>. Hãy vào Apps Script &rarr; Triển khai &rarr; Quản lý bản triển khai &rarr; Bút chì ✏️ &rarr; kiểm tra lại mục "Ai có quyền truy cập" phải là <strong>Bất kỳ ai (Anyone)</strong> &rarr; Chọn "Phiên bản mới" &rarr; Triển khai lại.
+                  </p>
+                </div>
+              </details>
+
+              <details class="faq-item">
+                <summary class="faq-summary">
+                  <span>Có cần phải mở máy tính hoặc mở tab Google Sheet 24/7 không?</span>
+                </summary>
+                <div class="faq-answer">
+                  <p>
+                    <strong>Hoàn toàn không cần!</strong> Google Apps Script chạy trực tiếp trên máy chủ điện toán đám mây của Google 24/7. Bất kể khi nào khách gửi đơn trên website, dữ liệu sẽ tự động được ghi vào bảng tính ngay lập tức.
+                  </p>
+                </div>
+              </details>
+
+              <details class="faq-item">
+                <summary class="faq-summary">
+                  <span>Khi muốn bàn giao cho tài khoản Google của nhân viên khác thì làm sao?</span>
+                </summary>
+                <div class="faq-answer">
+                  <p>
+                    Rất đơn giản! Nhân viên mới chỉ cần tạo một Google Sheet mới trên tài khoản của họ, làm theo Bước 1 đến Bước 5 ở trên để lấy URL Web App và Khóa kết nối mới, rồi dán vào trang quản trị này và bấm Lưu. Hệ thống website sẽ ngay lập tức chuyển sang ghi dữ liệu vào bảng của nhân viên mới một cách an toàn mà không làm mất dữ liệu cũ.
+                  </p>
+                </div>
+              </details>
+            </div>
+
+
+          </section>
+
+          {/* Section 5: Quick Links & Actions Card */}
           <section class="card" aria-labelledby="links-heading">
             <h2 id="links-heading" class="card-title">Liên kết kiểm thử & Bàn giao</h2>
             <div class="quick-links">
               <a href="/lien-he/" target="_blank" class="quick-link-item">
-                <span class="quick-link-title">Mở trang Liên hệ (/lien-he/)</span>
-                <span class="quick-link-desc">Thử nghiệm gửi form yêu cầu vận chuyển thực tế để xem dòng dữ liệu mới trong Sheet.</span>
+                <span class="quick-link-title">Mở trang Liên hệ (/lien-he/) ↗</span>
+                <span class="quick-link-desc">Thử nghiệm gửi form yêu cầu vận chuyển thực tế để xem dòng dữ liệu mới xuất hiện tức thì trong Google Sheet với đầy đủ 13 cột và ghi chú.</span>
               </a>
               <div class="quick-link-item">
-                <span class="quick-link-title">Quy trình bàn giao sang tài khoản Doanh nghiệp</span>
-                <span class="quick-link-desc">Sau khi thử nghiệm bằng tài khoản cá nhân, quản trị viên chỉ cần đăng nhập tài khoản doanh nghiệp mới tại trang này và xác nhận chuyển. Toàn bộ form sẽ tự động ghi vào Drive mới mà không cần chỉnh sửa code hay khởi động lại website.</span>
+                <span class="quick-link-title">Bảo mật đa tầng & Chống tràn dữ liệu</span>
+                <span class="quick-link-desc">Hệ thống áp dụng khóa AES-256 cho khóa kết nối, cơ chế khóa độc quyền LockService chống gửi trùng, và bộ lọc ký tự chống khai thác công thức Excel.</span>
               </div>
             </div>
 
             <div class="mt-4 pt-3 border-top flex-between">
               <span class="text-muted"><small>Phiên làm việc quản trị được bảo vệ an toàn bằng HTTP-only cookie.</small></span>
               <a href="/api/admin/logout" class="btn btn-outline btn-sm">
-                <span>Đăng xuất</span>
+                <span>Đăng xuất quản trị</span>
               </a>
             </div>
           </section>
@@ -298,12 +627,12 @@ const pendingConn = config?.pendingConnection;
   }
 
   .admin-container {
-    max-width: 900px;
+    max-width: 920px;
     margin: 0 auto;
   }
 
   .admin-header {
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
     text-align: center;
   }
 
@@ -333,47 +662,159 @@ const pendingConn = config?.pendingConnection;
     margin: 0 auto;
   }
 
-  /* Login Card */
-  .login-card {
-    background: #ffffff;
-    border-radius: 1rem;
-    padding: 2.5rem;
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.02);
-    border: 1px solid #e2e8f0;
-    max-width: 440px;
-    margin: 2rem auto;
-    text-align: center;
-  }
-
-  .login-icon {
-    width: 64px;
-    height: 64px;
-    background: #eff6ff;
-    color: #2563eb;
-    border-radius: 50%;
+  /* Active Channel Banner */
+  .active-channel-banner {
     display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 0 auto 1.5rem;
+    align-items: flex-start;
+    gap: 1.25rem;
+    padding: 1.25rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.75rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
   }
 
-  .login-title {
-    font-size: 1.35rem;
+  .banner-active {
+    background-color: #f0fdf4;
+    border: 1px solid #bbf7d0;
+  }
+
+  .banner-warning {
+    background-color: #fffbeb;
+    border: 1px solid #fde68a;
+  }
+
+  .banner-icon {
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .banner-title {
+    font-size: 1.05rem;
     font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 0.5rem;
+    color: #0f172a;
+    margin-bottom: 0.25rem;
   }
 
-  .login-subtitle {
-    font-size: 0.9rem;
+  .banner-desc {
+    font-size: 0.875rem;
+    color: #475569;
+    margin: 0;
+    line-height: 1.5;
+  }
+
+  /* Card */
+  .card {
+    background: #ffffff;
+    border-radius: 12px;
+    padding: 1.75rem 2rem;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+  }
+
+  .tag-badge {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    background-color: #0284c7;
+    color: #ffffff;
+    font-size: 0.7rem;
+    font-weight: 700;
+    border-radius: 4px;
+    letter-spacing: 0.05em;
+  }
+
+  .tag-guide {
+    background-color: #059669;
+  }
+
+  .card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.35rem;
+  }
+
+  .card-subtitle {
     color: #64748b;
-    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+    margin-bottom: 1.25rem;
   }
 
-  .login-form {
-    text-align: left;
+  .card-header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
   }
 
+  /* Badges */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.3rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .badge-active {
+    background-color: #ecfdf5;
+    color: #065f46;
+  }
+
+  /* Details list */
+  .connection-details {
+    display: flex;
+    flex-direction: column;
+    gap: 0.85rem;
+  }
+
+  .detail-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid #f1f5f9;
+  }
+
+  @media (min-width: 640px) {
+    .detail-row {
+      flex-direction: row;
+      justify-content: space-between;
+      align-items: center;
+    }
+  }
+
+  .detail-label {
+    color: #64748b;
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .detail-value {
+    color: #0f172a;
+    font-size: 0.925rem;
+  }
+
+  .detail-code {
+    font-family: monospace;
+    font-size: 0.825rem;
+    background-color: #f1f5f9;
+    padding: 0.2rem 0.5rem;
+    border-radius: 4px;
+    color: #334155;
+    word-break: break-all;
+  }
+
+  .text-truncate {
+    max-width: 380px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Form controls */
   .form-group {
     margin-bottom: 1.25rem;
   }
@@ -382,185 +823,85 @@ const pendingConn = config?.pendingConnection;
     display: block;
     font-size: 0.875rem;
     font-weight: 600;
-    color: #334155;
-    margin-bottom: 0.5rem;
+    color: #1e293b;
+    margin-bottom: 0.4rem;
+  }
+
+  .form-label.required::after {
+    content: ' *';
+    color: #dc2626;
   }
 
   .form-input {
     width: 100%;
-    padding: 0.75rem 1rem;
-    font-size: 0.95rem;
-    border: 1.5px solid #cbd5e1;
-    border-radius: 0.5rem;
+    padding: 0.65rem 0.85rem;
+    font-size: 0.9rem;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    background: #ffffff;
+    color: #0f172a;
     outline: none;
-    transition: border-color 0.2s;
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
   }
 
   .form-input:focus {
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+    border-color: #0284c7;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.12);
   }
 
-  .login-error-msg {
-    color: #dc2626;
-    font-size: 0.85rem;
-    margin-bottom: 1rem;
-    background: #fef2f2;
-    padding: 0.5rem 0.75rem;
-    border-radius: 0.375rem;
-  }
-
-  .login-footer-note {
-    margin-top: 1.5rem;
-    color: #94a3b8;
+  .form-hint {
+    display: block;
+    font-size: 0.775rem;
+    color: #64748b;
+    margin-top: 0.35rem;
     line-height: 1.4;
   }
 
-  /* Dashboard Grid */
-  .dashboard-grid {
+  .password-input-wrap {
+    position: relative;
     display: flex;
-    flex-direction: column;
-    gap: 1.75rem;
-  }
-
-  /* Cards */
-  .card {
-    background: #ffffff;
-    border-radius: 1rem;
-    padding: 1.75rem 2rem;
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e2e8f0;
-  }
-
-  .card-pending {
-    border: 2px solid #f59e0b;
-    background: #fffbeb;
-  }
-
-  .card-badge-pending {
-    display: inline-block;
-    padding: 0.25rem 0.6rem;
-    background: #f59e0b;
-    color: #ffffff;
-    font-size: 0.7rem;
-    font-weight: 700;
-    letter-spacing: 0.05em;
-    border-radius: 0.375rem;
-    margin-bottom: 0.75rem;
-  }
-
-  .card-header-flex {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 1.25rem;
-  }
-
-  .card-title {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: #0f172a;
-    margin-bottom: 0.25rem;
-  }
-
-  .card-subtitle, .card-desc {
-    font-size: 0.9rem;
-    color: #64748b;
-  }
-
-  /* Badges */
-  .badge {
-    display: inline-flex;
     align-items: center;
-    padding: 0.35rem 0.75rem;
-    font-size: 0.85rem;
-    font-weight: 600;
-    border-radius: 9999px;
   }
 
-  .badge-active {
-    background: #ecfdf5;
-    color: #065f46;
+  .password-input {
+    padding-right: 2.75rem;
   }
 
-  .badge-warning {
-    background: #fffbeb;
-    color: #92400e;
+  .btn-toggle-pw {
+    position: absolute;
+    right: 0.5rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    padding: 0.25rem 0.5rem;
+    opacity: 0.7;
+    transition: opacity 0.15s;
   }
 
-  .badge-inactive {
-    background: #f1f5f9;
-    color: #64748b;
+  .btn-toggle-pw:hover {
+    opacity: 1;
   }
 
-  /* Details Table */
-  .connection-details {
-    margin-top: 1rem;
-  }
-
-  .detail-row {
+  .form-actions {
     display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
     flex-wrap: wrap;
-    align-items: center;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid #f1f5f9;
-    gap: 0.5rem;
   }
 
-  .detail-label {
-    width: 180px;
-    font-size: 0.875rem;
-    color: #64748b;
-  }
-
-  .detail-value {
-    font-size: 0.95rem;
-    color: #1e293b;
-  }
-
-  .detail-code {
-    background: #f1f5f9;
-    padding: 0.2rem 0.4rem;
-    border-radius: 0.25rem;
-    font-family: monospace;
-    font-size: 0.85rem;
-    color: #0f172a;
-  }
-
-  .link-external {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.35rem;
-    color: #2563eb;
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-decoration: underline;
-  }
-
-  .link-btn {
-    text-decoration: none;
-  }
-
-  /* Action Buttons */
-  .action-buttons-group {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 1rem;
-    margin-top: 1.5rem;
-  }
-
+  /* Buttons */
   .btn {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
     gap: 0.5rem;
     padding: 0.65rem 1.25rem;
-    font-size: 0.95rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
     font-weight: 600;
-    border-radius: 0.5rem;
     cursor: pointer;
-    border: none;
-    transition: all 0.2s ease;
+    transition: all 0.15s ease;
+    border: 1px solid transparent;
     text-decoration: none;
   }
 
@@ -572,179 +913,381 @@ const pendingConn = config?.pendingConnection;
     background-color: #0369a1;
   }
 
-  .btn-success {
-    background-color: #059669;
-    color: #ffffff;
-  }
-  .btn-success:hover {
-    background-color: #047857;
-  }
-
-  .btn-secondary {
-    background-color: #e2e8f0;
-    color: #334155;
-  }
-  .btn-secondary:hover {
-    background-color: #cbd5e1;
-  }
-
   .btn-outline {
-    background: transparent;
-    border: 1.5px solid #cbd5e1;
+    background-color: #ffffff;
+    border-color: #cbd5e1;
     color: #334155;
   }
   .btn-outline:hover {
-    background: #f8fafc;
+    background-color: #f8fafc;
     border-color: #94a3b8;
   }
 
   .btn-sm {
-    padding: 0.4rem 0.75rem;
-    font-size: 0.85rem;
-  }
-
-  .btn-lg {
-    padding: 0.85rem 1.75rem;
-    font-size: 1.05rem;
-  }
-
-  .btn-block {
-    width: 100%;
+    padding: 0.4rem 0.85rem;
+    font-size: 0.8rem;
   }
 
   /* Alerts */
   .alert {
-    display: flex;
-    gap: 0.75rem;
-    align-items: flex-start;
-    padding: 1rem 1.25rem;
-    border-radius: 0.75rem;
-    font-size: 0.9rem;
+    padding: 0.85rem 1.15rem;
+    border-radius: 8px;
+    font-size: 0.875rem;
     line-height: 1.5;
+    margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
   }
 
   .alert-success {
-    background: #ecfdf5;
-    border: 1px solid #a7f3d0;
-    color: #065f46;
-  }
-
-  .alert-warning {
-    background: #fffbeb;
-    border: 1px solid #fde68a;
-    color: #92400e;
+    background-color: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
   }
 
   .alert-danger {
-    background: #fef2f2;
+    background-color: #fef2f2;
     border: 1px solid #fecaca;
     color: #991b1b;
   }
 
-  /* Empty state */
-  .empty-state {
-    text-align: center;
-    padding: 2.5rem 1rem;
+  .alert-warning {
+    background-color: #fffbeb;
+    border: 1px solid #fde68a;
+    color: #92400e;
   }
 
-  .empty-icon {
-    color: #94a3b8;
-    margin-bottom: 1rem;
-  }
-
-  .empty-title {
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: #1e293b;
-    margin-bottom: 0.5rem;
-  }
-
-  .empty-desc {
-    color: #64748b;
-    font-size: 0.95rem;
-    max-width: 500px;
-    margin: 0 auto 1.5rem;
-  }
-
-  /* Config Table */
-  .config-table {
+  /* In-Browser Code Editor Styles */
+  .code-editor-wrapper {
+    background: #090d16;
+    border: 1px solid #1e293b;
+    border-radius: 10px;
+    overflow: hidden;
     margin-top: 1rem;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
   }
 
-  .config-row {
+  .code-editor-header {
+    background: #111827;
+    padding: 0.5rem 0.75rem;
     display: flex;
-    flex-direction: column;
-    padding: 0.75rem 0;
-    border-bottom: 1px solid #f1f5f9;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #1f2937;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .code-file-tabs {
+    display: flex;
     gap: 0.35rem;
   }
 
-  @media (min-width: 640px) {
-    .config-row {
-      flex-direction: row;
-      align-items: center;
-      justify-content: space-between;
-    }
-  }
-
-  .config-key {
-    font-size: 0.85rem;
+  .code-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: transparent;
+    border: 1px solid transparent;
+    color: #94a3b8;
+    padding: 0.45rem 0.85rem;
+    border-radius: 6px;
+    font-size: 0.8rem;
     font-weight: 600;
-    color: #475569;
+    cursor: pointer;
+    transition: all 0.15s ease;
   }
 
-  .config-val {
+  .code-tab-btn:hover {
+    color: #f8fafc;
+    background: #1e293b;
+  }
+
+  .code-tab-btn.active {
+    background: #0284c7;
+    color: #ffffff;
+    border-color: #38bdf8;
+  }
+
+  .code-actions {
+    display: flex;
+    gap: 0.4rem;
+    align-items: center;
+  }
+
+  .btn-code-action {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.775rem;
+    font-weight: 600;
+    padding: 0.4rem 0.75rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    border: 1px solid #334155;
+    background: #1e293b;
+    color: #f8fafc;
+  }
+
+  .btn-code-action:hover {
+    background: #334155;
+    border-color: #475569;
+  }
+
+  .btn-copy-code {
+    background: #047857;
+    border-color: #059669;
+  }
+  .btn-copy-code:hover {
+    background: #059669;
+  }
+
+  .btn-save-code {
+    background: #1d4ed8;
+    border-color: #2563eb;
+  }
+  .btn-save-code:hover {
+    background: #2563eb;
+  }
+
+  .code-editor-body {
+    position: relative;
+  }
+
+  .code-textarea {
+    width: 100%;
+    height: 480px;
+    background: #090d16;
+    color: #e2e8f0;
+    font-family: Consolas, Monaco, 'Courier New', Courier, monospace;
     font-size: 0.85rem;
-    color: #1e293b;
+    line-height: 1.6;
+    padding: 1rem 1.25rem;
+    border: none;
+    outline: none;
+    resize: vertical;
+    white-space: pre;
+    overflow-wrap: normal;
+    overflow-x: auto;
+    display: none;
+    tab-size: 2;
   }
 
-  .copy-box {
+  .code-textarea.active {
+    display: block;
+  }
+
+  .code-features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 0.65rem;
+  }
+
+  .feature-pill {
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    background: #f1f5f9;
-    padding: 0.35rem 0.6rem;
-    border-radius: 0.375rem;
-  }
-
-  .copy-box code {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    padding: 0.55rem 0.85rem;
+    border-radius: 8px;
     font-size: 0.8rem;
-    color: #0f172a;
-    word-break: break-all;
+    color: #334155;
+    line-height: 1.35;
   }
 
-  .btn-copy {
+  .pill-icon {
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  /* Step-by-Step Guide Flow */
+  .steps-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .guide-step-card {
+    border: 1px solid #e2e8f0;
+    border-radius: 10px;
+    padding: 1.25rem 1.5rem;
     background: #ffffff;
-    border: 1px solid #cbd5e1;
-    border-radius: 0.25rem;
-    font-size: 0.75rem;
-    padding: 0.2rem 0.5rem;
+    position: relative;
+    transition: border-color 0.15s ease;
+  }
+
+  .guide-step-card.highlight-step {
+    background: #fdfdfe;
+    border-color: #cbd5e1;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  }
+
+  .step-badge {
+    display: inline-block;
+    padding: 0.2rem 0.65rem;
+    border-radius: 9999px;
+    font-size: 0.725rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    background: #e2e8f0;
+    color: #334155;
+    margin-bottom: 0.6rem;
+  }
+
+  .badge-danger {
+    background: #fee2e2;
+    color: #b91c1c;
+  }
+
+  .badge-warning {
+    background: #fef3c7;
+    color: #92400e;
+  }
+
+  .step-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 0.4rem;
+  }
+
+  .step-desc {
+    color: #475569;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    margin: 0;
+  }
+
+  .step-sublist {
+    margin: 0.5rem 0 0 1.2rem;
+    padding: 0;
+  }
+
+  .step-sublist li {
+    margin-bottom: 0.35rem;
+  }
+
+  .sub-bullets {
+    margin: 0.35rem 0 0.35rem 1.2rem;
+    padding: 0;
+  }
+
+  .sub-bullets li {
+    margin-bottom: 0.25rem;
+  }
+
+  .link-inline {
+    color: #0284c7;
+    font-weight: 600;
+    text-decoration: underline;
+  }
+
+  /* Callout warning in Step 3 */
+  .alert-callout {
+    background-color: #fff7ed;
+    border: 1px solid #fed7aa;
+    border-radius: 8px;
+    padding: 1rem 1.25rem;
+    margin-top: 0.75rem;
+    display: block;
+    color: #9a3412;
+  }
+
+  .callout-header {
+    font-size: 0.875rem;
+    margin-bottom: 0.4rem;
+  }
+
+  .callout-text {
+    font-size: 0.825rem;
+    line-height: 1.5;
+    margin-bottom: 0.5rem;
+  }
+
+  .callout-steps {
+    font-size: 0.825rem;
+    margin: 0 0 0.5rem 1.25rem;
+    padding: 0;
+    line-height: 1.5;
+  }
+
+  .callout-sub {
+    font-size: 0.775rem;
+    color: #7c2d12;
+    margin: 0;
+  }
+
+  .alert-tip {
+    background-color: #eff6ff;
+    border: 1px solid #bfdbfe;
+    border-radius: 6px;
+    padding: 0.65rem 0.85rem;
+    color: #1e40af;
+    font-size: 0.825rem;
+    display: block;
+  }
+
+  /* FAQ Accordion */
+  .faq-heading {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #0f172a;
+    margin-bottom: 1rem;
+  }
+
+  .faq-item {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 0.65rem;
+    overflow: hidden;
+  }
+
+  .faq-summary {
+    padding: 0.85rem 1.15rem;
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: #1e293b;
     cursor: pointer;
+    user-select: none;
+    transition: background-color 0.15s ease;
+  }
+
+  .faq-summary:hover {
+    background-color: #f1f5f9;
+  }
+
+  .faq-answer {
+    padding: 0.85rem 1.15rem;
+    background-color: #ffffff;
+    border-top: 1px solid #e2e8f0;
+    font-size: 0.85rem;
+    color: #475569;
+    line-height: 1.55;
+  }
+
+  .faq-answer p {
+    margin: 0;
   }
 
   /* Quick links */
   .quick-links {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 1rem;
-    margin-top: 1rem;
-  }
-
-  @media (min-width: 640px) {
-    .quick-links {
-      grid-template-columns: 1fr 1fr;
-    }
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
   .quick-link-item {
-    padding: 1rem;
-    border-radius: 0.5rem;
-    border: 1px solid #e2e8f0;
-    background: #f8fafc;
-    text-decoration: none;
-    color: inherit;
     display: block;
-    transition: border-color 0.2s;
+    padding: 0.85rem 1rem;
+    background-color: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    text-decoration: none;
+    transition: border-color 0.15s ease;
   }
 
   .quick-link-item:hover {
@@ -754,7 +1297,7 @@ const pendingConn = config?.pendingConnection;
   .quick-link-title {
     display: block;
     font-weight: 700;
-    font-size: 0.95rem;
+    font-size: 0.925rem;
     color: #0f172a;
     margin-bottom: 0.25rem;
   }
@@ -766,128 +1309,299 @@ const pendingConn = config?.pendingConnection;
     line-height: 1.4;
   }
 
+  .link-external {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.875rem;
+    color: #0284c7;
+    font-weight: 600;
+    text-decoration: none;
+  }
+  .link-external:hover {
+    text-decoration: underline;
+  }
+
   .border-top {
     border-top: 1px solid #e2e8f0;
   }
 
+  .mt-1 { margin-top: 0.25rem; }
+  .mt-2 { margin-top: 0.5rem; }
+  .mt-3 { margin-top: 0.75rem; }
   .mt-4 { margin-top: 1rem; }
+  .mb-4 { margin-bottom: 1rem; }
   .pt-3 { padding-top: 0.75rem; }
+  .pt-4 { padding-top: 1rem; }
 
   .flex-between {
     display: flex;
     justify-content: space-between;
     align-items: center;
   }
+
+  .action-buttons-group {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
 </style>
 
 <script>
-  // Admin Login Handler
-  const loginForm = document.getElementById('adminLoginForm') as HTMLFormElement | null;
-  const loginError = document.getElementById('loginError');
-  const loginBtn = document.getElementById('loginBtn');
-
-  if (loginForm) {
-    loginForm.addEventListener('submit', async (e) => {
-      e.preventDefault();
-      if (loginError) loginError.style.display = 'none';
-      if (loginBtn) {
-        loginBtn.setAttribute('disabled', 'true');
-        loginBtn.textContent = 'Đang xác thực...';
+  // =========================================================================
+  // 1. Password Visibility Toggle
+  // =========================================================================
+  const btnToggleApiKey = document.getElementById('btnToggleApiKey');
+  const apiKeyInput = document.getElementById('apiKey') as HTMLInputElement | null;
+  btnToggleApiKey?.addEventListener('click', () => {
+    if (apiKeyInput) {
+      if (apiKeyInput.type === 'password') {
+        apiKeyInput.type = 'text';
+        btnToggleApiKey.textContent = '🙈';
+      } else {
+        apiKeyInput.type = 'password';
+        btnToggleApiKey.textContent = '👁️';
       }
+    }
+  });
 
-      const passwordInput = document.getElementById('adminPassword') as HTMLInputElement | null;
-      const password = passwordInput?.value || '';
-
-      try {
-        const res = await fetch('/api/admin/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ password })
-        });
-
-        const data = await res.json();
-        if (data.success) {
-          window.location.reload();
-        } else {
-          if (loginError) {
-            loginError.textContent = data.error || 'Mật khẩu không chính xác.';
-            loginError.style.display = 'block';
-          }
-          if (loginBtn) {
-            loginBtn.removeAttribute('disabled');
-            loginBtn.textContent = 'Đăng nhập hệ thống';
-          }
-        }
-      } catch {
-        if (loginError) {
-          loginError.textContent = 'Không thể kết nối với máy chủ.';
-          loginError.style.display = 'block';
-        }
-        if (loginBtn) {
-          loginBtn.removeAttribute('disabled');
-          loginBtn.textContent = 'Đăng nhập hệ thống';
-        }
-      }
-    });
+  // =========================================================================
+  // 2. Alert Box Helpers
+  // =========================================================================
+  const appsAlert = document.getElementById('appsScriptAlert');
+  function showAppsAlert(type: 'success' | 'danger' | 'warning', text: string) {
+    if (!appsAlert) return;
+    appsAlert.className = `alert alert-${type} mt-3`;
+    appsAlert.innerHTML = text;
+    appsAlert.style.display = 'block';
   }
 
-  // Account switch confirm
-  const btnConfirm = document.getElementById('btnConfirmSwitch');
-  if (btnConfirm) {
-    btnConfirm.addEventListener('click', async () => {
-      if (!confirm('Bạn có chắc chắn muốn chuyển nơi nhận dữ liệu sang tài khoản Google mới này? Các form mới sẽ được ghi vào bảng tính mới.')) {
-        return;
+  const codeAlert = document.getElementById('codeAlert');
+  function showCodeAlert(type: 'success' | 'danger' | 'warning', text: string) {
+    if (!codeAlert) return;
+    codeAlert.className = `alert alert-${type} mt-2`;
+    codeAlert.innerHTML = text;
+    codeAlert.style.display = 'block';
+    setTimeout(() => {
+      if (codeAlert && type === 'success') {
+        codeAlert.style.display = 'none';
       }
-      btnConfirm.setAttribute('disabled', 'true');
-      btnConfirm.textContent = 'Đang chuyển đổi...';
-
-      try {
-        const res = await fetch('/api/admin/confirm-switch', { method: 'POST' });
-        const data = await res.json();
-        if (data.success) {
-          alert(data.message);
-          window.location.href = '/admin/google-sheets?success=switched';
-        } else {
-          alert('Lỗi: ' + (data.error || 'Không thể chuyển đổi'));
-          btnConfirm.removeAttribute('disabled');
-          btnConfirm.textContent = 'Xác nhận chuyển sang tài khoản này';
-        }
-      } catch {
-        alert('Lỗi kết nối máy chủ');
-        btnConfirm.removeAttribute('disabled');
-      }
-    });
+    }, 6000);
   }
 
-  // Account switch cancel
-  const btnCancel = document.getElementById('btnCancelSwitch');
-  if (btnCancel) {
-    btnCancel.addEventListener('click', async () => {
-      if (!confirm('Bạn có chắc muốn hủy bỏ liên kết tài khoản mới?')) return;
-      try {
-        const res = await fetch('/api/admin/cancel-switch', { method: 'POST' });
-        const data = await res.json();
-        if (data.success) {
-          window.location.href = '/admin/google-sheets';
-        }
-      } catch {
-        alert('Lỗi khi hủy liên kết');
+  // =========================================================================
+  // 3. Test & Save Apps Script Connection Form
+  // =========================================================================
+  const btnTestAppsScript = document.getElementById('btnTestAppsScript');
+  const btnRetestAppsScript = document.getElementById('btnRetestAppsScript');
+
+  async function handleTestAppsScript() {
+    const webAppUrl = (document.getElementById('webAppUrl') as HTMLInputElement)?.value.trim();
+    const apiKey = (document.getElementById('apiKey') as HTMLInputElement)?.value.trim();
+
+    if (!webAppUrl || !apiKey) {
+      showAppsAlert('warning', 'Vui lòng nhập cả URL Web App và Khóa kết nối trước khi kiểm tra.');
+      return;
+    }
+
+    if (btnTestAppsScript) {
+      btnTestAppsScript.setAttribute('disabled', 'true');
+      btnTestAppsScript.textContent = 'Đang kiểm tra kết nối...';
+    }
+
+    try {
+      const res = await fetch('/api/admin/apps-script/test', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ webAppUrl, apiKey })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        showAppsAlert(
+          'success',
+          `✅ <strong>Kết nối thành công!</strong> ${data.message} (Bảng tính: <em>${data.sheetTitle || 'Khách hàng Nam Hân'}</em>)`
+        );
+      } else {
+        showAppsAlert('danger', `❌ <strong>Thất bại:</strong> ${data.error || 'Không thể kết nối.'}`);
       }
-    });
+    } catch {
+      showAppsAlert('danger', '❌ <strong>Lỗi kết nối:</strong> Không thể gửi yêu cầu kiểm tra tới máy chủ.');
+    } finally {
+      if (btnTestAppsScript) {
+        btnTestAppsScript.removeAttribute('disabled');
+        btnTestAppsScript.innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="11" cy="11" r="8"/>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"/>
+          </svg>
+          <span>Kiểm tra kết nối</span>
+        `;
+      }
+    }
   }
 
-  // Copy helper
-  document.querySelectorAll('.btn-copy').forEach((btn) => {
-    btn.addEventListener('click', async () => {
-      const text = btn.getAttribute('data-copy');
-      if (text) {
-        await navigator.clipboard.writeText(text);
-        const originalText = btn.textContent;
-        btn.textContent = 'Đã chép!';
-        setTimeout(() => {
-          btn.textContent = originalText;
-        }, 2000);
+  btnTestAppsScript?.addEventListener('click', handleTestAppsScript);
+  btnRetestAppsScript?.addEventListener('click', () => {
+    const apiKey = (document.getElementById('apiKey') as HTMLInputElement)?.value.trim();
+    if (!apiKey) {
+      apiKeyInput?.focus();
+      showAppsAlert('warning', 'Vui lòng nhập lại Khóa kết nối bí mật để kiểm tra lại.');
+    } else {
+      handleTestAppsScript();
+    }
+  });
+
+  const btnSaveAppsScript = document.getElementById('btnSaveAppsScript');
+  btnSaveAppsScript?.addEventListener('click', async () => {
+    const webAppUrl = (document.getElementById('webAppUrl') as HTMLInputElement)?.value.trim();
+    const apiKey = (document.getElementById('apiKey') as HTMLInputElement)?.value.trim();
+    const sheetUrl = (document.getElementById('sheetUrl') as HTMLInputElement)?.value.trim();
+
+    if (!webAppUrl || !apiKey) {
+      showAppsAlert('warning', 'Vui lòng điền đầy đủ URL Web App và Khóa kết nối bí mật.');
+      return;
+    }
+
+    btnSaveAppsScript.setAttribute('disabled', 'true');
+    btnSaveAppsScript.textContent = 'Đang lưu & kích hoạt...';
+
+    try {
+      const res = await fetch('/api/admin/apps-script/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ webAppUrl, apiKey, sheetUrl, activateImmediately: true })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        alert(data.message || 'Lưu cấu hình thành công!');
+        window.location.href = '/admin/google-sheets?success=appsscript_saved';
+      } else {
+        showAppsAlert('danger', `❌ <strong>Lưu cấu hình thất bại:</strong> ${data.error}`);
+        btnSaveAppsScript.removeAttribute('disabled');
+        btnSaveAppsScript.innerHTML = `
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+            <polyline points="17 21 17 13 7 13 7 21"/>
+            <polyline points="7 3 7 8 15 8"/>
+          </svg>
+          <span>Lưu & Kích hoạt nhận dữ liệu</span>
+        `;
       }
-    });
+    } catch {
+      showAppsAlert('danger', '❌ Lỗi kết nối máy chủ khi lưu cấu hình.');
+      btnSaveAppsScript.removeAttribute('disabled');
+    }
+  });
+
+  // =========================================================================
+  // 4. In-Browser Code Editor Logic (Tabs, Copy, Save, Reload)
+  // =========================================================================
+  const tabCodeGs = document.getElementById('tabCodeGs');
+  const tabManifest = document.getElementById('tabManifest');
+  const editorCodeGs = document.getElementById('editorCodeGs') as HTMLTextAreaElement | null;
+  const editorManifest = document.getElementById('editorManifest') as HTMLTextAreaElement | null;
+  let activeCodeTab: 'code' | 'manifest' = 'code';
+
+  tabCodeGs?.addEventListener('click', () => {
+    activeCodeTab = 'code';
+    tabCodeGs.classList.add('active');
+    tabManifest?.classList.remove('active');
+    editorCodeGs?.classList.add('active');
+    editorManifest?.classList.remove('active');
+  });
+
+  tabManifest?.addEventListener('click', () => {
+    activeCodeTab = 'manifest';
+    tabManifest.classList.add('active');
+    tabCodeGs?.classList.remove('active');
+    editorManifest?.classList.add('active');
+    editorCodeGs?.classList.remove('active');
+  });
+
+  // 4.1 Copy active code to clipboard
+  const btnCopyCode = document.getElementById('btnCopyCode');
+  const copyCodeText = document.getElementById('copyCodeText');
+
+  btnCopyCode?.addEventListener('click', async () => {
+    const textToCopy = activeCodeTab === 'code' ? editorCodeGs?.value : editorManifest?.value;
+    if (!textToCopy) {
+      showCodeAlert('warning', 'Không có nội dung mã để sao chép.');
+      return;
+    }
+
+    try {
+      await navigator.clipboard.writeText(textToCopy);
+      if (copyCodeText) copyCodeText.textContent = '✅ Đã sao chép!';
+      showCodeAlert(
+        'success',
+        `📋 <strong>Đã sao chép ${activeCodeTab === 'code' ? 'Code.gs' : 'appsscript.json'} vào bộ nhớ tạm!</strong> Bạn có thể mở Google Apps Script và dán (Ctrl + V) ngay.`
+      );
+      setTimeout(() => {
+        if (copyCodeText) copyCodeText.textContent = 'Sao chép mã (1 Click)';
+      }, 2500);
+    } catch {
+      showCodeAlert('danger', 'Không thể tự động sao chép. Vui lòng bấm vào ô code và nhấn Ctrl + A rồi Ctrl + C.');
+    }
+  });
+
+  // 4.2 Save modified code back to server
+  const btnSaveCode = document.getElementById('btnSaveCode');
+  const saveCodeText = document.getElementById('saveCodeText');
+
+  btnSaveCode?.addEventListener('click', async () => {
+    const code = editorCodeGs?.value || '';
+    const manifest = editorManifest?.value || '';
+
+    if (btnSaveCode) {
+      btnSaveCode.setAttribute('disabled', 'true');
+      if (saveCodeText) saveCodeText.textContent = 'Đang lưu...';
+    }
+
+    try {
+      const res = await fetch('/api/admin/apps-script/code', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code, manifest })
+      });
+      const data = await res.json();
+
+      if (data.success) {
+        const timeStr = new Date().toLocaleTimeString('vi-VN');
+        showCodeAlert(
+          'success',
+          `💾 <strong>Đã lưu thay đổi vào hệ thống lúc ${timeStr}!</strong> Nhớ bấm nút <em>"Sao chép mã"</em> và dán sang Google Sheet, sau đó chọn <strong>"Phiên bản mới" (New version)</strong> khi Triển khai để có hiệu lực.`
+        );
+      } else {
+        showCodeAlert('danger', `❌ Lỗi khi lưu mã: ${data.error}`);
+      }
+    } catch {
+      showCodeAlert('danger', '❌ Lỗi kết nối máy chủ khi lưu mã.');
+    } finally {
+      if (btnSaveCode) {
+        btnSaveCode.removeAttribute('disabled');
+        if (saveCodeText) saveCodeText.textContent = 'Lưu vào hệ thống';
+      }
+    }
+  });
+
+  // 4.3 Reload code from server
+  const btnReloadCode = document.getElementById('btnReloadCode');
+  btnReloadCode?.addEventListener('click', async () => {
+    if (!confirm('Bạn có chắc muốn tải lại mã nguồn gốc từ máy chủ? Các chỉnh sửa chưa lưu sẽ bị hủy.')) return;
+    try {
+      const res = await fetch('/api/admin/apps-script/code');
+      const data = await res.json();
+      if (data.success) {
+        if (editorCodeGs && typeof data.code === 'string') editorCodeGs.value = data.code;
+        if (editorManifest && typeof data.manifest === 'string') editorManifest.value = data.manifest;
+        showCodeAlert('success', '🔄 Đã nạp lại mã nguồn mới nhất từ máy chủ.');
+      } else {
+        showCodeAlert('danger', `Lỗi tải lại mã: ${data.error}`);
+      }
+    } catch {
+      showCodeAlert('danger', 'Lỗi kết nối máy chủ khi tải lại mã.');
+    }
   });
 </script>

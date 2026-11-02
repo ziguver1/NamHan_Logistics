@@ -370,6 +370,27 @@ if (isDraft) {
     line-height: 1.8;
     color: #1e293b;
     margin-bottom: 3rem;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  .article-body-content :global(table) {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    margin: 1.5rem 0;
+    border-collapse: collapse;
+  }
+
+  .article-body-content :global(pre) {
+    max-width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding: 1rem;
+    background: #f1f5f9;
+    border-radius: 8px;
+    margin: 1.5rem 0;
   }
 
   .article-body-content :global(h2) {

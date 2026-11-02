@@ -38,6 +38,8 @@ const countDeleted = allItems.filter((a) => a.status === 'deleted').length;
 <SiteLayout
   title="Quản lý Bảng tin | Nam Hân Logistics Admin"
   description="Trang quản lý thông báo, bản tin chính thức của Nam Hân Logistics."
+  hidePublicNav={true}
+  noindex={true}
 >
   {isAdmin && <AdminHeader activeTab="news" />}
 
@@ -141,11 +143,11 @@ const countDeleted = allItems.filter((a) => a.status === 'deleted').length;
                 <table class="announcements-table">
                   <thead>
                     <tr>
-                      <th style="width: 44px;">Ghim</th>
-                      <th>Tiêu đề & Đường dẫn</th>
-                      <th style="width: 130px;">Trạng thái</th>
-                      <th style="width: 140px;">Ngày đăng</th>
-                      <th style="width: 220px;" class="text-right">Thao tác</th>
+                      <th style="width: 48px;" class="text-center" title="Ghim bài viết lên đầu">Ghim</th>
+                      <th>Thông báo & Nội dung</th>
+                      <th style="width: 140px;">Trạng thái</th>
+                      <th style="width: 120px;">Ngày đăng</th>
+                      <th style="width: 250px;" class="text-right">Thao tác</th>
                     </tr>
                   </thead>
                   <tbody>
@@ -156,32 +158,104 @@ const countDeleted = allItems.filter((a) => a.status === 'deleted').length;
                             type="button"
                             class={`btn-pin ${item.isPinned ? 'pinned' : ''}`}
                             data-id={item.id}
-                            title={item.isPinned ? 'Bỏ ghim' : 'Ghim lên đầu'}
-                            aria-label={item.isPinned ? 'Bỏ ghim' : 'Ghim lên đầu'}
+                            title={item.isPinned ? 'Bỏ ghim' : 'Ghim thông báo lên đầu trang'}
+                            aria-label={item.isPinned ? 'Bỏ ghim' : 'Ghim thông báo lên đầu trang'}
                           >
-                            <svg width="18" height="18" viewBox="0 0 24 24" fill={item.isPinned ? '#f59e0b' : 'none'} stroke={item.isPinned ? '#f59e0b' : 'currentColor'} stroke-width="2">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill={item.isPinned ? '#f59e0b' : 'none'} stroke={item.isPinned ? '#f59e0b' : 'currentColor'} stroke-width="2">
                               <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                             </svg>
                           </button>
                         </td>
 
                         <td>
-                          <div class="item-title-wrap">
-                            <a href={`/admin/bang-tin/editor?id=${item.id}`} class="item-title-link">
-                              {item.title}
+                          <div class="article-cell">
+                            <!-- Thumbnail Image or Placeholder -->
+                            <a
+                              href={`/admin/bang-tin/editor?id=${item.id}`}
+                              class="thumb-link"
+                              title="Bấm để chỉnh sửa bài viết"
+                            >
+                              {item.coverImage?.url ? (
+                                <img
+                                  src={item.coverImage.url}
+                                  alt={item.coverImage.alt || item.title}
+                                  class="item-thumb"
+                                  loading="lazy"
+                                />
+                              ) : (
+                                <div class="thumb-empty" title="Bài viết chưa có ảnh đại diện">
+                                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+                                    <circle cx="9" cy="9" r="2"/>
+                                    <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+                                  </svg>
+                                  <span>Không ảnh</span>
+                                </div>
+                              )}
                             </a>
-                            <div class="item-slug">
-                              <code>/bang-tin/{item.slug}</code>
-                              {item.coverImage && <span class="badge-tag">Có ảnh</span>}
-                              {Boolean(item.attachmentCount) && <span class="badge-tag">Có đính kèm</span>}
+
+                            <!-- Title, Summary & Meta Links -->
+                            <div class="article-details">
+                              <a
+                                href={`/admin/bang-tin/editor?id=${item.id}`}
+                                class="item-title-link"
+                                title="Bấm để chỉnh sửa bài viết này"
+                              >
+                                {item.title}
+                              </a>
+
+                              {item.summary && (
+                                <p class="item-summary-text" title={item.summary}>
+                                  {item.summary}
+                                </p>
+                              )}
+
+                              <div class="item-meta-tags">
+                                <a
+                                  href={`/bang-tin/${item.slug}`}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  class="meta-link"
+                                  title="Mở xem bài viết hiển thị thực tế trên website"
+                                >
+                                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                                    <polyline points="15 3 21 3 21 9"/>
+                                    <line x1="10" y1="14" x2="21" y2="3"/>
+                                  </svg>
+                                  <span>Xem trang web</span>
+                                </a>
+
+                                {Boolean(item.attachmentCount) && (
+                                  <span class="badge-attachment" title="Bài viết có tệp tài liệu PDF đính kèm">
+                                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#dc2626" stroke-width="2">
+                                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                                      <polyline points="14 2 14 8 20 8"/>
+                                    </svg>
+                                    <span>{item.attachmentCount} tệp PDF đính kèm</span>
+                                  </span>
+                                )}
+                              </div>
                             </div>
                           </div>
                         </td>
 
                         <td>
-                          {item.status === 'published' && <span class="badge-status status-published">🟢 Đã đăng</span>}
-                          {item.status === 'draft' && <span class="badge-status status-draft">🟡 Bản nháp</span>}
-                          {item.status === 'deleted' && <span class="badge-status status-deleted">🔴 Đã xóa</span>}
+                          {item.status === 'published' && (
+                            <span class="badge-status status-published" title="Bài viết đang hiển thị công khai trên website">
+                              🟢 Đã đăng
+                            </span>
+                          )}
+                          {item.status === 'draft' && (
+                            <span class="badge-status status-draft" title="Bài viết đang lưu nháp nội bộ, chưa hiện trên web">
+                              🟡 Bản nháp
+                            </span>
+                          )}
+                          {item.status === 'deleted' && (
+                            <span class="badge-status status-deleted" title="Bài viết đang trong thùng rác">
+                              🔴 Thùng rác
+                            </span>
+                          )}
                         </td>
 
                         <td>
@@ -199,9 +273,12 @@ const countDeleted = allItems.filter((a) => a.status === 'deleted').length;
                                 <a
                                   href={`/admin/bang-tin/editor?id=${item.id}`}
                                   class="action-btn btn-edit"
-                                  title="Chỉnh sửa thông báo"
+                                  title="Chỉnh sửa nội dung thông báo"
                                 >
-                                  Sửa
+                                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"/>
+                                  </svg>
+                                  <span>Sửa</span>
                                 </a>
 
                                 <a
@@ -209,9 +286,13 @@ const countDeleted = allItems.filter((a) => a.status === 'deleted').length;
                                   target="_blank"
                                   rel="noopener noreferrer"
                                   class="action-btn btn-preview"
-                                  title="Xem trước giao diện"
+                                  title="Xem trước giao diện bài viết"
                                 >
-                                  Xem
+                                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                                    <circle cx="12" cy="12" r="3"/>
+                                  </svg>
+                                  <span>Xem</span>
                                 </a>
 
                                 {item.status === 'published' ? (
@@ -220,19 +301,19 @@ const countDeleted = allItems.filter((a) => a.status === 'deleted').length;
                                     class="action-btn btn-status-toggle"
                                     data-id={item.id}
                                     data-action="unpublish"
-                                    title="Gỡ bài xuống (chuyển về nháp)"
+                                    title="Gỡ bài xuống (chuyển về trạng thái nháp)"
                                   >
-                                    Gỡ
+                                    <span>Gỡ</span>
                                   </button>
                                 ) : (
                                   <button
                                     type="button"
-                                    class="action-btn btn-status-toggle"
+                                    class="action-btn btn-status-toggle btn-publish-now"
                                     data-id={item.id}
                                     data-action="publish"
-                                    title="Đăng thông báo lên website"
+                                    title="Đăng thông báo lên website ngay lập tức"
                                   >
-                                    Đăng
+                                    <span>Đăng</span>
                                   </button>
                                 )}
 
@@ -243,7 +324,11 @@ const countDeleted = allItems.filter((a) => a.status === 'deleted').length;
                                   data-action="trash"
                                   title="Chuyển vào thùng rác"
                                 >
-                                  Xóa
+                                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="3 6 5 6 21 6"/>
+                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                                  </svg>
+                                  <span>Xóa</span>
                                 </button>
                               </>
                             ) : (
@@ -255,7 +340,11 @@ const countDeleted = allItems.filter((a) => a.status === 'deleted').length;
                                   data-action="restore"
                                   title="Khôi phục thông báo về bản nháp"
                                 >
-                                  Khôi phục
+                                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="1 4 1 10 7 10"/>
+                                    <path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/>
+                                  </svg>
+                                  <span>Khôi phục</span>
                                 </button>
 
                                 <button
@@ -265,7 +354,7 @@ const countDeleted = allItems.filter((a) => a.status === 'deleted').length;
                                   data-action="delete"
                                   title="Xóa vĩnh viễn không thể phục hồi"
                                 >
-                                  Xóa hẳn
+                                  <span>Xóa hẳn</span>
                                 </button>
                               </>
                             )}
@@ -528,40 +617,133 @@ const countDeleted = allItems.filter((a) => a.status === 'deleted').length;
     transform: scale(1.15);
   }
 
+  /* Article Cell & Thumbnail Styling */
+  .article-cell {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    min-width: 320px;
+  }
+
+  .thumb-link {
+    flex-shrink: 0;
+    display: block;
+    border-radius: 8px;
+    overflow: hidden;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+
+  .thumb-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+  }
+
+  .item-thumb {
+    width: 96px;
+    height: 64px;
+    object-fit: cover;
+    display: block;
+    background: #f1f5f9;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+  }
+
+  .thumb-empty {
+    width: 96px;
+    height: 64px;
+    border-radius: 8px;
+    background: #f8fafc;
+    border: 1px dashed #cbd5e1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: #94a3b8;
+    font-size: 0.675rem;
+    font-weight: 600;
+  }
+
+  @media (max-width: 640px) {
+    .item-thumb,
+    .thumb-empty {
+      width: 76px;
+      height: 52px;
+    }
+    .article-cell {
+      min-width: 250px;
+      gap: 0.75rem;
+    }
+  }
+
+  .article-details {
+    flex: 1;
+    min-width: 0;
+  }
+
   .item-title-link {
     font-weight: 700;
     color: #0f172a;
     text-decoration: none;
-    font-size: 0.925rem;
-    line-height: 1.35;
-    display: inline-block;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    transition: color 0.15s ease;
   }
 
   .item-title-link:hover {
     color: #0284c7;
-    text-decoration: underline;
   }
 
-  .item-slug {
+  .item-summary-text {
+    margin: 0.25rem 0 0.45rem 0;
+    font-size: 0.825rem;
+    color: #64748b;
+    line-height: 1.45;
+    display: -webkit-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  .item-meta-tags {
     display: flex;
     align-items: center;
-    gap: 0.5rem;
-    margin-top: 0.25rem;
+    gap: 0.75rem;
+    flex-wrap: wrap;
   }
 
-  .item-slug code {
+  .meta-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
     font-size: 0.75rem;
-    color: #64748b;
-    background: #f1f5f9;
-    padding: 0.1rem 0.35rem;
+    color: #0284c7;
+    text-decoration: none;
+    font-weight: 600;
+    padding: 0.15rem 0.45rem;
     border-radius: 4px;
+    background: #f0f9ff;
+    transition: background-color 0.15s ease;
   }
 
-  .badge-tag {
-    font-size: 0.7rem;
-    color: #0369a1;
+  .meta-link:hover {
     background: #e0f2fe;
-    padding: 0.1rem 0.4rem;
+    text-decoration: none;
+  }
+
+  .badge-attachment {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-size: 0.725rem;
+    color: #b91c1c;
+    background: #fef2f2;
+    border: 1px solid #fee2e2;
+    padding: 0.12rem 0.5rem;
     border-radius: 4px;
     font-weight: 600;
   }
@@ -569,10 +751,11 @@ const countDeleted = allItems.filter((a) => a.status === 'deleted').length;
   .badge-status {
     display: inline-flex;
     align-items: center;
-    padding: 0.2rem 0.6rem;
+    padding: 0.25rem 0.65rem;
     border-radius: 9999px;
     font-size: 0.775rem;
     font-weight: 700;
+    white-space: nowrap;
   }
 
   .status-published {
@@ -591,26 +774,32 @@ const countDeleted = allItems.filter((a) => a.status === 'deleted').length;
   .date-text {
     font-size: 0.825rem;
     color: #64748b;
+    font-weight: 500;
   }
 
   .actions-cell {
     display: flex;
     justify-content: flex-end;
     align-items: center;
-    gap: 0.35rem;
+    gap: 0.4rem;
+    flex-wrap: wrap;
   }
 
   .action-btn {
-    padding: 0.3rem 0.55rem;
-    font-size: 0.75rem;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    padding: 0.35rem 0.65rem;
+    font-size: 0.775rem;
     font-weight: 600;
-    border-radius: 4px;
+    border-radius: 6px;
     border: 1px solid #cbd5e1;
     background: #ffffff;
     color: #334155;
     cursor: pointer;
     text-decoration: none;
-    transition: all 0.15s;
+    transition: all 0.15s ease;
+    white-space: nowrap;
   }
 
   .action-btn:hover {
@@ -618,21 +807,46 @@ const countDeleted = allItems.filter((a) => a.status === 'deleted').length;
     border-color: #94a3b8;
   }
 
+  .btn-edit {
+    color: #0369a1;
+    border-color: #bae6fd;
+    background: #f0f9ff;
+  }
+  .btn-edit:hover {
+    background: #e0f2fe;
+    border-color: #7dd3fc;
+  }
+
+  .btn-preview {
+    color: #475569;
+  }
+
+  .btn-publish-now {
+    color: #065f46;
+    border-color: #a7f3d0;
+    background: #ecfdf5;
+  }
+  .btn-publish-now:hover {
+    background: #d1fae5;
+  }
+
   .btn-trash {
     color: #dc2626;
     border-color: #fecaca;
+    background: #fffafa;
   }
   .btn-trash:hover {
-    background: #fef2f2;
-    border-color: #f87171;
+    background: #fee2e2;
+    border-color: #fca5a5;
   }
 
   .btn-restore {
     color: #059669;
     border-color: #a7f3d0;
+    background: #ecfdf5;
   }
   .btn-restore:hover {
-    background: #ecfdf5;
+    background: #d1fae5;
   }
 
   .btn-hard-delete {

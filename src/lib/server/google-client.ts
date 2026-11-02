@@ -27,20 +27,38 @@ export interface ContactSubmissionData {
   deliveryLocation: string;
   cargoDescription: string;
   cargoWeight?: string;
+  notes?: string;
   sourceUrl?: string;
 }
 
+function cleanEnv(val?: unknown): string {
+  if (typeof val !== 'string') return '';
+  let str = val.trim();
+  if (
+    (str.startsWith('"') && str.endsWith('"')) ||
+    (str.startsWith("'") && str.endsWith("'"))
+  ) {
+    str = str.slice(1, -1);
+  }
+  return str.trim();
+}
+
 export function getGoogleClientId(): string {
-  return process.env.GOOGLE_CLIENT_ID || '';
+  const raw = (import.meta as any).env?.GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID;
+  return cleanEnv(raw);
 }
 
 export function getGoogleClientSecret(): string {
-  return process.env.GOOGLE_CLIENT_SECRET || '';
+  const raw = (import.meta as any).env?.GOOGLE_CLIENT_SECRET || process.env.GOOGLE_CLIENT_SECRET;
+  return cleanEnv(raw);
 }
 
 export function getGoogleRedirectUri(origin?: string): string {
-  if (process.env.GOOGLE_REDIRECT_URI) {
-    return process.env.GOOGLE_REDIRECT_URI;
+  const custom = cleanEnv(
+    (import.meta as any).env?.GOOGLE_REDIRECT_URI || process.env.GOOGLE_REDIRECT_URI
+  );
+  if (custom) {
+    return custom;
   }
   // Fallback to origin if provided (e.g. from incoming request URL)
   if (origin) {
@@ -277,7 +295,10 @@ export async function appendContactSubmission(
     sanitizeCellValue(data.deliveryLocation),
     sanitizeCellValue(data.cargoDescription),
     sanitizeCellValue(data.cargoWeight || ''),
-    sanitizeCellValue(data.sourceUrl || '/lien-he/')
+    sanitizeCellValue(data.sourceUrl || '/lien-he/'),
+    'Mới nhận',
+    '',
+    sanitizeCellValue(data.notes || '')
   ];
 
   const appendUrl = `${GOOGLE_SHEETS_ENDPOINT}/${encodeURIComponent(spreadsheetId)}/values/A1:append?valueInputOption=USER_ENTERED&insertDataOption=INSERT_ROWS`;

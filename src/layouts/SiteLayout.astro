@@ -8,12 +8,16 @@ interface Props {
   title?: string;
   description?: string;
   canonicalPath?: string;
+  hidePublicNav?: boolean;
+  noindex?: boolean;
 }
 
 const {
   title = `${companyInfo.shortName} — Giải pháp vận tải & Logistics chuyên nghiệp`,
   description = companyInfo.tagline,
   canonicalPath = '/',
+  hidePublicNav = false,
+  noindex = false,
 } = Astro.props;
 
 const siteTitle = title.includes(companyInfo.shortName)
@@ -32,7 +36,11 @@ const siteTitle = title.includes(companyInfo.shortName)
     <!-- SEO Meta Tags -->
     <title>{siteTitle}</title>
     <meta name="description" content={description} />
-    <meta name="robots" content="index, follow" />
+    {noindex ? (
+      <meta name="robots" content="noindex, nofollow" />
+    ) : (
+      <meta name="robots" content="index, follow" />
+    )}
 
     <!-- Open Graph / Social -->
     <meta property="og:type" content="website" />
@@ -51,19 +59,23 @@ const siteTitle = title.includes(companyInfo.shortName)
       rel="stylesheet"
     />
   </head>
-  <body>
+  <body class={hidePublicNav ? 'admin-layout-body' : ''}>
     <!-- Accessibility Skip Link -->
     <a href="#main-content" class="skip-link">Chuyển đến nội dung chính</a>
 
-    <!-- Global Header -->
-    <SiteHeader currentPath={canonicalPath} />
+    <!-- Global Header (Public pages only) -->
+    {!hidePublicNav && <SiteHeader currentPath={canonicalPath} />}
 
     <!-- Main Content Landmark -->
-    <main id="main-content">
+    {hidePublicNav ? (
       <slot />
-    </main>
+    ) : (
+      <main id="main-content">
+        <slot />
+      </main>
+    )}
 
-    <!-- Global Footer -->
-    <SiteFooter />
+    <!-- Global Footer (Public pages only) -->
+    {!hidePublicNav && <SiteFooter />}
   </body>
 </html>

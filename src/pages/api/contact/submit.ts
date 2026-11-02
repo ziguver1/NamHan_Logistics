@@ -1,6 +1,9 @@
 import type { APIRoute } from 'astro';
 import { getConfig, saveConfig, hasSeenRequestId, markRequestIdSeen } from '../../../lib/server/storage.ts';
 import { getFreshAccessToken, appendContactSubmission, type ContactSubmissionData } from '../../../lib/server/google-client.ts';
+import { submitToAppsScript } from '../../../lib/server/apps-script-client.ts';
+import { decryptData } from '../../../lib/server/crypto.ts';
+import { getAdminSecret } from '../../../lib/server/admin-auth.ts';
 
 export const prerender = false;
 
@@ -49,6 +52,7 @@ export const POST: APIRoute = async ({ request }) => {
     const cargoDescription = typeof payload.cargoDescription === 'string' ? payload.cargoDescription.trim() : '';
     const cargoWeight = typeof payload.cargoWeight === 'string' ? payload.cargoWeight.trim() : '';
     const contactPhone = typeof payload.contactPhone === 'string' ? payload.contactPhone.trim() : '';
+    const notes = typeof payload.notes === 'string' ? payload.notes.trim() : '';
     const sourceUrl = typeof payload.sourceUrl === 'string' ? payload.sourceUrl.trim() : '/lien-he/';
 
     // Generate or sanitize requestId
@@ -88,6 +92,10 @@ export const POST: APIRoute = async ({ request }) => {
       errors.cargoWeight = 'Khối lượng / số lượng không được vượt quá 200 ký tự.';
     }
 
+    if (notes && notes.length > 2000) {
+      errors.notes = 'Ghi chú không được vượt quá 2000 ký tự.';
+    }
+
     // Phone validation: 9-25 chars, contains mostly digits with standard symbols
     const phoneDigits = contactPhone.replace(/\D/g, '');
     if (!contactPhone || phoneDigits.length < 9 || phoneDigits.length > 15) {
@@ -115,12 +123,21 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    // 6. Check Google Sheets connection
+    // 6. Check Active Integration Method
     const config = await getConfig();
-    const activeConn = config.activeConnection;
 
-    if (!activeConn || activeConn.status !== 'active') {
-      console.warn('[Contact Submit] No active Google Sheets connection. Status:', activeConn?.status);
+    // Determine which method is active: 'apps_script' | 'oauth'
+    let activeMethod: 'apps_script' | 'oauth' | null = null;
+    if (config.activeMethod) {
+      activeMethod = config.activeMethod;
+    } else if (config.appsScriptConnection?.status === 'active') {
+      activeMethod = 'apps_script';
+    } else if (config.activeConnection?.status === 'active') {
+      activeMethod = 'oauth';
+    }
+
+    if (!activeMethod) {
+      console.warn('[Contact Submit] No active Google Sheets connection configured.');
       return new Response(
         JSON.stringify({
           success: false,
@@ -131,34 +148,12 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    // 7. Get fresh access token
-    let accessToken: string;
-    try {
-      accessToken = await getFreshAccessToken(activeConn.encryptedRefreshToken);
-    } catch (err: any) {
-      console.error('[Contact Submit] Error refreshing Google token:', err);
-      if (err.code === 'NEEDS_REAUTH') {
-        activeConn.status = 'needs_reauth';
-        activeConn.lastError = 'Refresh token expired or revoked. Re-authorization required in admin.';
-        await saveConfig(config);
-      }
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: 'AUTH_FAILED',
-          message: 'Hệ thống kết nối Google Sheets cần cấp quyền lại. Vui lòng liên hệ Hotline trực tiếp để được tư vấn ngay.'
-        }),
-        { status: 503, headers: { 'Content-Type': 'application/json' } }
-      );
-    }
-
-    // 8. Format Vietnam timestamp (UTC+7)
+    // 7. Format Vietnam timestamp (UTC+7)
     const nowUtc = new Date();
     const vnTime = new Date(nowUtc.getTime() + 7 * 60 * 60 * 1000);
     const pad = (n: number) => n.toString().padStart(2, '0');
     const createdAtVn = `${pad(vnTime.getUTCDate())}/${pad(vnTime.getUTCMonth() + 1)}/${vnTime.getUTCFullYear()} ${pad(vnTime.getUTCHours())}:${pad(vnTime.getUTCMinutes())}:${pad(vnTime.getUTCSeconds())}`;
 
-    // 9. Append to Google Sheet
     const submissionData: ContactSubmissionData = {
       requestId,
       createdAt: createdAtVn,
@@ -169,21 +164,134 @@ export const POST: APIRoute = async ({ request }) => {
       deliveryLocation,
       cargoDescription,
       cargoWeight,
+      notes,
       sourceUrl
     };
 
-    await appendContactSubmission(activeConn.spreadsheetId, accessToken, submissionData);
+    // =========================================================================
+    // METHOD A: GOOGLE APPS SCRIPT WEB APP (Khuyên dùng, không cần Google Cloud)
+    // =========================================================================
+    if (activeMethod === 'apps_script') {
+      const appsConn = config.appsScriptConnection;
+      if (!appsConn || appsConn.status !== 'active' || !appsConn.webAppUrl || !appsConn.encryptedApiKey) {
+        console.warn('[Contact Submit] Apps Script active method selected but connection is invalid or inactive.');
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: 'SYSTEM_NOT_CONNECTED',
+            message: 'Hệ thống tiếp nhận Google Apps Script chưa hoàn tất cấu hình. Quý khách vui lòng gọi Hotline để được hỗ trợ kịp thời.'
+          }),
+          { status: 503, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
 
-    // 10. Record requestId to prevent duplicate submits
-    await markRequestIdSeen(requestId);
+      // Decrypt API key
+      let apiKey = '';
+      try {
+        const secret = getAdminSecret();
+        apiKey = await decryptData(appsConn.encryptedApiKey, secret);
+      } catch (err) {
+        console.error('[Contact Submit] Failed to decrypt Apps Script API Key:', err);
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: 'CONFIG_ERROR',
+            message: 'Không thể giải mã khóa kết nối an toàn. Quý khách vui lòng gọi Hotline để được hỗ trợ.'
+          }),
+          { status: 500, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+
+      const result = await submitToAppsScript(appsConn.webAppUrl, apiKey, submissionData);
+
+      if (!result.success) {
+        console.error('[Contact Submit] Apps Script rejected submission:', result);
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: result.code || 'SUBMIT_ERROR',
+            message: result.message || 'Lỗi khi ghi nhận yêu cầu vào Google Sheets.'
+          }),
+          { status: 502, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Record requestId to prevent duplicate submissions
+      await markRequestIdSeen(requestId);
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          requestId,
+          duplicate: Boolean(result.duplicate),
+          message: 'Gửi yêu cầu vận chuyển thành công! Đội ngũ Nam Hân Logistics sẽ liên hệ lại với quý khách trong thời gian sớm nhất.'
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // =========================================================================
+    // METHOD B: GOOGLE OAUTH 2.0 (Phương án qua Google Cloud Project)
+    // =========================================================================
+    if (activeMethod === 'oauth') {
+      const activeConn = config.activeConnection;
+
+      if (!activeConn || activeConn.status !== 'active') {
+        console.warn('[Contact Submit] No active OAuth Google Sheets connection. Status:', activeConn?.status);
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: 'SYSTEM_NOT_CONNECTED',
+            message: 'Hệ thống tiếp nhận tự động đang bảo trì hoặc chưa kết nối Google Sheets. Quý khách vui lòng liên hệ Hotline trực tiếp để được phục vụ ngay.'
+          }),
+          { status: 503, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Get fresh access token
+      let accessToken: string;
+      try {
+        accessToken = await getFreshAccessToken(activeConn.encryptedRefreshToken);
+      } catch (err: any) {
+        console.error('[Contact Submit] Error refreshing Google token:', err);
+        if (err.code === 'NEEDS_REAUTH') {
+          activeConn.status = 'needs_reauth';
+          activeConn.lastError = 'Refresh token expired or revoked. Re-authorization required in admin.';
+          await saveConfig(config);
+        }
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: 'AUTH_FAILED',
+            message: 'Hệ thống kết nối Google Sheets cần cấp quyền lại. Vui lòng liên hệ Hotline trực tiếp để được tư vấn ngay.'
+          }),
+          { status: 503, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+
+      // Append to Google Sheet
+      await appendContactSubmission(activeConn.spreadsheetId, accessToken, submissionData);
+
+      // Record requestId to prevent duplicate submits
+      await markRequestIdSeen(requestId);
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          requestId,
+          message: 'Gửi yêu cầu vận chuyển thành công! Đội ngũ Nam Hân Logistics sẽ liên hệ lại với quý khách trong thời gian sớm nhất.'
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
 
     return new Response(
       JSON.stringify({
-        success: true,
-        requestId,
-        message: 'Gửi yêu cầu vận chuyển thành công! Đội ngũ Nam Hân Logistics sẽ liên hệ lại với quý khách trong thời gian sớm nhất.'
+        success: false,
+        error: 'SYSTEM_NOT_CONNECTED',
+        message: 'Hệ thống chưa kích hoạt kênh tiếp nhận Google Sheets. Quý khách vui lòng liên hệ Hotline trực tiếp.'
       }),
-      { status: 200, headers: { 'Content-Type': 'application/json' } }
+      { status: 503, headers: { 'Content-Type': 'application/json' } }
     );
   } catch (err: any) {
     console.error('[Contact Submit System Error]:', err);

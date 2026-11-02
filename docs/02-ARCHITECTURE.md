@@ -129,3 +129,11 @@ Phase 2 implement `NetlifyLeadSubmissionAdapter` tương ứng. Nếu form gửi
 
 ## 6. ADR change policy
 Mọi thay đổi sang CMS, SSR, PHP backend, CRM, speech cloud, XLSX generated service phải có ADR gồm: nhu cầu nghiệp vụ, options, privacy, vận hành, chi phí, migration, rollback và quyết định owner.
+
+## 7. Kiến trúc tích hợp tiếp nhận Form Liên hệ (Google Sheets)
+Hệ thống hỗ trợ 2 phương án tiếp nhận tự động vào Google Sheets với **nguyên tắc một kênh duy nhất (Single Active Channel)**:
+1. **Google Apps Script Web App (Khuyên dùng khi bàn giao):** Kịch bản Container-bound chạy trên Google Sheet của khách hàng, xác thực bằng Khóa bí mật (AES-256), không cần tạo Google Cloud Console/OAuth Client ID.
+2. **Google OAuth 2.0 (Dành cho tài khoản có Google Cloud):** Kết nối trực tiếp qua Sheets API v4 bằng Authorization Code & Refresh Token.
+- Máy chủ website đóng vai trò trung gian duy nhất: Browser không gọi trực tiếp Google để tránh lộ bí mật.
+- Form endpoint (`/api/contact/submit`) kiểm tra `config.activeMethod` và chỉ điều hướng tới duy nhất 1 kênh đã kích hoạt, không ghi song song, có khóa chống trùng lặp `requestId` và chống Formula Injection.
+

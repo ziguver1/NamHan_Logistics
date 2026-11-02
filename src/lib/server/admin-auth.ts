@@ -8,17 +8,39 @@ import { signSession, verifySession, generateRandomToken } from './crypto.ts';
 const COOKIE_NAME = 'nhl_admin_session';
 const SESSION_MAX_AGE_SECONDS = 7 * 24 * 60 * 60; // 7 days
 
+function cleanEnvString(val?: unknown): string {
+  if (typeof val !== 'string') return '';
+  let str = val.trim();
+  if (
+    (str.startsWith('"') && str.endsWith('"')) ||
+    (str.startsWith("'") && str.endsWith("'"))
+  ) {
+    str = str.slice(1, -1);
+  }
+  return str.trim();
+}
+
 export function getAdminSecret(): string {
-  const secret = process.env.ADMIN_SECRET;
+  const raw =
+    (import.meta as any).env?.ADMIN_SECRET ||
+    process.env.ADMIN_SECRET;
+  const secret = cleanEnvString(raw);
   if (secret && secret.length >= 16) {
     return secret;
   }
   // Resilient fallback for local dev
-  return process.env.GOOGLE_CLIENT_SECRET || 'namhan-logistics-admin-secret-dev-key-2026';
+  const fallbackGoogle = cleanEnvString(
+    (import.meta as any).env?.GOOGLE_CLIENT_SECRET || process.env.GOOGLE_CLIENT_SECRET
+  );
+  return fallbackGoogle || 'namhan-logistics-admin-secret-dev-key-2026';
 }
 
 export function getAdminPassword(): string {
-  return process.env.ADMIN_PASSWORD || 'namhan@2026';
+  const raw =
+    (import.meta as any).env?.ADMIN_PASSWORD ||
+    process.env.ADMIN_PASSWORD;
+  const password = cleanEnvString(raw);
+  return password || 'namhan@2026';
 }
 
 /**

@@ -17,9 +17,22 @@ export interface SheetsConnection {
   lastError?: string;
 }
 
+export interface AppsScriptConnection {
+  webAppUrl: string;
+  encryptedApiKey: string;
+  sheetUrl?: string;
+  sheetTitle?: string;
+  connectedAt: string;
+  lastTestedAt?: string;
+  status: 'active' | 'inactive';
+  lastError?: string;
+}
+
 export interface AppConfig {
-  activeConnection?: SheetsConnection;
-  pendingConnection?: SheetsConnection;
+  activeMethod?: 'oauth' | 'apps_script'; // Which integration method actually receives submissions
+  activeConnection?: SheetsConnection;    // Google OAuth connection
+  pendingConnection?: SheetsConnection;   // Pending OAuth account switch
+  appsScriptConnection?: AppsScriptConnection; // Google Apps Script Web App connection
   recentSubmissions?: Record<string, number>; // requestId -> timestamp (ms)
 }
 

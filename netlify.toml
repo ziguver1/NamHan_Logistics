@@ -1,5 +1,31 @@
-# Netlify configuration for Astro STATIC output
-# Static build: publish dist, no SSR adapter
+# ==========================================
+# NAM HÂN LOGISTICS - Netlify Deployment Spec
+# ==========================================
+
 [build]
   command = "npm run build"
   publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Production Security & Performance Headers
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(self), geolocation=()"
+
+# Cache vĩnh viễn cho bundle tĩnh của Astro (đã băm tên file)
+[[headers]]
+  for = "/_astro/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Cache hình ảnh tối ưu
+[[headers]]
+  for = "/images/*"
+  [headers.values]
+    Cache-Control = "public, max-age=86400, stale-while-revalidate=604800"

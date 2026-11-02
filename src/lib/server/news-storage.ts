@@ -20,7 +20,7 @@ const INDEX_KEY = 'announcements_index';
 const LOCAL_DATA_DIR = path.resolve(process.cwd(), '.data', 'news');
 const LOCAL_MEDIA_DIR = path.resolve(process.cwd(), '.data', 'media');
 
-const isProductionEnv = Boolean(process.env.NETLIFY);
+const isProductionEnv = Boolean(process.env.NETLIFY || (import.meta as any).env?.NETLIFY);
 
 async function getNetlifyBlobStore() {
   try {
