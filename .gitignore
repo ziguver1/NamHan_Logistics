@@ -34,6 +34,7 @@ node_modules/
 # 5. Netlify Tooling & Deployment Cache
 .netlify/
 .netlify
+.netlify*
 
 # 6. Logs & Debugging
 logs/

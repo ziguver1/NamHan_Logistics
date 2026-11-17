@@ -55,7 +55,7 @@ const INITIAL_SEEDS: Announcement[] = [
     summary: 'Phân tích các giải pháp điều phối xe thông minh giúp doanh nghiệp giảm chi phí lưu kho và đảm bảo tiến độ giao nhận trong thời gian cao điểm.',
     content: '<p>Bước vào quý IV hàng năm, lưu lượng vận chuyển hàng hóa giữa hai đầu cầu kinh tế Hà Nội — TP. Hồ Chí Minh luôn tăng từ 35% đến 50%. Để đáp ứng nhu cầu tăng trưởng mạnh mẽ của các doanh nghiệp đối tác, Nam Hân Logistics đã chủ động kích hoạt phương án điều phối tập trung trên toàn tuyến Quốc lộ 1A và Cao tốc Bắc — Nam.</p><h2>1. Tăng cường năng lực đầu kéo và sơ-mi rơ-moóc</h2><p>Đội xe của Nam Hân được bổ sung các dòng xe tải thùng kín và xe container tải trọng lớn, thực hiện bảo dưỡng định kỳ toàn diện trước khi xuất bến. Mỗi xe đều trang bị hệ thống định vị GPS trực tuyến và cảm biến hành trình 24/7.</p><h2>2. Rút ngắn thời gian luân chuyển hàng hóa</h2><p>Nhờ quy trình xếp dỡ cơ giới hóa tại hai bãi xe trung tâm (Hà Nội & Bình Dương) kết hợp trạm dừng kỹ thuật Bỉm Sơn, thời gian toàn trình tuyến Hà Nội — TP.HCM duy trì ổn định ở mức 48 – 60 giờ.</p><p>Nam Hân Logistics cam kết giữ vững cam kết về cước phí cạnh tranh, đảm bảo không tăng giá đột biến trong các đợt cao điểm lễ tết.</p>',
     coverImage: {
-      url: '/images/home/news-thumb-1.webp',
+      url: '/images/home/news-thumb-1.webp?v=2',
       alt: 'Xe tải Nam Hân Logistics vận chuyển trên tuyến Bắc Nam'
     },
     isPinned: true,
