@@ -1,6 +1,7 @@
 ---
 import { ROUTES } from '@/lib/routes';
 import { companyInfo, branchOffice } from '@/content/company';
+import { brandAssets } from '@/content/brand';
 ---
 
 <footer class="main-footer">
@@ -11,10 +12,10 @@ import { companyInfo, branchOffice } from '@/content/company';
       <div class="footer-col col-brand">
         <a href={ROUTES.HOME} class="logo-box" aria-label="Nam Hân Logistics - Trang chủ">
           <img
-            src="/images/logo-nam-han.webp"
-            alt="Nam Hân Logistics Logo"
-            width="81"
-            height="44"
+            src={brandAssets.logo.src}
+            alt={brandAssets.logo.alt}
+            width={brandAssets.logo.width}
+            height={brandAssets.logo.height}
             class="logo-img"
             loading="lazy"
             decoding="async"
@@ -236,11 +237,11 @@ import { companyInfo, branchOffice } from '@/content/company';
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 96px;
-    height: 52px;
+    width: fit-content;
+    min-height: 64px;
     background-color: #ffffff;
     border-radius: 6px;
-    padding: 4px 7px;
+    padding: 6px 10px;
     margin-bottom: 1.125rem;
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     transition: transform var(--transition-fast);
@@ -251,8 +252,8 @@ import { companyInfo, branchOffice } from '@/content/company';
   }
 
   .logo-img {
-    width: 81px;
-    height: 44px;
+    width: 132px;
+    height: auto;
     object-fit: contain;
     display: block;
   }

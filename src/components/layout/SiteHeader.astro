@@ -2,6 +2,7 @@
 import { ROUTES } from '@/lib/routes';
 import { mainNavigation, headerCTA } from '@/content/navigation';
 import { companyInfo } from '@/content/company';
+import { brandAssets } from '@/content/brand';
 
 interface Props {
   currentPath?: string;
@@ -15,10 +16,10 @@ const { currentPath = '/' } = Astro.props;
     <!-- Brand Logo -->
     <a href={ROUTES.HOME} class="brand-logo" aria-label={`${companyInfo.shortName} - Trang chủ`}>
       <img
-        src="/images/logo-nam-han.webp"
-        alt="Nam Hân Logistics Logo"
-        width="81"
-        height="44"
+        src={brandAssets.logo.src}
+        alt={brandAssets.logo.alt}
+        width={brandAssets.logo.width}
+        height={brandAssets.logo.height}
         class="header-logo-img"
       />
     </a>
@@ -145,7 +146,7 @@ const { currentPath = '/' } = Astro.props;
   }
 
   .header-logo-img {
-    height: 40px;
+    height: 44px;
     width: auto;
     object-fit: contain;
     display: block;

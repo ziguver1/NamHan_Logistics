@@ -1,0 +1,187 @@
+{
+  "date": "2026-11-06",
+  "source": "User-supplied NHL logo",
+  "processing": "Whitespace trim, format conversion and resize only; original artwork preserved.",
+  "files": [
+    {
+      "path": "public/images/logo-nam-han.webp",
+      "format": "webp",
+      "width": 991,
+      "height": 392,
+      "sha256": "362d1a7c861edad0a151ace5ec0143e793823e6ccd9ffb9bb97011675141313f"
+    },
+    {
+      "path": "public/images/logo-nam-han-wide.webp",
+      "format": "webp",
+      "width": 991,
+      "height": 392,
+      "sha256": "362d1a7c861edad0a151ace5ec0143e793823e6ccd9ffb9bb97011675141313f"
+    },
+    {
+      "path": "public/images/logo-nam-han.png",
+      "format": "png",
+      "width": 991,
+      "height": 392,
+      "sha256": "78b4858190c1632e9d5f4c6c8d6fd14470002f9fb882014000bd352190ba79b9"
+    },
+    {
+      "path": "public/favicon.png",
+      "format": "png",
+      "width": 64,
+      "height": 64,
+      "sha256": "2e55e2facabb64475ead3a98546fd44a4a19fe1e6198ad67e49c09b9d34a2a94"
+    },
+    {
+      "path": "public/favicon.svg",
+      "sha256": "f0e33aaaf84f586370ad3faf2f70f7534b7e72aa752eae8d2ec3db8b2d73b465"
+    }
+  ],
+  "cacheVersion": "nhl-20261106",
+  "responsiveChecks": [
+    {
+      "logos": [
+        {
+          "height": 44,
+          "loaded": true,
+          "width": 111.234375
+        },
+        {
+          "height": 52.203125,
+          "loaded": true,
+          "width": 132
+        }
+      ],
+      "pageWidth": 305,
+      "width": 320
+    },
+    {
+      "logos": [
+        {
+          "height": 44,
+          "loaded": true,
+          "width": 111.234375
+        },
+        {
+          "height": 52.203125,
+          "loaded": true,
+          "width": 132
+        }
+      ],
+      "pageWidth": 345,
+      "width": 360
+    },
+    {
+      "logos": [
+        {
+          "height": 44,
+          "loaded": true,
+          "width": 111.234375
+        },
+        {
+          "height": 52.203125,
+          "loaded": true,
+          "width": 132
+        }
+      ],
+      "pageWidth": 360,
+      "width": 375
+    },
+    {
+      "logos": [
+        {
+          "height": 44,
+          "loaded": true,
+          "width": 111.234375
+        },
+        {
+          "height": 52.203125,
+          "loaded": true,
+          "width": 132
+        }
+      ],
+      "pageWidth": 375,
+      "width": 390
+    },
+    {
+      "logos": [
+        {
+          "height": 44,
+          "loaded": true,
+          "width": 111.234375
+        },
+        {
+          "height": 52.203125,
+          "loaded": true,
+          "width": 132
+        }
+      ],
+      "pageWidth": 415,
+      "width": 430
+    },
+    {
+      "logos": [
+        {
+          "height": 44,
+          "loaded": true,
+          "width": 111.234375
+        },
+        {
+          "height": 52.203125,
+          "loaded": true,
+          "width": 132
+        }
+      ],
+      "pageWidth": 753,
+      "width": 768
+    },
+    {
+      "logos": [
+        {
+          "height": 44,
+          "loaded": true,
+          "width": 111.234375
+        },
+        {
+          "height": 52.203125,
+          "loaded": true,
+          "width": 132
+        }
+      ],
+      "pageWidth": 1009,
+      "width": 1024
+    },
+    {
+      "logos": [
+        {
+          "height": 44,
+          "loaded": true,
+          "width": 111.234375
+        },
+        {
+          "height": 52.203125,
+          "loaded": true,
+          "width": 132
+        }
+      ],
+      "pageWidth": 1265,
+      "width": 1280
+    },
+    {
+      "logos": [
+        {
+          "height": 44,
+          "loaded": true,
+          "width": 111.234375
+        },
+        {
+          "height": 52.203125,
+          "loaded": true,
+          "width": 132
+        }
+      ],
+      "pageWidth": 1425,
+      "width": 1440
+    }
+  ],
+  "builtHtmlFilesChecked": 8
+}

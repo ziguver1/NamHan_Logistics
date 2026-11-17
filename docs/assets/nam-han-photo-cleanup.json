@@ -1,0 +1,478 @@
+{
+  "date": "2026-11-06",
+  "scope": "Remove embedded Nam Han branding in website photos; preserve standalone header/footer logos.",
+  "mode": "built-in image_gen",
+  "totalContentImages": 50,
+  "uniqueContentImages": 45,
+  "editedFiles": 36,
+  "editedUniqueImages": 32,
+  "unchangedLogos": [
+    {
+      "path": "public/images/logo-nam-han-wide.webp",
+      "sha256": "fcc23b2ba0f1f319bae7d4b5d96f297abca6b508909007d9975b7897513f0009"
+    },
+    {
+      "path": "public/images/logo-nam-han.png",
+      "sha256": "9ce77b3b9c5faf8ba94a3d29b3584e1cd812787089b7640df8d8fe56770d9075"
+    },
+    {
+      "path": "public/images/logo-nam-han.webp",
+      "sha256": "07601dab885bcce5442ac6cea6a2da249335a3f4449830b88bdb6dc4df46fd40"
+    }
+  ],
+  "prompt": "Use case: precise-object-edit. Edit target: the supplied website photograph. Remove ALL Nam Hân / Nam Han / NamHan company branding in the entire image: every written name, associated N/NH/symbol logo, wordmark and accompanying LOGISTICS lettering wherever branded, including tiny marks on distant truck cabs, cab doors, containers, packages, building signs, uniforms and hats. Leave clean unbranded surfaces, reconstructing matching paint, metal ribbing, fabric or facade naturally. Preserve the photograph's original composition, people/faces/poses, vehicle shapes/colors/count, background, equipment, lighting, perspective, framing and aspect ratio. Preserve unrelated real vehicle manufacturer names and unrelated text. Do not replace the scene, crop, blur, invent new text or introduce any new logo. Inspect ALL small background branding too. Output one cleaned photo.",
+  "assembly": "Only selected logo regions are composited into originals. Original dimensions and alpha are preserved; WebP quality 94.",
+  "backupDirectory": "tmp/imagegen/nam-han-removal/originals",
+  "entries": [
+    {
+      "path": "public/images/about/about-warehouse-man.webp",
+      "status": "edited",
+      "width": 596,
+      "height": 373,
+      "sourceSha256": "8d7b20d9d7e8ab55aaf5893ea5fceba39bdca81de655bbc808f1f0c0db143722",
+      "sha256": "53c8e3ece9b086262648063cb906c977a206a0fea1f05ec58f8aa8e9e6bcb42d",
+      "bytes": 49816
+    },
+    {
+      "path": "public/images/about/corridor-map.webp",
+      "status": "unchanged-no-identifiable-nam-han-brand",
+      "width": 596,
+      "height": 460,
+      "sourceSha256": "722a5a6984335475a7a7d04d9b9d9b5c0c2552eef7e1c37fc091110ebb6fa3a0",
+      "sha256": "722a5a6984335475a7a7d04d9b9d9b5c0c2552eef7e1c37fc091110ebb6fa3a0",
+      "bytes": 16938
+    },
+    {
+      "path": "public/images/about/facility-bim-son.webp",
+      "status": "edited",
+      "width": 390,
+      "height": 256,
+      "sourceSha256": "776618271d677eb2be9b4e83e8631f7fff8aaf6459717c11bceeac9cf92c7af2",
+      "sha256": "a4ec921d0ab1c13671b91c1199c9e6883dbc570acacae3485f9eda235fedb073",
+      "bytes": 31162
+    },
+    {
+      "path": "public/images/about/facility-binh-duong.webp",
+      "status": "edited",
+      "width": 390,
+      "height": 256,
+      "sourceSha256": "995da97e8744a353781f9bdb6ceb579bd0b4f16a46c914a6f913390d806de72f",
+      "sha256": "264fe490f0e68dc3e42399a0782e540c22b93fb6c402da6263fd7d9ea5038c1a",
+      "bytes": 44008
+    },
+    {
+      "path": "public/images/about/facility-hcm.webp",
+      "status": "edited",
+      "width": 390,
+      "height": 256,
+      "sourceSha256": "9ab159d24068ef8187111d8fda924d9b5d896623c42ce4549f47f6653c3ec94e",
+      "sha256": "9b987cc0effcf04e94895541aeedc64f5222f7626446fb317d225564148bcf8a",
+      "bytes": 34230
+    },
+    {
+      "path": "public/images/about/hero-about-truck.webp",
+      "status": "edited",
+      "width": 493,
+      "height": 592,
+      "sourceSha256": "39324ff8215a73afca58a70ad785d87d1192197f003c322939148688c70b7a27",
+      "sha256": "a77a88c0a6c90046bbd088cdd624d8d3bfd411a2017ccd1b097880edae2acf58",
+      "bytes": 60002
+    },
+    {
+      "path": "public/images/about/people-control-room.webp",
+      "status": "edited",
+      "width": 493,
+      "height": 370,
+      "sourceSha256": "6b0952b5d2f2e27fd4e59afc800d03f6a828b0f238cad79d0299ce475938c4c3",
+      "sha256": "13ac2d3008e7a12d275bb55e289231c3a6ec391ae144e3ad39d78f36ebf77b7e",
+      "bytes": 49394
+    },
+    {
+      "path": "public/images/contact/contact-hero-bg.webp",
+      "status": "unchanged-no-identifiable-nam-han-brand",
+      "width": 1196,
+      "height": 474,
+      "sourceSha256": "12bfd0f8c0ffc431ff00299013c41ef4b4accfeea1528de3bbfe9ba6420e8322",
+      "sha256": "12bfd0f8c0ffc431ff00299013c41ef4b4accfeea1528de3bbfe9ba6420e8322",
+      "bytes": 57926
+    },
+    {
+      "path": "public/images/home/client-avatar-1.webp",
+      "status": "unchanged-no-identifiable-nam-han-brand",
+      "width": 44,
+      "height": 44,
+      "sourceSha256": "aad06da7b5a4582be72f0704cad720f224703aeba5e772b96f99eeb6aee66b59",
+      "sha256": "aad06da7b5a4582be72f0704cad720f224703aeba5e772b96f99eeb6aee66b59",
+      "bytes": 2106
+    },
+    {
+      "path": "public/images/home/client-avatar-2.webp",
+      "status": "unchanged-no-identifiable-nam-han-brand",
+      "width": 44,
+      "height": 44,
+      "sourceSha256": "43269b603de38eb21b32c9b2cca733d5954f4a4571c8548356ec1dddec84735b",
+      "sha256": "43269b603de38eb21b32c9b2cca733d5954f4a4571c8548356ec1dddec84735b",
+      "bytes": 2046
+    },
+    {
+      "path": "public/images/home/client-avatar-3.webp",
+      "status": "unchanged-no-identifiable-nam-han-brand",
+      "width": 44,
+      "height": 44,
+      "sourceSha256": "a85f0e5dc3331b266b79af29745330158362fb7fe050519299f985f903ce0594",
+      "sha256": "a85f0e5dc3331b266b79af29745330158362fb7fe050519299f985f903ce0594",
+      "bytes": 2030
+    },
+    {
+      "path": "public/images/home/green-logistics.webp",
+      "status": "edited",
+      "width": 584,
+      "height": 329,
+      "sourceSha256": "99aa54f8284ab0f4b37c03ec94fc358f93de922757629b63cc7d7a5b3cebb164",
+      "sha256": "075c42d39632e6c39d331debb393b386556f69d08019704b1b4ec38d5c92d773",
+      "bytes": 49404
+    },
+    {
+      "path": "public/images/home/overview-top.webp",
+      "status": "edited",
+      "width": 584,
+      "height": 329,
+      "sourceSha256": "99aa54f8284ab0f4b37c03ec94fc358f93de922757629b63cc7d7a5b3cebb164",
+      "sha256": "075c42d39632e6c39d331debb393b386556f69d08019704b1b4ec38d5c92d773",
+      "bytes": 49404
+    },
+    {
+      "path": "public/images/home/hero-truck.webp",
+      "status": "edited",
+      "width": 2007,
+      "height": 784,
+      "sourceSha256": "c2ffb0cdf567d5ae0b527577d9da721ca974611db96470d2891f4253a1929423",
+      "sha256": "cd4843859c2a01e167530c330101964ec286609f4f682d7b8faf2bd2639d2d6f",
+      "bytes": 434002
+    },
+    {
+      "path": "public/images/home/news-thumb-1.webp",
+      "status": "edited",
+      "width": 385,
+      "height": 217,
+      "sourceSha256": "ee62d51ff72bf7e334670cfc7c0aa7bffb1349dd1df5d8e658a4c1364a14571f",
+      "sha256": "d04fa84c2f2e7f5a17490f8612bfaee177207fa61d36f3171597f7f38c89f9f1",
+      "bytes": 30268
+    },
+    {
+      "path": "public/images/home/news-thumb-2.webp",
+      "status": "unchanged-no-identifiable-nam-han-brand",
+      "width": 385,
+      "height": 217,
+      "sourceSha256": "2273567066df8f9f7706877a18f9ce0423560e1e5bfdbca7cad71674cb0f3055",
+      "sha256": "2273567066df8f9f7706877a18f9ce0423560e1e5bfdbca7cad71674cb0f3055",
+      "bytes": 38026
+    },
+    {
+      "path": "public/images/home/news-thumb-3.webp",
+      "status": "unchanged-no-identifiable-nam-han-brand",
+      "width": 385,
+      "height": 217,
+      "sourceSha256": "d0d867b1c062195922ec0a8a94cc99d34539f043e9c7f3a811f3b62fca3232ea",
+      "sha256": "d0d867b1c062195922ec0a8a94cc99d34539f043e9c7f3a811f3b62fca3232ea",
+      "bytes": 29806
+    },
+    {
+      "path": "public/images/home/overview-bot-left.webp",
+      "status": "edited",
+      "width": 286,
+      "height": 215,
+      "sourceSha256": "5750c8e6fa1abfb3f48e01cb67a61481a2d66574031142dff4052e3dc7addfe7",
+      "sha256": "f96492bb402103f5ecd54a8f87a07c3d1c1fea0d87ddf81f7e1e813e3664967f",
+      "bytes": 26146
+    },
+    {
+      "path": "public/images/home/service-handling.webp",
+      "status": "edited",
+      "width": 286,
+      "height": 215,
+      "sourceSha256": "5750c8e6fa1abfb3f48e01cb67a61481a2d66574031142dff4052e3dc7addfe7",
+      "sha256": "f96492bb402103f5ecd54a8f87a07c3d1c1fea0d87ddf81f7e1e813e3664967f",
+      "bytes": 26146
+    },
+    {
+      "path": "public/images/home/overview-bot-right.webp",
+      "status": "edited",
+      "width": 286,
+      "height": 215,
+      "sourceSha256": "ff8607a552a08aa54b40f1609026624175c6509e5b4ba8323c0d6974f1934fda",
+      "sha256": "3370209e5781931251842ff6488f338af12987191ef90b3918965d40636c6eb7",
+      "bytes": 23520
+    },
+    {
+      "path": "public/images/home/overview-warehouse.webp",
+      "status": "edited",
+      "width": 286,
+      "height": 215,
+      "sourceSha256": "ff8607a552a08aa54b40f1609026624175c6509e5b4ba8323c0d6974f1934fda",
+      "sha256": "3370209e5781931251842ff6488f338af12987191ef90b3918965d40636c6eb7",
+      "bytes": 23520
+    },
+    {
+      "path": "public/images/home/overview-fleet.webp",
+      "status": "edited",
+      "width": 584,
+      "height": 389,
+      "sourceSha256": "3484f48712f7a530774dced15fa1cbac1f4e4f7b61dcaaf85f0eabd4853d12ad",
+      "sha256": "12f5185ece66aabbe9583f3e2915e78846b166f17b3fa5ed63f7b9c160ee364f",
+      "bytes": 69658
+    },
+    {
+      "path": "public/images/home/service-bac-nam.webp",
+      "status": "unchanged-no-identifiable-nam-han-brand",
+      "width": 212,
+      "height": 218,
+      "sourceSha256": "c173fc69f002792545851500062e7e8e0e25f7d59ea0bcbc46d8097327df978b",
+      "sha256": "c173fc69f002792545851500062e7e8e0e25f7d59ea0bcbc46d8097327df978b",
+      "bytes": 15714
+    },
+    {
+      "path": "public/images/home/service-ftl.webp",
+      "status": "unchanged-no-identifiable-nam-han-brand",
+      "width": 218,
+      "height": 218,
+      "sourceSha256": "39b6087eb4464748c9f9ff0fa7f2146e3d7d15665d9f55495d75276382a458ad",
+      "sha256": "39b6087eb4464748c9f9ff0fa7f2146e3d7d15665d9f55495d75276382a458ad",
+      "bytes": 12350
+    },
+    {
+      "path": "public/images/home/service-solutions.webp",
+      "status": "unchanged-no-identifiable-nam-han-brand",
+      "width": 218,
+      "height": 218,
+      "sourceSha256": "39b6087eb4464748c9f9ff0fa7f2146e3d7d15665d9f55495d75276382a458ad",
+      "sha256": "39b6087eb4464748c9f9ff0fa7f2146e3d7d15665d9f55495d75276382a458ad",
+      "bytes": 12350
+    },
+    {
+      "path": "public/images/home/service-kho-hang.webp",
+      "status": "edited",
+      "width": 212,
+      "height": 278,
+      "sourceSha256": "23e47c9d8963c50fecc18e89a6fed861a1f852b798a928490780830c780752a2",
+      "sha256": "b0cc69ac96d46e104c5d3dffa336d0e76bf0221cf42986c1edbab310bd3b855b",
+      "bytes": 22720
+    },
+    {
+      "path": "public/images/home/service-logistics.webp",
+      "status": "edited",
+      "width": 212,
+      "height": 278,
+      "sourceSha256": "23e47c9d8963c50fecc18e89a6fed861a1f852b798a928490780830c780752a2",
+      "sha256": "b0cc69ac96d46e104c5d3dffa336d0e76bf0221cf42986c1edbab310bd3b855b",
+      "bytes": 22720
+    },
+    {
+      "path": "public/images/home/service-ltl.webp",
+      "status": "edited",
+      "width": 218,
+      "height": 278,
+      "sourceSha256": "9c9ce0b2a73e44ce16a314a300811a35ddc7090f8cabc382d5d06b1ce36176e4",
+      "sha256": "283e9bb2fdf71704bf110507046eb250d7bce2aedaad67189948f2871d295c2f",
+      "bytes": 25188
+    },
+    {
+      "path": "public/images/home/service-road-distribution.webp",
+      "status": "edited",
+      "width": 313,
+      "height": 399,
+      "sourceSha256": "fbc9d3bfc0b5b28f659a2ea4cbc16d1941fd4ec537b88838291622f09d04106c",
+      "sha256": "86b4aaac728e7fd20bd585246864b87419ac508499eff5f698b3ac999bd1bb79",
+      "bytes": 31224
+    },
+    {
+      "path": "public/images/home/service-road.webp",
+      "status": "edited",
+      "width": 313,
+      "height": 195,
+      "sourceSha256": "80775f4f7d63c77b8849dbe04a84fd57ea9cc2812b0bf7a0510877f6f306d8e9",
+      "sha256": "69ff6dac0d775db7a6e2db20bd22110fb05e679247629a4e752685241da21a09",
+      "bytes": 18444
+    },
+    {
+      "path": "public/images/services/handling/hero-handling.webp",
+      "status": "edited",
+      "width": 596,
+      "height": 410,
+      "sourceSha256": "c43a5c9d797a4511dcc89612a5e673840d07ad13243b3dd22b76b1d3803473d8",
+      "sha256": "0b933fa328d10f3164c32ec8db7edc400d0651c65a48e25fe091d0a8fd314174",
+      "bytes": 61758
+    },
+    {
+      "path": "public/images/services/handling/overview-handling.webp",
+      "status": "edited",
+      "width": 490,
+      "height": 368,
+      "sourceSha256": "7ec03ae1fc3cdb15472ee2810254d6913ed201731b9bdc2f9c97ac00c03c9dd5",
+      "sha256": "8032304a77c933daaca9f8a98e3b6e463102801e38b47a7bdad0bfb05fa94894",
+      "bytes": 48646
+    },
+    {
+      "path": "public/images/services/hero-services.webp",
+      "status": "unchanged-no-identifiable-nam-han-brand",
+      "width": 1280,
+      "height": 458,
+      "sourceSha256": "4445023cbe86c4d7c487309338e0b872dab1034ee945e0c42b16de27715d6dcf",
+      "sha256": "4445023cbe86c4d7c487309338e0b872dab1034ee945e0c42b16de27715d6dcf",
+      "bytes": 148958
+    },
+    {
+      "path": "public/images/services/logistics/logistics-hero-bg.webp",
+      "status": "edited",
+      "width": 1280,
+      "height": 560,
+      "sourceSha256": "a4401fb895620c92ffdd7e338501fe12231877180ebae54c25916d8af51a3e83",
+      "sha256": "332b9511f54c69f006563dceeba892ea8876a029e45496dd2b64d7e2c6d199b6",
+      "bytes": 142284
+    },
+    {
+      "path": "public/images/services/logistics/logistics-warehouse.webp",
+      "status": "edited",
+      "width": 596,
+      "height": 440,
+      "sourceSha256": "bf0076620321eab58711a9ba092e1a1df9b287b347d50fff0aeb53d100532845",
+      "sha256": "122a086fdc605a0c967ba8259a9357159ea1ca0d9724d4ccea363daa21b3b8c5",
+      "bytes": 92700
+    },
+    {
+      "path": "public/images/services/road/depot-warehouse.webp",
+      "status": "edited",
+      "width": 596,
+      "height": 420,
+      "sourceSha256": "e8261583cde7f52d66dc9ade9e4e074984845f441a011bbe8ca69fd422d30029",
+      "sha256": "6adb589d90a8af0542a11daa2063942e2cf2e91d5b8f7ef45e1836da6aefae78",
+      "bytes": 61602
+    },
+    {
+      "path": "public/images/services/road/hero-road-freight.webp",
+      "status": "edited",
+      "width": 1280,
+      "height": 550,
+      "sourceSha256": "1431f71d56196559d6680f43ac135f3d9b69c9b5e7ebd4934f08a618a011854c",
+      "sha256": "ccb318cb0565145a1c72d72e5f81b54a02cea2351df8fc86ab40b1a7be44dc2a",
+      "bytes": 167148
+    },
+    {
+      "path": "public/images/services/road/vehicle-box-truck.webp",
+      "status": "edited",
+      "width": 264,
+      "height": 176,
+      "sourceSha256": "292896a08cafbf3e2aedb36f183e5c102517efe51bf1fb590dca4b9f5653c183",
+      "sha256": "558e557d310bd100c7fb49058ddea6cf4f6725f0d24752ce0a947ec7d150fb89",
+      "bytes": 12768
+    },
+    {
+      "path": "public/images/services/road/vehicle-container.webp",
+      "status": "edited",
+      "width": 264,
+      "height": 176,
+      "sourceSha256": "b90c82cc8728188956ba2ca0b3dca966b8cee02377f839d75bfb08c7fc967d4d",
+      "sha256": "71eb96c48eca9785501dc28271aaaa84f6870abab79e33b5fed905e9b5375fcf",
+      "bytes": 18664
+    },
+    {
+      "path": "public/images/services/road/vehicle-tipper-dump.webp",
+      "status": "edited",
+      "width": 264,
+      "height": 176,
+      "sourceSha256": "585eb3e6dbd1fa80b0df4ce562fc2e0899cd7ad6edf597f1933442275232a37a",
+      "sha256": "d0cbe9b73ce1c8d8758e0ce95feeaed12d969b59a97d60cf4f069935326286c5",
+      "bytes": 19118
+    },
+    {
+      "path": "public/images/services/road/vehicle-truck-head.webp",
+      "status": "edited",
+      "width": 264,
+      "height": 176,
+      "sourceSha256": "06e33c7265590cc93bad5d16d643e523c9c5b98e6a7dddbce2ce368cb70f0b42",
+      "sha256": "993db750af3f0ebbdef32baa328b4cf5292089e9b33b3727c30f5b7b3d25156f",
+      "bytes": 14744
+    },
+    {
+      "path": "public/images/services/service-handling-forklift.webp",
+      "status": "unchanged-no-identifiable-nam-han-brand",
+      "width": 598,
+      "height": 240,
+      "sourceSha256": "3a27244c7ef4367e9ec30b1533ece4adda9f1005d0352e17609160e37aa2430c",
+      "sha256": "3a27244c7ef4367e9ec30b1533ece4adda9f1005d0352e17609160e37aa2430c",
+      "bytes": 41098
+    },
+    {
+      "path": "public/images/services/service-logistics-fleet.webp",
+      "status": "edited",
+      "width": 598,
+      "height": 240,
+      "sourceSha256": "2f67d33ce0dccff82215deaa58b56bd278ed39f0d489d3b7abfd01d6794f0cb8",
+      "sha256": "b8ce6a671364a07929b6f46d8518dcd876a5fb7f41f5bfe27236b3ec4879e525",
+      "bytes": 52124
+    },
+    {
+      "path": "public/images/services/service-road-core.webp",
+      "status": "unchanged-no-identifiable-nam-han-brand",
+      "width": 598,
+      "height": 240,
+      "sourceSha256": "1b61452823cbcfdeea3def2d83bca099e8613398a27d85accbb2414d1092eeb9",
+      "sha256": "1b61452823cbcfdeea3def2d83bca099e8613398a27d85accbb2414d1092eeb9",
+      "bytes": 55198
+    },
+    {
+      "path": "public/images/services/service-solutions-truck.webp",
+      "status": "unchanged-no-identifiable-nam-han-brand",
+      "width": 598,
+      "height": 240,
+      "sourceSha256": "692214065a194a14b013249ceb31d85a5b84742446e08fbe11998662862690ea",
+      "sha256": "692214065a194a14b013249ceb31d85a5b84742446e08fbe11998662862690ea",
+      "bytes": 53792
+    },
+    {
+      "path": "public/images/services/solutions/solutions-fleet.webp",
+      "status": "edited",
+      "width": 596,
+      "height": 320,
+      "sourceSha256": "573162a769a31ea65aead3aace64ac78ef2275994de035f82195f783af118ea9",
+      "sha256": "59943e37190b592832388683a82d3da86cc873c12e6ee8b4f375ddcf27569e08",
+      "bytes": 49104
+    },
+    {
+      "path": "public/images/services/solutions/solutions-hero-bg.webp",
+      "status": "edited",
+      "width": 1280,
+      "height": 304,
+      "sourceSha256": "e4069b369bf9c6bf547844d66fbdb63c94b062ed38872a356898c0e22af4c3eb",
+      "sha256": "92eec679cd0b84f1ad38163600ac578e96b080d42a3f92132694843e9ca1d779",
+      "bytes": 100558
+    },
+    {
+      "path": "public/images/services/solutions/solutions-mode-consolidation.webp",
+      "status": "edited",
+      "width": 395,
+      "height": 176,
+      "sourceSha256": "6427cb855074f0b59fe426336acbd6b41f3abadaf58f46bcaebc08375a4c04c9",
+      "sha256": "6afdc357359c4f3084413a4dce33597fcfbd840c59dc0954a8778e1dff6c5a8f",
+      "bytes": 28588
+    },
+    {
+      "path": "public/images/services/solutions/solutions-mode-ftl.webp",
+      "status": "edited",
+      "width": 395,
+      "height": 176,
+      "sourceSha256": "8383870c97bf44c834fb6b146d3370a8e05fb0f2a3d69a68b22a6a648a91fa86",
+      "sha256": "ec99b10c039135b4a43eba2fd938ffd93457ddc39cacfcca0aded20d6fc87936",
+      "bytes": 20906
+    },
+    {
+      "path": "public/images/services/solutions/solutions-mode-ltl.webp",
+      "status": "edited",
+      "width": 395,
+      "height": 176,
+      "sourceSha256": "0f77ea101ed0977bf08e82bb568a353ccde6ddf2cfc6338f4a8c3b13aa948dc9",
+      "sha256": "03751a1a8332989604e7b83f4fd828a6666597a0d937fd5dbbc50b9be1643c8a",
+      "bytes": 33556
+    }
+  ]
+}
