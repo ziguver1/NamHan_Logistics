@@ -18,6 +18,10 @@ const request = Astro.request;
 const isAdmin = await isAuthenticatedAdmin(request);
 const url = new URL(request.url);
 
+// Prevent caching of administrative screens and data
+Astro.response.headers.set('Cache-Control', 'no-store, private, must-revalidate');
+Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+
 const successParam = url.searchParams.get('success');
 const errorParam = url.searchParams.get('error');
 
@@ -1449,6 +1453,16 @@ if (isAdmin) {
       showAppsAlert('warning', 'Vui lòng nhập lại Khóa kết nối bí mật để kiểm tra lại.');
     } else {
       handleTestAppsScript();
+    }
+  });
+
+  // Auto-clean & normalize Web App URL on blur
+  const webAppUrlInput = document.getElementById('webAppUrl') as HTMLInputElement | null;
+  webAppUrlInput?.addEventListener('blur', () => {
+    let val = webAppUrlInput.value.trim().replace(/^["'`]+|["'`]+$/g, '');
+    const match = val.match(/\/s\/([a-zA-Z0-9_\-\.]+)\/exec/i);
+    if (match && match[1]) {
+      webAppUrlInput.value = `https://script.google.com/macros/s/${match[1]}/exec`;
     }
   });
 

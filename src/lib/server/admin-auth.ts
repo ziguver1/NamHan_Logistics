@@ -81,7 +81,7 @@ export async function createAdminSessionCookie(isSecure = false): Promise<string
   });
 
   const signedToken = await signSession(payload, secret);
-  const secureFlag = isSecure ? 'Secure;' : '';
+  const secureFlag = (isSecure || Boolean(process.env.NETLIFY)) ? 'Secure;' : '';
 
   return `${COOKIE_NAME}=${signedToken}; Path=/; Max-Age=${SESSION_MAX_AGE_SECONDS}; HttpOnly; SameSite=Lax; ${secureFlag}`.trim();
 }
@@ -90,7 +90,8 @@ export async function createAdminSessionCookie(isSecure = false): Promise<string
  * Creates an expired Set-Cookie header to log out the admin.
  */
 export function createAdminLogoutCookie(): string {
-  return `${COOKIE_NAME}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax;`;
+  const secureFlag = Boolean(process.env.NETLIFY) ? 'Secure;' : '';
+  return `${COOKIE_NAME}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax; ${secureFlag}`.trim();
 }
 
 /**

@@ -37,8 +37,17 @@ export interface AppConfig {
 }
 
 const STORAGE_KEY = 'connection_state';
-const LOCAL_DATA_DIR = path.resolve(process.cwd(), '.data');
-const LOCAL_DATA_FILE = path.join(LOCAL_DATA_DIR, 'connection_state.json');
+
+function getStorageDir(): string {
+  if (process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    return path.join('/tmp', 'namhan_config_data');
+  }
+  return path.resolve(process.cwd(), '.data');
+}
+
+function getStorageFile(): string {
+  return path.join(getStorageDir(), 'connection_state.json');
+}
 
 // Memory cache for quick reads
 let inMemoryCache: AppConfig | null = null;
@@ -46,6 +55,11 @@ let inMemoryCache: AppConfig | null = null;
 async function getNetlifyBlobStore() {
   try {
     const { getStore } = await import('@netlify/blobs');
+    const siteID = process.env.NETLIFY_SITE_ID || process.env.SITE_ID;
+    const token = process.env.NETLIFY_BLOBS_TOKEN || process.env.NETLIFY_AUTH_TOKEN;
+    if (siteID && token) {
+      return getStore({ name: 'namhan_config', siteID, token });
+    }
     return getStore('namhan_config');
   } catch {
     return null;
@@ -72,8 +86,9 @@ export async function getConfig(): Promise<AppConfig> {
 
   // 2. Try Local File fallback
   try {
-    if (fs.existsSync(LOCAL_DATA_FILE)) {
-      const content = fs.readFileSync(LOCAL_DATA_FILE, 'utf-8');
+    const dataFile = getStorageFile();
+    if (fs.existsSync(dataFile)) {
+      const content = fs.readFileSync(dataFile, 'utf-8');
       inMemoryCache = JSON.parse(content) as AppConfig;
       return inMemoryCache;
     }
@@ -105,10 +120,11 @@ export async function saveConfig(config: AppConfig): Promise<void> {
 
   // 2. Always persist to local file in dev or as secondary copy
   try {
-    if (!fs.existsSync(LOCAL_DATA_DIR)) {
-      fs.mkdirSync(LOCAL_DATA_DIR, { recursive: true });
+    const dir = getStorageDir();
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir, { recursive: true });
     }
-    fs.writeFileSync(LOCAL_DATA_FILE, JSON.stringify(config, null, 2), 'utf-8');
+    fs.writeFileSync(getStorageFile(), JSON.stringify(config, null, 2), 'utf-8');
   } catch (err) {
     if (!savedToBlob) {
       console.warn('[Storage] Could not write to local data file:', err);

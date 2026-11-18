@@ -27,19 +27,22 @@ export interface AppsScriptSubmitResult {
 }
 
 /**
- * Validates Google Apps Script Web App URL to prevent Server-Side Request Forgery (SSRF).
- * Only allows verified Google script hosts with standard /macros/s/.../exec path pattern.
+ * Validates and normalizes Google Apps Script Web App URL.
+ * Protects against SSRF and automatically normalizes multi-account URLs (/u/0/, /a/domain/)
+ * into universal canonical public Web App URLs.
  */
-export function validateAppsScriptUrl(urlString: string): { valid: boolean; error?: string } {
+export function validateAppsScriptUrl(urlString: string): { valid: boolean; canonicalUrl?: string; error?: string } {
   if (!urlString || typeof urlString !== 'string') {
     return { valid: false, error: 'URL ứng dụng web không được để trống.' };
   }
 
+  // Strip leading/trailing whitespace, quotes and backticks commonly included when copying
+  const clean = urlString.trim().replace(/^["'`]+|["'`]+$/g, '');
   let parsed: URL;
   try {
-    parsed = new URL(urlString.trim());
+    parsed = new URL(clean);
   } catch {
-    return { valid: false, error: 'Định dạng URL không hợp lệ.' };
+    return { valid: false, error: 'Định dạng URL không hợp lệ. Vui lòng nhập đúng đường link bắt đầu bằng https://.' };
   }
 
   // 1. Must be HTTPS
@@ -51,18 +54,42 @@ export function validateAppsScriptUrl(urlString: string): { valid: boolean; erro
   const host = parsed.hostname.toLowerCase();
   const allowedHosts = ['script.google.com', 'script.googleusercontent.com'];
   if (!allowedHosts.includes(host)) {
+    if (host.includes('docs.google.com')) {
+      return {
+        valid: false,
+        error: `Bạn đang dán link bảng tính Google Sheets (${host}). Vui lòng nhập link "URL ứng dụng web" (bắt đầu bằng script.google.com và kết thúc bằng /exec).`
+      };
+    }
     return {
       valid: false,
       error: `Tên miền '${host}' không thuộc hệ thống Google Apps Script được phép (chỉ chấp nhận script.google.com).`
     };
   }
 
-  // 3. Strict Path pattern: /macros/s/{deploymentId}/exec
-  const path = parsed.pathname;
-  if (!/^\/macros\/s\/[a-zA-Z0-9_\-]{20,}\/exec\/?$/i.test(path)) {
+  // 3. Path pattern check: must end with /exec
+  const rawPath = parsed.pathname.replace(/\/+$/, ''); // Strip trailing slashes
+  if (!/\/exec$/i.test(rawPath)) {
     return {
       valid: false,
       error: 'Đường dẫn URL chưa đúng chuẩn Web App. URL phải kết thúc bằng "/exec" (ví dụ: https://script.google.com/macros/s/.../exec).'
+    };
+  }
+
+  // Extract deployment ID: handles standard /macros/s/<id>/exec, multi-account /macros/u/0/s/<id>/exec,
+  // and domain-prefixed /a/<domain>/macros/s/<id>/exec
+  const match = rawPath.match(/\/s\/([a-zA-Z0-9_\-\.]+)\/exec/i);
+  if (!match || !match[1]) {
+    return {
+      valid: false,
+      error: 'Không tìm thấy Mã triển khai (Deployment ID) hợp lệ trong đường dẫn URL.'
+    };
+  }
+
+  const deploymentId = match[1];
+  if (deploymentId.length < 15) {
+    return {
+      valid: false,
+      error: 'Mã triển khai trong URL quá ngắn hoặc không đúng chuẩn.'
     };
   }
 
@@ -71,7 +98,11 @@ export function validateAppsScriptUrl(urlString: string): { valid: boolean; erro
     return { valid: false, error: 'URL không được chứa tên đăng nhập hoặc mật khẩu.' };
   }
 
-  return { valid: true };
+  // Return canonical URL without account index or domain prefix for universal public access
+  return {
+    valid: true,
+    canonicalUrl: `https://script.google.com/macros/s/${deploymentId}/exec`
+  };
 }
 
 /**
@@ -93,7 +124,8 @@ async function callAppsScript(
   try {
     // Note: Google Apps Script Web Apps reply to POST with HTTP 302 redirecting to script.googleusercontent.com
     // Node.js native fetch follows redirects seamlessly when redirect: 'follow'.
-    const response = await fetch(webAppUrl.trim(), {
+    const targetUrl = (urlCheck.canonicalUrl || webAppUrl).trim();
+    const response = await fetch(targetUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

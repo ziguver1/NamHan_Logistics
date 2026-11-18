@@ -15,6 +15,10 @@ const request = Astro.request;
 const isAdmin = await isAuthenticatedAdmin(request);
 const url = new URL(request.url);
 
+// Prevent caching of administrative screens
+Astro.response.headers.set('Cache-Control', 'no-store, private, must-revalidate');
+Astro.response.headers.set('X-Robots-Tag', 'noindex, nofollow, noarchive');
+
 const currentTab = url.searchParams.get('tab') || 'all';
 const searchKeyword = url.searchParams.get('q') || '';
 

@@ -32,6 +32,7 @@ export const POST: APIRoute = async ({ request }) => {
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
+    const cleanUrl = urlValidation.canonicalUrl || webAppUrl;
 
     if (!apiKey) {
       return new Response(
@@ -40,7 +41,7 @@ export const POST: APIRoute = async ({ request }) => {
       );
     }
 
-    const result = await testAppsScriptConnection(webAppUrl, apiKey);
+    const result = await testAppsScriptConnection(cleanUrl, apiKey);
 
     if (result.ok) {
       return new Response(

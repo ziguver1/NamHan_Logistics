@@ -39,7 +39,7 @@ export const servicesAssets: Record<ServicesAssetKey, ServicesImageAsset> = {
 
   // 3. Service 02: Logistics & Giao nhận
   serviceLogistics: {
-    src: '/images/services/service-logistics-fleet.webp?v=2',
+    src: '/images/services/service-logistics-fleet.webp?v=4',
     alt: 'Dịch vụ logistics và điều phối giao nhận hàng hóa tại trung tâm phân phối',
     label: 'SERVICE LOGISTICS',
     aspectRatio: '16/10',

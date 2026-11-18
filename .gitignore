@@ -4,6 +4,7 @@
 
 # 1. Build & Compilation Outputs
 dist/
+dist*
 .astro/
 build/
 out/
@@ -49,6 +50,9 @@ lerna-debug.log*
 scratch/
 temp/
 tmp/
+output/
+.netlify_old/
+dist_old/
 coverage/
 .nyc_output/
 playwright-report/

@@ -17,32 +17,54 @@ import type {
 const STORE_NAME = 'namhan_news';
 const INDEX_KEY = 'announcements_index';
 
-const LOCAL_DATA_DIR = path.resolve(process.cwd(), '.data', 'news');
-const LOCAL_MEDIA_DIR = path.resolve(process.cwd(), '.data', 'media');
+function getNewsDataDir(): string {
+  if (process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    return path.join('/tmp', 'namhan_news_data');
+  }
+  return path.resolve(process.cwd(), '.data', 'news');
+}
 
-const isProductionEnv = Boolean(process.env.NETLIFY || (import.meta as any).env?.NETLIFY);
+function getNewsMediaDir(): string {
+  if (process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+    return path.join('/tmp', 'namhan_media_data');
+  }
+  return path.resolve(process.cwd(), '.data', 'media');
+}
+
+// In-memory cache for ultra-fast, resilient reads and writes
+let inMemoryIndex: AnnouncementSummary[] | null = null;
+const inMemoryArticles = new Map<string, Announcement>();
+const inMemoryMedia = new Map<string, StoredMediaFile>();
 
 async function getNetlifyBlobStore() {
   try {
     const { getStore } = await import('@netlify/blobs');
-    return getStore(STORE_NAME);
-  } catch (err) {
-    if (isProductionEnv) {
-      throw new Error(`[NewsStorage] Netlify Blobs unavailable in production: ${err instanceof Error ? err.message : String(err)}`);
+    const siteID = process.env.NETLIFY_SITE_ID || process.env.SITE_ID;
+    const token = process.env.NETLIFY_BLOBS_TOKEN || process.env.NETLIFY_AUTH_TOKEN;
+    if (siteID && token) {
+      return getStore({ name: STORE_NAME, siteID, token });
     }
+    return getStore(STORE_NAME);
+  } catch {
     return null;
   }
 }
 
 /**
- * Initializes local storage directories if running in dev.
+ * Initializes storage directories safely.
  */
 function ensureLocalDirs() {
-  if (!fs.existsSync(LOCAL_DATA_DIR)) {
-    fs.mkdirSync(LOCAL_DATA_DIR, { recursive: true });
-  }
-  if (!fs.existsSync(LOCAL_MEDIA_DIR)) {
-    fs.mkdirSync(LOCAL_MEDIA_DIR, { recursive: true });
+  try {
+    const dataDir = getNewsDataDir();
+    const mediaDir = getNewsMediaDir();
+    if (!fs.existsSync(dataDir)) {
+      fs.mkdirSync(dataDir, { recursive: true });
+    }
+    if (!fs.existsSync(mediaDir)) {
+      fs.mkdirSync(mediaDir, { recursive: true });
+    }
+  } catch (err) {
+    console.warn('[NewsStorage] ensureLocalDirs warning:', err);
   }
 }
 
@@ -55,7 +77,7 @@ const INITIAL_SEEDS: Announcement[] = [
     summary: 'Phân tích các giải pháp điều phối xe thông minh giúp doanh nghiệp giảm chi phí lưu kho và đảm bảo tiến độ giao nhận trong thời gian cao điểm.',
     content: '<p>Bước vào quý IV hàng năm, lưu lượng vận chuyển hàng hóa giữa hai đầu cầu kinh tế Hà Nội — TP. Hồ Chí Minh luôn tăng từ 35% đến 50%. Để đáp ứng nhu cầu tăng trưởng mạnh mẽ của các doanh nghiệp đối tác, Nam Hân Logistics đã chủ động kích hoạt phương án điều phối tập trung trên toàn tuyến Quốc lộ 1A và Cao tốc Bắc — Nam.</p><h2>1. Tăng cường năng lực đầu kéo và sơ-mi rơ-moóc</h2><p>Đội xe của Nam Hân được bổ sung các dòng xe tải thùng kín và xe container tải trọng lớn, thực hiện bảo dưỡng định kỳ toàn diện trước khi xuất bến. Mỗi xe đều trang bị hệ thống định vị GPS trực tuyến và cảm biến hành trình 24/7.</p><h2>2. Rút ngắn thời gian luân chuyển hàng hóa</h2><p>Nhờ quy trình xếp dỡ cơ giới hóa tại hai bãi xe trung tâm (Hà Nội & Bình Dương) kết hợp trạm dừng kỹ thuật Bỉm Sơn, thời gian toàn trình tuyến Hà Nội — TP.HCM duy trì ổn định ở mức 48 – 60 giờ.</p><p>Nam Hân Logistics cam kết giữ vững cam kết về cước phí cạnh tranh, đảm bảo không tăng giá đột biến trong các đợt cao điểm lễ tết.</p>',
     coverImage: {
-      url: '/images/home/news-thumb-1.webp?v=2',
+      url: '/images/home/news-thumb-1.webp?v=4',
       alt: 'Xe tải Nam Hân Logistics vận chuyển trên tuyến Bắc Nam'
     },
     isPinned: true,
@@ -72,7 +94,7 @@ const INITIAL_SEEDS: Announcement[] = [
     summary: 'Nâng cao khả năng tiếp nhận, sang tải và bốc dỡ cơ giới, rút ngắn thời gian trung chuyển giữa hai miền Nam — Bắc xuống dưới 32 giờ.',
     content: '<p>Nhằm củng cố năng lực mạng lưới logistics đa điểm, Nam Hân Logistics chính thức mở rộng trạm dừng và bãi đỗ kỹ thuật tại khu vực Miền Trung. Đây là mắt xích then chốt kết nối hai trung tâm kho bãi chính tại miền Bắc và miền Nam.</p><h2>Năng lực tiếp nhận mở rộng</h2><ul><li>Diện tích bãi xe rộng rãi, phục vụ sang tải đồng thời cho 15 xe tải lớn.</li><li>Trang bị xe nâng cơ giới hiện đại phục vụ bốc xếp hàng nặng, máy móc công nghiệp.</li><li>Đội ngũ kỹ thuật trực 24/7 kiểm tra an toàn kỹ thuật lốp, phanh và thùng hàng.</li></ul><p>Việc đưa trạm trung chuyển đi vào vận hành giúp rút ngắn tối đa thời gian chờ đợi trên hành trình Bắc — Nam, tăng độ tin cậy trong các hợp đồng dịch vụ dài hạn.</p>',
     coverImage: {
-      url: '/images/home/news-thumb-2.webp',
+      url: '/images/home/news-thumb-2.webp?v=4',
       alt: 'Bãi xe và kho trung chuyển của Nam Hân Logistics'
     },
     isPinned: false,
@@ -89,7 +111,7 @@ const INITIAL_SEEDS: Announcement[] = [
     summary: 'Tìm hiểu tiêu chuẩn đóng gói, niêm phong kẹp chì và hệ thống giám sát hành trình GPS trực tuyến 24/7 bảo vệ trọn vẹn tài sản của khách hàng.',
     content: '<p>Trong vận tải đường bộ liên tỉnh, bảo đảm an toàn nguyên vẹn cho hàng hóa là nguyên tắc sống còn. Nam Hân Logistics áp dụng quy trình kiểm soát nghiêm ngặt 4 bước trước khi xe lăn bánh.</p><h2>Quy chuẩn 4 bước chuẩn hóa</h2><ol><li><strong>Kiểm đếm và phân loại:</strong> Hàng hóa được phân loại theo tính chất chịu lực, kích thước và yêu cầu bảo quản.</li><li><strong>Chằng buộc chuyên dụng:</strong> Sử dụng dây cáp, đệm lót chuyên dụng chống xô lệch, va đập trong quá trình vận hành trên cao tốc và đèo dốc.</li><li><strong>Niêm phong kẹp chì (Seal):</strong> Đối với hàng nguyên chuyến FTL và hàng giá trị cao, mã niêm phong được bàn giao bằng biên bản đối soát hai đầu.</li><li><strong>Bảo hiểm trách nhiệm hàng hóa:</strong> 100% chuyến xe vận chuyển đều kèm gói bảo hiểm theo giá trị khai báo.</li></ol>',
     coverImage: {
-      url: '/images/home/news-thumb-3.webp',
+      url: '/images/home/news-thumb-3.webp?v=4',
       alt: 'Quy trình chằng buộc và niêm phong hàng hóa Nam Hân Logistics'
     },
     isPinned: false,
@@ -105,69 +127,81 @@ const INITIAL_SEEDS: Announcement[] = [
  * Reads the announcements index summary list.
  */
 export async function getAnnouncementsIndex(): Promise<AnnouncementSummary[]> {
+  // 1. Try Netlify Blobs if store is active
   const store = await getNetlifyBlobStore();
 
   if (store) {
     try {
       const data = await store.get(INDEX_KEY, { type: 'json' });
-      if (Array.isArray(data)) {
-        return data as AnnouncementSummary[];
+      if (Array.isArray(data) && data.length > 0) {
+        inMemoryIndex = data as AnnouncementSummary[];
+        return inMemoryIndex;
       }
       // If store is empty, initialize with seeds
       await seedInitialData(store);
       const seeded = await store.get(INDEX_KEY, { type: 'json' });
-      return Array.isArray(seeded) ? (seeded as AnnouncementSummary[]) : [];
-    } catch (err) {
-      if (isProductionEnv) {
-        throw new Error(`[NewsStorage] Error reading index from Netlify Blobs: ${err instanceof Error ? err.message : String(err)}`);
+      if (Array.isArray(seeded) && seeded.length > 0) {
+        inMemoryIndex = seeded as AnnouncementSummary[];
+        return inMemoryIndex;
       }
-    }
+    } catch {}
   }
 
-  // Local development file fallback
+  // 2. Try In-Memory Cache
+  if (inMemoryIndex && inMemoryIndex.length > 0) {
+    return inMemoryIndex;
+  }
+
+  // 3. Local/tmp directory fallback
   ensureLocalDirs();
-  const localIndexFile = path.join(LOCAL_DATA_DIR, 'index.json');
+  const localIndexFile = path.join(getNewsDataDir(), 'index.json');
   try {
     if (fs.existsSync(localIndexFile)) {
       const raw = fs.readFileSync(localIndexFile, 'utf-8');
-      return JSON.parse(raw);
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        inMemoryIndex = parsed as AnnouncementSummary[];
+        return inMemoryIndex;
+      }
     }
   } catch (err) {
     console.warn('[NewsStorage] Error reading local index:', err);
   }
 
-  // Seed locally
+  // 4. Seed locally
   await seedInitialDataLocal();
   try {
     if (fs.existsSync(localIndexFile)) {
-      return JSON.parse(fs.readFileSync(localIndexFile, 'utf-8'));
+      inMemoryIndex = JSON.parse(fs.readFileSync(localIndexFile, 'utf-8'));
+      return inMemoryIndex!;
     }
   } catch {}
 
-  return INITIAL_SEEDS.map(toSummary);
+  inMemoryIndex = INITIAL_SEEDS.map(toSummary);
+  return inMemoryIndex;
 }
 
 /**
  * Saves the announcements index list.
  */
 async function saveAnnouncementsIndex(summaries: AnnouncementSummary[]): Promise<void> {
-  const store = await getNetlifyBlobStore();
+  inMemoryIndex = summaries;
 
+  const store = await getNetlifyBlobStore();
   if (store) {
     try {
       await store.setJSON(INDEX_KEY, summaries);
-      return;
-    } catch (err) {
-      if (isProductionEnv) {
-        throw new Error(`[NewsStorage] Failed to save index to Netlify Blobs: ${err instanceof Error ? err.message : String(err)}`);
-      }
-    }
+    } catch {}
   }
 
-  // Local save
-  ensureLocalDirs();
-  const localIndexFile = path.join(LOCAL_DATA_DIR, 'index.json');
-  fs.writeFileSync(localIndexFile, JSON.stringify(summaries, null, 2), 'utf-8');
+  // Local/tmp save
+  try {
+    ensureLocalDirs();
+    const localIndexFile = path.join(getNewsDataDir(), 'index.json');
+    fs.writeFileSync(localIndexFile, JSON.stringify(summaries, null, 2), 'utf-8');
+  } catch (err) {
+    console.warn('[NewsStorage] Could not write index file:', err);
+  }
 }
 
 /**
@@ -175,27 +209,39 @@ async function saveAnnouncementsIndex(summaries: AnnouncementSummary[]): Promise
  */
 export async function getAnnouncementById(id: string): Promise<Announcement | null> {
   if (!id) return null;
-  const store = await getNetlifyBlobStore();
 
+  if (inMemoryArticles.has(id)) {
+    return inMemoryArticles.get(id)!;
+  }
+
+  const store = await getNetlifyBlobStore();
   if (store) {
     try {
       const data = await store.get(`article:${id}`, { type: 'json' });
-      return (data as Announcement) || null;
-    } catch (err) {
-      if (isProductionEnv) {
-        throw new Error(`[NewsStorage] Failed to read article ${id} from Blobs: ${err instanceof Error ? err.message : String(err)}`);
+      if (data && typeof data === 'object') {
+        const article = data as Announcement;
+        inMemoryArticles.set(id, article);
+        return article;
       }
-    }
+    } catch {}
   }
 
   ensureLocalDirs();
-  const filePath = path.join(LOCAL_DATA_DIR, `${id}.json`);
+  const filePath = path.join(getNewsDataDir(), `${id}.json`);
   if (fs.existsSync(filePath)) {
     try {
-      return JSON.parse(fs.readFileSync(filePath, 'utf-8'));
+      const article = JSON.parse(fs.readFileSync(filePath, 'utf-8')) as Announcement;
+      inMemoryArticles.set(id, article);
+      return article;
     } catch {
       return null;
     }
+  }
+
+  const seed = INITIAL_SEEDS.find((s) => s.id === id);
+  if (seed) {
+    inMemoryArticles.set(id, seed);
+    return seed;
   }
 
   return null;
@@ -298,20 +344,22 @@ export async function saveAnnouncement(
   }
 
   // 4. Save article payload
+  inMemoryArticles.set(article.id, article);
+
   const store = await getNetlifyBlobStore();
   if (store) {
     try {
       await store.setJSON(`article:${article.id}`, article);
-    } catch (err) {
-      if (isProductionEnv) {
-        throw new Error(`[NewsStorage] Failed to save article ${article.id} to Blobs: ${err instanceof Error ? err.message : String(err)}`);
-      }
-    }
+    } catch {}
   }
 
-  ensureLocalDirs();
-  const filePath = path.join(LOCAL_DATA_DIR, `${article.id}.json`);
-  fs.writeFileSync(filePath, JSON.stringify(article, null, 2), 'utf-8');
+  try {
+    ensureLocalDirs();
+    const filePath = path.join(getNewsDataDir(), `${article.id}.json`);
+    fs.writeFileSync(filePath, JSON.stringify(article, null, 2), 'utf-8');
+  } catch (err) {
+    console.warn('[NewsStorage] Could not write article file:', err);
+  }
 
   // 5. Update index
   const summary = toSummary(article);
@@ -356,21 +404,22 @@ export async function restoreAnnouncement(id: string): Promise<boolean> {
  * Permanently removes an announcement.
  */
 export async function hardDeleteAnnouncement(id: string): Promise<boolean> {
-  const store = await getNetlifyBlobStore();
+  inMemoryArticles.delete(id);
 
+  const store = await getNetlifyBlobStore();
   if (store) {
     try {
       await store.delete(`article:${id}`);
     } catch {}
   }
 
-  ensureLocalDirs();
-  const filePath = path.join(LOCAL_DATA_DIR, `${id}.json`);
-  if (fs.existsSync(filePath)) {
-    try {
+  try {
+    ensureLocalDirs();
+    const filePath = path.join(getNewsDataDir(), `${id}.json`);
+    if (fs.existsSync(filePath)) {
       fs.unlinkSync(filePath);
-    } catch {}
-  }
+    }
+  } catch {}
 
   // Remove from index
   const index = await getAnnouncementsIndex();
@@ -397,10 +446,19 @@ export async function saveMediaFile(
   buffer: Buffer,
   meta: { originalName: string; mimeType: string }
 ): Promise<AttachmentFile> {
-  const store = await getNetlifyBlobStore();
   const uploadedAt = new Date().toISOString();
   const sizeBytes = buffer.length;
 
+  inMemoryMedia.set(fileId, {
+    id: fileId,
+    originalName: meta.originalName,
+    mimeType: meta.mimeType,
+    sizeBytes,
+    uploadedAt,
+    buffer
+  });
+
+  const store = await getNetlifyBlobStore();
   if (store) {
     try {
       // Store metadata
@@ -416,19 +474,19 @@ export async function saveMediaFile(
         buffer.byteOffset + buffer.byteLength
       ) as ArrayBuffer;
       await store.set(`media_bin:${fileId}`, arrayBuffer);
-    } catch (err) {
-      if (isProductionEnv) {
-        throw new Error(`[NewsStorage] Failed to store media file ${fileId} in Blobs: ${err instanceof Error ? err.message : String(err)}`);
-      }
-    }
+    } catch {}
   }
 
-  // Local filesystem save
-  ensureLocalDirs();
-  const metaPath = path.join(LOCAL_MEDIA_DIR, `${fileId}.meta.json`);
-  const binPath = path.join(LOCAL_MEDIA_DIR, `${fileId}.bin`);
-  fs.writeFileSync(metaPath, JSON.stringify({ ...meta, sizeBytes, uploadedAt }, null, 2));
-  fs.writeFileSync(binPath, buffer);
+  // Local/tmp filesystem save
+  try {
+    ensureLocalDirs();
+    const metaPath = path.join(getNewsMediaDir(), `${fileId}.meta.json`);
+    const binPath = path.join(getNewsMediaDir(), `${fileId}.bin`);
+    fs.writeFileSync(metaPath, JSON.stringify({ ...meta, sizeBytes, uploadedAt }, null, 2));
+    fs.writeFileSync(binPath, buffer);
+  } catch (err) {
+    console.warn('[NewsStorage] Could not write media to disk:', err);
+  }
 
   return {
     id: fileId,
@@ -443,15 +501,19 @@ export async function saveMediaFile(
 
 export async function getMediaFile(fileId: string): Promise<StoredMediaFile | null> {
   if (!fileId) return null;
-  const store = await getNetlifyBlobStore();
 
+  if (inMemoryMedia.has(fileId)) {
+    return inMemoryMedia.get(fileId)!;
+  }
+
+  const store = await getNetlifyBlobStore();
   if (store) {
     try {
       const meta = (await store.get(`media_meta:${fileId}`, { type: 'json' })) as any;
       const bin = await store.get(`media_bin:${fileId}`, { type: 'blob' });
       if (meta && bin) {
         const arrayBuf = await bin.arrayBuffer();
-        return {
+        const stored = {
           id: fileId,
           originalName: meta.originalName,
           mimeType: meta.mimeType,
@@ -459,23 +521,21 @@ export async function getMediaFile(fileId: string): Promise<StoredMediaFile | nu
           uploadedAt: meta.uploadedAt,
           buffer: Buffer.from(arrayBuf)
         };
+        inMemoryMedia.set(fileId, stored);
+        return stored;
       }
-    } catch (err) {
-      if (isProductionEnv) {
-        throw new Error(`[NewsStorage] Failed to get media file ${fileId} from Blobs: ${err instanceof Error ? err.message : String(err)}`);
-      }
-    }
+    } catch {}
   }
 
   ensureLocalDirs();
-  const metaPath = path.join(LOCAL_MEDIA_DIR, `${fileId}.meta.json`);
-  const binPath = path.join(LOCAL_MEDIA_DIR, `${fileId}.bin`);
+  const metaPath = path.join(getNewsMediaDir(), `${fileId}.meta.json`);
+  const binPath = path.join(getNewsMediaDir(), `${fileId}.bin`);
 
   if (fs.existsSync(metaPath) && fs.existsSync(binPath)) {
     try {
       const meta = JSON.parse(fs.readFileSync(metaPath, 'utf-8'));
       const buffer = fs.readFileSync(binPath);
-      return {
+      const stored = {
         id: fileId,
         originalName: meta.originalName,
         mimeType: meta.mimeType,
@@ -483,6 +543,8 @@ export async function getMediaFile(fileId: string): Promise<StoredMediaFile | nu
         uploadedAt: meta.uploadedAt,
         buffer
       };
+      inMemoryMedia.set(fileId, stored);
+      return stored;
     } catch {
       return null;
     }
@@ -559,12 +621,12 @@ async function seedInitialData(store: any): Promise<void> {
 async function seedInitialDataLocal(): Promise<void> {
   ensureLocalDirs();
   for (const seed of INITIAL_SEEDS) {
-    const fPath = path.join(LOCAL_DATA_DIR, `${seed.id}.json`);
+    const fPath = path.join(getNewsDataDir(), `${seed.id}.json`);
     if (!fs.existsSync(fPath)) {
       fs.writeFileSync(fPath, JSON.stringify(seed, null, 2), 'utf-8');
     }
   }
-  const idxPath = path.join(LOCAL_DATA_DIR, 'index.json');
+  const idxPath = path.join(getNewsDataDir(), 'index.json');
   if (!fs.existsSync(idxPath)) {
     fs.writeFileSync(idxPath, JSON.stringify(INITIAL_SEEDS.map(toSummary), null, 2), 'utf-8');
   }

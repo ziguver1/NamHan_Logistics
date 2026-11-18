@@ -123,7 +123,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
     console.error('[News Save Error]:', err);
     return new Response(
-      JSON.stringify({ success: false, error: 'Lỗi hệ thống khi lưu thông báo.' }),
+      JSON.stringify({ success: false, error: err.message || 'Lỗi hệ thống khi lưu thông báo.' }),
       { status: 500, headers: { 'Content-Type': 'application/json' } }
     );
   }

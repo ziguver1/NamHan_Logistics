@@ -36,6 +36,7 @@ export const POST: APIRoute = async ({ request }) => {
         { status: 400, headers: { 'Content-Type': 'application/json' } }
       );
     }
+    const cleanUrl = urlValidation.canonicalUrl || webAppUrl;
 
     if (!apiKey) {
       return new Response(
@@ -45,7 +46,7 @@ export const POST: APIRoute = async ({ request }) => {
     }
 
     // Step 1: Mandatory pre-flight test connection before saving
-    const testResult = await testAppsScriptConnection(webAppUrl, apiKey);
+    const testResult = await testAppsScriptConnection(cleanUrl, apiKey);
     if (!testResult.ok) {
       return new Response(
         JSON.stringify({
@@ -65,7 +66,7 @@ export const POST: APIRoute = async ({ request }) => {
     const connectedAt = new Date().toISOString();
 
     config.appsScriptConnection = {
-      webAppUrl,
+      webAppUrl: cleanUrl,
       encryptedApiKey,
       sheetTitle: testResult.sheetTitle || 'Khách hàng Nam Hân',
       sheetUrl: sheetUrl || (testResult.spreadsheetId ? `https://docs.google.com/spreadsheets/d/${testResult.spreadsheetId}/edit` : ''),
