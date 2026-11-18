@@ -77,7 +77,7 @@ const INITIAL_SEEDS: Announcement[] = [
     summary: 'Phân tích các giải pháp điều phối xe thông minh giúp doanh nghiệp giảm chi phí lưu kho và đảm bảo tiến độ giao nhận trong thời gian cao điểm.',
     content: '<p>Bước vào quý IV hàng năm, lưu lượng vận chuyển hàng hóa giữa hai đầu cầu kinh tế Hà Nội — TP. Hồ Chí Minh luôn tăng từ 35% đến 50%. Để đáp ứng nhu cầu tăng trưởng mạnh mẽ của các doanh nghiệp đối tác, Nam Hân Logistics đã chủ động kích hoạt phương án điều phối tập trung trên toàn tuyến Quốc lộ 1A và Cao tốc Bắc — Nam.</p><h2>1. Tăng cường năng lực đầu kéo và sơ-mi rơ-moóc</h2><p>Đội xe của Nam Hân được bổ sung các dòng xe tải thùng kín và xe container tải trọng lớn, thực hiện bảo dưỡng định kỳ toàn diện trước khi xuất bến. Mỗi xe đều trang bị hệ thống định vị GPS trực tuyến và cảm biến hành trình 24/7.</p><h2>2. Rút ngắn thời gian luân chuyển hàng hóa</h2><p>Nhờ quy trình xếp dỡ cơ giới hóa tại hai bãi xe trung tâm (Hà Nội & Bình Dương) kết hợp trạm dừng kỹ thuật Bỉm Sơn, thời gian toàn trình tuyến Hà Nội — TP.HCM duy trì ổn định ở mức 48 – 60 giờ.</p><p>Nam Hân Logistics cam kết giữ vững cam kết về cước phí cạnh tranh, đảm bảo không tăng giá đột biến trong các đợt cao điểm lễ tết.</p>',
     coverImage: {
-      url: '/images/home/news-thumb-1.webp?v=4',
+      url: '/images/home/news-thumb-1.webp?v=5',
       alt: 'Xe tải Nam Hân Logistics vận chuyển trên tuyến Bắc Nam'
     },
     isPinned: true,
@@ -94,7 +94,7 @@ const INITIAL_SEEDS: Announcement[] = [
     summary: 'Nâng cao khả năng tiếp nhận, sang tải và bốc dỡ cơ giới, rút ngắn thời gian trung chuyển giữa hai miền Nam — Bắc xuống dưới 32 giờ.',
     content: '<p>Nhằm củng cố năng lực mạng lưới logistics đa điểm, Nam Hân Logistics chính thức mở rộng trạm dừng và bãi đỗ kỹ thuật tại khu vực Miền Trung. Đây là mắt xích then chốt kết nối hai trung tâm kho bãi chính tại miền Bắc và miền Nam.</p><h2>Năng lực tiếp nhận mở rộng</h2><ul><li>Diện tích bãi xe rộng rãi, phục vụ sang tải đồng thời cho 15 xe tải lớn.</li><li>Trang bị xe nâng cơ giới hiện đại phục vụ bốc xếp hàng nặng, máy móc công nghiệp.</li><li>Đội ngũ kỹ thuật trực 24/7 kiểm tra an toàn kỹ thuật lốp, phanh và thùng hàng.</li></ul><p>Việc đưa trạm trung chuyển đi vào vận hành giúp rút ngắn tối đa thời gian chờ đợi trên hành trình Bắc — Nam, tăng độ tin cậy trong các hợp đồng dịch vụ dài hạn.</p>',
     coverImage: {
-      url: '/images/home/news-thumb-2.webp?v=4',
+      url: '/images/home/news-thumb-2.webp?v=5',
       alt: 'Bãi xe và kho trung chuyển của Nam Hân Logistics'
     },
     isPinned: false,
@@ -111,7 +111,7 @@ const INITIAL_SEEDS: Announcement[] = [
     summary: 'Tìm hiểu tiêu chuẩn đóng gói, niêm phong kẹp chì và hệ thống giám sát hành trình GPS trực tuyến 24/7 bảo vệ trọn vẹn tài sản của khách hàng.',
     content: '<p>Trong vận tải đường bộ liên tỉnh, bảo đảm an toàn nguyên vẹn cho hàng hóa là nguyên tắc sống còn. Nam Hân Logistics áp dụng quy trình kiểm soát nghiêm ngặt 4 bước trước khi xe lăn bánh.</p><h2>Quy chuẩn 4 bước chuẩn hóa</h2><ol><li><strong>Kiểm đếm và phân loại:</strong> Hàng hóa được phân loại theo tính chất chịu lực, kích thước và yêu cầu bảo quản.</li><li><strong>Chằng buộc chuyên dụng:</strong> Sử dụng dây cáp, đệm lót chuyên dụng chống xô lệch, va đập trong quá trình vận hành trên cao tốc và đèo dốc.</li><li><strong>Niêm phong kẹp chì (Seal):</strong> Đối với hàng nguyên chuyến FTL và hàng giá trị cao, mã niêm phong được bàn giao bằng biên bản đối soát hai đầu.</li><li><strong>Bảo hiểm trách nhiệm hàng hóa:</strong> 100% chuyến xe vận chuyển đều kèm gói bảo hiểm theo giá trị khai báo.</li></ol>',
     coverImage: {
-      url: '/images/home/news-thumb-3.webp?v=4',
+      url: '/images/home/news-thumb-3.webp?v=5',
       alt: 'Quy trình chằng buộc và niêm phong hàng hóa Nam Hân Logistics'
     },
     isPinned: false,

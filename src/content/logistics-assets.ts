@@ -17,7 +17,7 @@ export type LogisticsAssetKey = 'heroBg' | 'warehouse';
 
 export const logisticsAssets: Record<LogisticsAssetKey, LogisticsImageAsset> = {
   heroBg: {
-    src: '/images/services/logistics/logistics-hero-bg.webp?v=4',
+    src: '/images/services/logistics/logistics-hero-bg.webp?v=5',
     alt: 'Bối cảnh kho bãi logistics và điều phối xe tải Nam Hân',
     width: 1280,
     height: 520,
@@ -25,7 +25,7 @@ export const logisticsAssets: Record<LogisticsAssetKey, LogisticsImageAsset> = {
     aspectRatio: '16/7',
   },
   warehouse: {
-    src: '/images/services/logistics/logistics-warehouse.webp?v=4',
+    src: '/images/services/logistics/logistics-warehouse.webp?v=5',
     alt: 'Hoạt động xuất nhập hàng và đóng gói pallet tại trung tâm logistics Nam Hân',
     width: 580,
     height: 400,
