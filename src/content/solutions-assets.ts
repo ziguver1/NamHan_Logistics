@@ -22,7 +22,7 @@ export type SolutionsAssetKey =
 
 export const solutionsAssets: Record<SolutionsAssetKey, SolutionsImageAsset> = {
   heroBg: {
-    src: '/images/services/solutions/solutions-hero-bg.webp?v=5',
+    src: '/images/services/solutions/solutions-hero-bg.webp?v=6',
     alt: 'Đoàn xe vận tải Nam Hân lưu thông trên cao tốc huyết mạch Bắc Nam',
     width: 1280,
     height: 480,
@@ -30,7 +30,7 @@ export const solutionsAssets: Record<SolutionsAssetKey, SolutionsImageAsset> = {
     aspectRatio: '16/6',
   },
   fleet: {
-    src: '/images/services/solutions/solutions-fleet.webp?v=5',
+    src: '/images/services/solutions/solutions-fleet.webp?v=6',
     alt: 'Đội xe đầu kéo container và xe tải đỗ tại trung tâm điều vận Nam Hân',
     width: 580,
     height: 380,
@@ -38,7 +38,7 @@ export const solutionsAssets: Record<SolutionsAssetKey, SolutionsImageAsset> = {
     aspectRatio: '16/11',
   },
   modeLtl: {
-    src: '/images/services/solutions/solutions-mode-ltl.webp?v=5',
+    src: '/images/services/solutions/solutions-mode-ltl.webp?v=6',
     alt: 'Vận chuyển hàng lẻ LTL tiết kiệm chi phí',
     width: 380,
     height: 240,
@@ -46,7 +46,7 @@ export const solutionsAssets: Record<SolutionsAssetKey, SolutionsImageAsset> = {
     aspectRatio: '16/10',
   },
   modeConsolidation: {
-    src: '/images/services/solutions/solutions-mode-consolidation.webp?v=5',
+    src: '/images/services/solutions/solutions-mode-consolidation.webp?v=6',
     alt: 'Vận chuyển hàng ghép tối ưu hóa diện tích xe',
     width: 380,
     height: 240,
@@ -54,7 +54,7 @@ export const solutionsAssets: Record<SolutionsAssetKey, SolutionsImageAsset> = {
     aspectRatio: '16/10',
   },
   modeFtl: {
-    src: '/images/services/solutions/solutions-mode-ftl.webp?v=5',
+    src: '/images/services/solutions/solutions-mode-ftl.webp?v=6',
     alt: 'Vận chuyển hàng nguyên chuyến bao xe FTL an toàn tuyệt đối',
     width: 380,
     height: 240,
