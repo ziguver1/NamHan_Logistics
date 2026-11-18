@@ -1,21 +1,14 @@
 ---
 // Hero Section for Home page (Frame 44:1456)
+import NightHighwayAnimation from './NightHighwayAnimation.astro';
 ---
 
 <section class="hero-section" aria-label="Giới thiệu Nam Hân Logistics">
-  <!-- Hero Background Image & High-Contrast Overlay -->
-  <div class="hero-bg" aria-hidden="true">
-    <img
-      src="/images/home/hero-truck.webp?v=6"
-      alt=""
-      class="hero-bg-img"
-      width="1280"
-      height="500"
-      fetchpriority="high"
-      decoding="async"
-    />
-    <div class="hero-overlay"></div>
-  </div>
+  <!-- 2D Night Expressway Animation with Light-Trails -->
+  <NightHighwayAnimation />
+
+  <!-- High-contrast vignette ensuring text legibility on left side -->
+  <div class="hero-overlay" aria-hidden="true"></div>
 
   <div class="container hero-container">
     <div class="hero-content">
@@ -39,7 +32,7 @@
   .hero-section {
     position: relative;
     width: 100%;
-    min-height: 380px;
+    min-height: 420px;
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -48,49 +41,27 @@
 
   @media (min-width: 768px) {
     .hero-section {
-      min-height: 440px;
+      min-height: 460px;
     }
   }
 
   @media (min-width: 1024px) {
     .hero-section {
-      min-height: 500px;
-      height: 500px;
-    }
-  }
-
-  /* Background Image & Overlay Layering */
-  .hero-bg {
-    position: absolute;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 1;
-    pointer-events: none;
-  }
-
-  .hero-bg-img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: 65% center;
-    display: block;
-  }
-
-  @media (min-width: 1024px) {
-    .hero-bg-img {
-      object-position: center;
+      min-height: 520px;
+      height: 520px;
     }
   }
 
   .hero-overlay {
     position: absolute;
     inset: 0;
-    /* High-contrast gradient overlay ensuring readability on both mobile and desktop */
+    pointer-events: none;
+    z-index: 2;
     background: linear-gradient(
       180deg,
-      rgba(7, 24, 46, 0.92) 0%,
-      rgba(7, 24, 46, 0.82) 100%
+      rgba(3, 12, 24, 0.82) 0%,
+      rgba(3, 12, 24, 0.45) 55%,
+      rgba(3, 12, 24, 0.1) 100%
     );
   }
 
@@ -98,10 +69,10 @@
     .hero-overlay {
       background: linear-gradient(
         90deg,
-        rgba(7, 24, 46, 0.94) 0%,
-        rgba(7, 24, 46, 0.85) 38%,
-        rgba(7, 24, 46, 0.5) 65%,
-        rgba(7, 24, 46, 0.12) 100%
+        rgba(3, 12, 24, 0.94) 0%,
+        rgba(3, 12, 24, 0.82) 42%,
+        rgba(3, 12, 24, 0.25) 75%,
+        transparent 100%
       );
     }
   }
@@ -109,7 +80,7 @@
   /* Foreground Container */
   .hero-container {
     position: relative;
-    z-index: 2;
+    z-index: 3;
     padding-top: clamp(3.5rem, 8vw, 9.25rem);
     padding-bottom: clamp(2.5rem, 5vw, 5.5rem);
   }
