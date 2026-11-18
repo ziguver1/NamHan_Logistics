@@ -33,9 +33,15 @@ const { currentPath = '/' } = Astro.props;
       aria-controls="primary-navigation"
       aria-label="Mở menu điều hướng"
     >
-      <span class="hamburger-box" aria-hidden="true">
-        <span class="hamburger-inner"></span>
-      </span>
+      <svg class="icon-hamburger" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="3" y1="6" x2="21" y2="6"></line>
+        <line x1="3" y1="12" x2="21" y2="12"></line>
+        <line x1="3" y1="18" x2="21" y2="18"></line>
+      </svg>
+      <svg class="icon-close" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
       <span class="sr-only">Menu</span>
     </button>
 
@@ -190,62 +196,51 @@ const { currentPath = '/' } = Astro.props;
 
   /* Mobile Toggle Button */
   .mobile-toggle {
-    display: flex;
+    position: relative;
+    display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: var(--touch-target-min);
-    height: var(--touch-target-min);
+    width: var(--touch-target-min, 44px);
+    height: var(--touch-target-min, 44px);
+    padding: 0;
+    margin: 0;
     background: transparent;
     border: 1px solid var(--color-border);
     border-radius: var(--radius-sm);
+    color: var(--color-brand-navy);
     cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+    flex-shrink: 0;
+    box-sizing: border-box;
+    transition: background-color var(--transition-fast), border-color var(--transition-fast);
   }
 
-  .hamburger-box {
-    width: 1.25rem;
-    height: 0.875rem;
-    position: relative;
+  .mobile-toggle:hover {
+    background-color: var(--color-bg-muted);
+  }
+
+  .mobile-toggle .icon-hamburger {
     display: block;
+    width: 22px;
+    height: 22px;
+    margin: auto;
   }
 
-  .hamburger-inner,
-  .hamburger-inner::before,
-  .hamburger-inner::after {
-    width: 100%;
-    height: 2px;
-    background-color: var(--color-brand-navy);
-    position: absolute;
-    transition: transform var(--transition-fast);
+  .mobile-toggle .icon-close {
+    display: none;
+    width: 22px;
+    height: 22px;
+    margin: auto;
   }
 
-  .hamburger-inner {
-    top: 50%;
-    transform: translateY(-50%);
+  /* When drawer is open: switch to centered 'X' icon */
+  .mobile-toggle[aria-expanded="true"] .icon-hamburger {
+    display: none;
   }
 
-  .hamburger-inner::before {
-    content: '';
-    top: -6px;
-  }
-
-  .hamburger-inner::after {
-    content: '';
-    bottom: -6px;
-  }
-
-  /* Hamburger to 'X' animation when mobile drawer is open */
-  .mobile-toggle[aria-expanded="true"] .hamburger-inner {
-    background-color: transparent;
-  }
-
-  .mobile-toggle[aria-expanded="true"] .hamburger-inner::before {
-    top: 0;
-    transform: rotate(45deg);
-  }
-
-  .mobile-toggle[aria-expanded="true"] .hamburger-inner::after {
-    bottom: 0;
-    transform: rotate(-45deg);
+  .mobile-toggle[aria-expanded="true"] .icon-close {
+    display: block;
   }
 
   /* Mobile Navigation Drawer Default (max-width: 1023px) */
