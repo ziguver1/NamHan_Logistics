@@ -32,10 +32,13 @@ import NightHighwayAnimation from './NightHighwayAnimation.astro';
   .hero-section {
     position: relative;
     width: 100%;
+    max-width: 100%;
     min-height: 420px;
     display: flex;
     align-items: center;
     overflow: hidden;
+    contain: paint;
+    clip-path: inset(0);
     background-color: var(--color-brand-navy, #0b2545);
   }
 
