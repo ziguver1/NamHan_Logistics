@@ -17,7 +17,7 @@ export type HandlingAssetKey = 'hero' | 'overview';
 
 export const handlingAssets: Record<HandlingAssetKey, HandlingImageAsset> = {
   hero: {
-    src: '/images/services/handling/hero-handling.webp?v=6',
+    src: '/images/services/handling/hero-handling.webp?v=7',
     alt: 'Hoạt động bốc xếp hàng hóa bằng xe nâng tại kho bãi Nam Hân Logistics',
     width: 600,
     height: 420,
@@ -25,7 +25,7 @@ export const handlingAssets: Record<HandlingAssetKey, HandlingImageAsset> = {
     recommendedAspect: '16:11 (~600 × 420px)',
   },
   overview: {
-    src: '/images/services/handling/overview-handling.webp?v=6',
+    src: '/images/services/handling/overview-handling.webp?v=7',
     alt: 'Đội ngũ bốc xếp chuyên nghiệp hỗ trợ dỡ hàng và xếp pallet cẩn trọng',
     width: 540,
     height: 380,

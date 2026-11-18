@@ -16,7 +16,7 @@ export interface HomeImageAsset {
 export const homeAssets: Record<string, HomeImageAsset> = {
   // 1. Hero Section (Node 44:1456)
   hero: {
-    src: '/images/home/hero-truck.webp?v=6',
+    src: '/images/home/hero-truck.webp?v=7',
     alt: 'Đội xe vận tải đường bộ Nam Hân Logistics di chuyển liên tỉnh',
     label: 'HERO IMAGE',
     aspectRatio: '16/10',
@@ -25,14 +25,14 @@ export const homeAssets: Record<string, HomeImageAsset> = {
 
   // 2. Overview & Năng lực (Node 44:1197)
   overviewMain: {
-    src: '/images/home/overview-fleet.webp?v=6',
+    src: '/images/home/overview-fleet.webp?v=7',
     alt: 'Đội xe tải và xe đầu kéo Nam Hân Logistics tại bãi tập kết',
     label: 'OVERVIEW FLEET',
     aspectRatio: '4/3',
     expectedFile: '/images/home/overview-fleet.webp',
   },
   overviewSecondary: {
-    src: '/images/home/overview-warehouse.webp?v=6',
+    src: '/images/home/overview-warehouse.webp?v=7',
     alt: 'Hoạt động điều phối và kiểm soát hàng hóa tại kho Nam Hân',
     label: 'OVERVIEW WAREHOUSE',
     aspectRatio: '16/10',
@@ -41,21 +41,21 @@ export const homeAssets: Record<string, HomeImageAsset> = {
 
   // 3. Four Core Services
   serviceRoad: {
-    src: '/images/home/service-road.webp?v=6',
+    src: '/images/home/service-road.webp?v=7',
     alt: 'Dịch vụ vận tải hàng hóa đường bộ Bắc — Trung — Nam',
     label: 'SERVICE ROAD',
     aspectRatio: '16/10',
     expectedFile: '/images/home/service-road.webp',
   },
   serviceHandling: {
-    src: '/images/home/service-handling.webp?v=6',
+    src: '/images/home/service-handling.webp?v=7',
     alt: 'Dịch vụ bốc xếp, nâng hạ và đóng gói hàng hóa cơ giới',
     label: 'SERVICE HANDLING',
     aspectRatio: '16/10',
     expectedFile: '/images/home/service-handling.webp',
   },
   serviceLogistics: {
-    src: '/images/home/service-logistics.webp?v=6',
+    src: '/images/home/service-logistics.webp?v=7',
     alt: 'Dịch vụ logistics và giao nhận hàng hóa tận nơi',
     label: 'SERVICE LOGISTICS',
     aspectRatio: '16/10',
@@ -71,7 +71,7 @@ export const homeAssets: Record<string, HomeImageAsset> = {
 
   // 4. Green Logistics Section (Node 44:1261)
   greenLogistics: {
-    src: '/images/home/green-logistics.webp?v=6',
+    src: '/images/home/green-logistics.webp?v=7',
     alt: 'Giải pháp logistics xanh thân thiện với môi trường, tối ưu khí thải CO2',
     label: 'GREEN LOGISTICS',
     aspectRatio: '16/9',
@@ -103,7 +103,7 @@ export const homeAssets: Record<string, HomeImageAsset> = {
 
   // 6. News Section (Node 44:1513)
   newsThumb1: {
-    src: '/images/home/news-thumb-1.webp?v=6',
+    src: '/images/home/news-thumb-1.webp?v=7',
     alt: 'Tối ưu hóa hành trình vận tải hàng hóa liên tỉnh mùa cao điểm',
     label: 'NEWS THUMB 1',
     aspectRatio: '16/10',
