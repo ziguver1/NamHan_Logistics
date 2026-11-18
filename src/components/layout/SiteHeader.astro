@@ -88,14 +88,36 @@ const { currentPath = '/' } = Astro.props;
           <span class="cta-arrow" aria-hidden="true">&rarr;</span>
         </a>
       </div>
+
+      <!-- Quick Contact Actions in Mobile Drawer -->
+      <div class="mobile-drawer-contact">
+        <p class="drawer-contact-title">HỖ TRỢ TRỰC TIẾP 24/7</p>
+        <div class="drawer-contact-buttons">
+          <a href={`tel:${companyInfo.hotline.replace(/\s+/g, '')}`} class="drawer-btn-hotline" aria-label={`Gọi ngay Hotline ${companyInfo.hotline}`}>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+            </svg>
+            <span>{companyInfo.hotline}</span>
+          </a>
+          <a href={`https://zalo.me/${companyInfo.hotline.replace(/\s+/g, '')}`} target="_blank" rel="noopener noreferrer" class="drawer-btn-zalo" aria-label="Tư vấn nhanh qua Zalo">
+            <span class="zalo-badge" aria-hidden="true">Zalo</span>
+            <span>Nhắn Zalo</span>
+          </a>
+        </div>
+        <p class="drawer-address-info">{companyInfo.address}</p>
+      </div>
     </nav>
   </div>
+
+  <!-- Mobile Drawer Backdrop Overlay -->
+  <div class="drawer-backdrop" id="mobile-drawer-backdrop" aria-hidden="true"></div>
 </header>
 
 <script>
   // Progressive enhancement for mobile menu drawer
   const toggleBtn = document.getElementById('mobile-menu-toggle');
   const navMenu = document.getElementById('primary-navigation');
+  const backdrop = document.getElementById('mobile-drawer-backdrop');
 
   if (toggleBtn && navMenu) {
     const toggleMenu = () => {
@@ -103,10 +125,14 @@ const { currentPath = '/' } = Astro.props;
       toggleBtn.setAttribute('aria-expanded', String(!isExpanded));
       toggleBtn.setAttribute('aria-label', isExpanded ? 'Mở menu điều hướng' : 'Đóng menu điều hướng');
       navMenu.classList.toggle('is-open', !isExpanded);
+      if (backdrop) backdrop.classList.toggle('is-open', !isExpanded);
       document.body.classList.toggle('menu-open', !isExpanded);
     };
 
     toggleBtn.addEventListener('click', toggleMenu);
+    if (backdrop) {
+      backdrop.addEventListener('click', toggleMenu);
+    }
 
     // Close on Escape key
     document.addEventListener('keydown', (event) => {
@@ -137,6 +163,7 @@ const { currentPath = '/' } = Astro.props;
     position: sticky;
     top: 0;
     z-index: 100;
+    padding-top: var(--safe-top);
   }
 
   .header-inner {
@@ -220,6 +247,12 @@ const { currentPath = '/' } = Astro.props;
     background-color: var(--color-bg-muted);
   }
 
+  .mobile-toggle[aria-expanded="true"] {
+    background-color: #f1f5f9;
+    border-color: #cbd5e1;
+    color: var(--color-brand-orange);
+  }
+
   .mobile-toggle .icon-hamburger {
     display: block;
     width: 22px;
@@ -243,23 +276,58 @@ const { currentPath = '/' } = Astro.props;
     display: block;
   }
 
+  /* Backdrop Overlay */
+  .drawer-backdrop {
+    display: none;
+  }
+
   /* Mobile Navigation Drawer Default (max-width: 1023px) */
   @media (max-width: 1023px) {
+    .drawer-backdrop.is-open {
+      display: block;
+      position: fixed;
+      inset: 0;
+      top: calc(4.5rem + var(--safe-top));
+      background-color: rgba(11, 37, 69, 0.45);
+      backdrop-filter: blur(2px);
+      z-index: 98;
+      animation: fadeInBackdrop 0.2s ease-out;
+    }
+
+    @keyframes fadeInBackdrop {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
     .site-nav {
       position: fixed;
-      top: 4.5rem;
+      top: calc(4.5rem + var(--safe-top));
       left: 0;
       right: 0;
       bottom: 0;
-      height: calc(100dvh - 4.5rem);
+      height: calc(100dvh - 4.5rem - var(--safe-top));
       background-color: var(--color-bg-page);
       display: none;
       flex-direction: column;
-      padding: 1.5rem var(--page-gutter);
-      padding-bottom: calc(2.5rem + env(safe-area-inset-bottom, 0px));
+      padding: 1.25rem var(--page-gutter);
+      padding-bottom: calc(2rem + var(--safe-bottom));
       overflow-y: auto;
       -webkit-overflow-scrolling: touch;
       border-top: 1px solid var(--color-border);
+      z-index: 99;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+      animation: slideDownMenu 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideDownMenu {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
 
     .site-nav.is-open {
@@ -270,7 +338,7 @@ const { currentPath = '/' } = Astro.props;
       list-style: none;
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.375rem;
     }
 
     .nav-link {
@@ -278,9 +346,9 @@ const { currentPath = '/' } = Astro.props;
       align-items: center;
       justify-content: space-between;
       min-height: var(--touch-target-min);
-      padding: 0.5rem 0;
-      font-size: 1.125rem;
-      font-weight: 600;
+      padding: 0.625rem 0.25rem;
+      font-size: 1.0625rem;
+      font-weight: 700;
       color: var(--color-brand-navy);
       border-bottom: 1px solid var(--color-border);
     }
@@ -292,8 +360,8 @@ const { currentPath = '/' } = Astro.props;
     .dropdown-menu {
       list-style: none;
       padding: 0.375rem 0.5rem 0.375rem 1rem;
-      margin-top: 0.375rem;
-      margin-bottom: 0.375rem;
+      margin-top: 0.25rem;
+      margin-bottom: 0.5rem;
       background-color: var(--color-bg-muted, #f8fafc);
       border-left: 3px solid var(--color-brand-orange, #f95016);
       border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
@@ -303,9 +371,10 @@ const { currentPath = '/' } = Astro.props;
     }
 
     .dropdown-link {
-      display: block;
+      display: flex;
+      align-items: center;
       min-height: var(--touch-target-min);
-      padding: 0.5rem 0;
+      padding: 0.5rem 0.25rem;
       font-size: 0.9375rem;
       color: var(--color-text-secondary);
     }
@@ -316,7 +385,7 @@ const { currentPath = '/' } = Astro.props;
     }
 
     .nav-cta-wrap {
-      margin-top: 1.5rem;
+      margin-top: 1.25rem;
     }
 
     .btn-header-cta {
@@ -325,12 +394,87 @@ const { currentPath = '/' } = Astro.props;
       justify-content: center;
       gap: 0.375rem;
       width: 100%;
-      min-height: var(--touch-target-min);
+      min-height: 48px;
       background-color: var(--color-brand-orange);
       color: var(--color-text-inverse);
-      font-weight: 600;
+      font-weight: 700;
+      font-size: 0.9375rem;
       border-radius: var(--radius-full);
       padding: 0.75rem 1.5rem;
+      box-shadow: 0 4px 12px rgba(249, 80, 22, 0.3);
+    }
+
+    .mobile-drawer-contact {
+      margin-top: 1.25rem;
+      padding-top: 1.25rem;
+      border-top: 1px dashed var(--color-border);
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .drawer-contact-title {
+      font-size: 0.6875rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      margin: 0;
+    }
+
+    .drawer-contact-buttons {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.625rem;
+    }
+
+    .drawer-btn-hotline {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.375rem;
+      min-height: 46px;
+      padding: 0.625rem 0.75rem;
+      background-color: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+      border-radius: var(--radius-md);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .drawer-btn-zalo {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.375rem;
+      min-height: 46px;
+      padding: 0.625rem 0.75rem;
+      background-color: #eff6ff;
+      border: 1px solid #bfdbfe;
+      color: #1d4ed8;
+      border-radius: var(--radius-md);
+      font-size: 0.8125rem;
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .drawer-btn-zalo .zalo-badge {
+      background-color: #0068ff;
+      color: #ffffff;
+      font-size: 0.5625rem;
+      font-weight: 800;
+      padding: 0.125rem 0.3125rem;
+      border-radius: 4px;
+      line-height: 1;
+    }
+
+    .drawer-address-info {
+      font-size: 0.75rem;
+      color: var(--color-text-muted);
+      line-height: 1.45;
+      margin: 0;
     }
   }
 
@@ -452,6 +596,10 @@ const { currentPath = '/' } = Astro.props;
       background-color: var(--color-brand-orange-hover);
       color: var(--color-text-inverse);
       transform: translateY(-1px);
+    }
+
+    .mobile-drawer-contact {
+      display: none;
     }
   }
 </style>

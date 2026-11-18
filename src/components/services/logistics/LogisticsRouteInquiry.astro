@@ -4,6 +4,7 @@
  * Lead Point 3: Route Inquiry Strip
  * Compliance: Phase 1 Demo indicator + Progressive client validation
  */
+import { companyInfo } from '@/content/company';
 ---
 
 <section id="route-inquiry" class="route-inquiry-section" aria-labelledby="route-inquiry-heading">
@@ -92,7 +93,7 @@
           </svg>
           <div class="status-content">
             <strong>Yêu cầu tra cứu đã ghi nhận (Thử nghiệm Phase 1):</strong>
-            <span>Hệ thống đang kiểm tra danh sách xe trên hành lang tuyến. Bộ phận điều vận sẽ phản hồi hoặc quý khách có thể liên hệ ngay Hotline <strong>1900 6868</strong> để kiểm tra tình trạng tức thời.</span>
+            <span>Hệ thống đang kiểm tra danh sách xe trên hành lang tuyến. Bộ phận điều vận sẽ phản hồi hoặc quý khách có thể liên hệ ngay Hotline <strong>{companyInfo.hotline}</strong> để kiểm tra tình trạng tức thời.</span>
           </div>
         </div>
       </form>

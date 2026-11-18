@@ -64,6 +64,15 @@ canvas {
 input,
 button,
 textarea,
+select,
+a {
+  touch-action: manipulation; /* Eliminate 300ms double-tap delay on mobile browsers */
+  -webkit-tap-highlight-color: rgba(249, 80, 22, 0.12); /* Subtle brand tactile feedback on touch */
+}
+
+input,
+button,
+textarea,
 select {
   font: inherit;
   color: inherit;

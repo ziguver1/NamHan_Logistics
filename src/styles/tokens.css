@@ -41,6 +41,12 @@
   --stack-space: clamp(1rem, 2vw, 1.75rem);
   --touch-target-min: 44px;
 
+  /* Safe Area Insets for Mobile Devices (iOS Safari Notch & Home Bar) */
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-left: env(safe-area-inset-left, 0px);
+  --safe-right: env(safe-area-inset-right, 0px);
+
   /* Radius */
   --radius-sm: 8px;
   --radius-md: 12px;

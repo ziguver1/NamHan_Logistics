@@ -4,6 +4,7 @@
  * Lead Point 2: Handling & Transport Support Quote
  * Compliance: Phase 1 Demo indicator + Progressive client validation
  */
+import { companyInfo } from '@/content/company';
 ---
 
 <section id="quote-form" class="handling-quote-section" aria-labelledby="handling-quote-heading">
@@ -115,7 +116,7 @@
           </svg>
           <div class="status-content">
             <strong>Ghi nhận thông tin (Giao diện xem trước Phase 1):</strong>
-            <span>Hệ thống tiếp nhận tự động đang kết nối hạ tầng. Vui lòng liên hệ trực tiếp Hotline <strong>1900 6868</strong> để được hỗ trợ báo giá và điều xe ngay.</span>
+            <span>Hệ thống tiếp nhận tự động đang kết nối hạ tầng. Vui lòng liên hệ trực tiếp Hotline <strong>{companyInfo.hotline}</strong> để được hỗ trợ báo giá và điều xe ngay.</span>
           </div>
         </div>
       </form>
