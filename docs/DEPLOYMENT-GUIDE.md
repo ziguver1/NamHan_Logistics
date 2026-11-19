@@ -1,35 +1,63 @@
-# HƯỚNG DẪN TRIỂN KHAI PRODUCTION LÊN NETLIFY
-## DỰ ÁN NAM HÂN LOGISTICS (ASTRO 5 + NETLIFY BLOBS + GOOGLE APPS SCRIPT)
+# HƯỚNG DẪN TRIỂN KHAI PRODUCTION (VERCEL & NETLIFY)
+## DỰ ÁN NAM HÂN LOGISTICS (ASTRO 5 + UPSTASH REDIS / VERCEL + GOOGLE APPS SCRIPT)
 
 ---
 
 ### I. TỔNG QUAN KIẾN TRÚC TRIỂN KHAI
 
-* **Framework:** Astro 5 (`output: 'static'` kết hợp On-Demand SSR via `@astrojs/netlify`).
-* **Nền tảng Hosting:** Netlify.
-* **Lưu trữ dữ liệu động (Bảng tin & Cấu hình):** Netlify Blobs (tự động tích hợp trong runtime Netlify).
-* **Tiếp nhận đơn hàng / Form liên hệ:** Google Apps Script Web App (ghi trực tiếp vào Google Sheets theo thời gian thực).
+* **Framework:** Astro 5 (`output: 'static'` kết hợp On-Demand SSR via `@astrojs/vercel` hoặc `@astrojs/netlify`).
+* **Nền tảng Hosting chính:** **Vercel** (Miễn phí băng thông lớn, tốc độ CDN cao).
+* **Lưu trữ dữ liệu động (Bảng tin & Cấu hình):** **Upstash Redis** (Serverless Redis REST API, miễn phí 10.000 lệnh/ngày) hoặc Netlify Blobs (nếu chạy Netlify).
+* **Tiếp nhận đơn hàng / Form liên hệ:** Google Apps Script Web App (ghi trực tiếp vào Google Sheets doanh nghiệp theo thời gian thực).
 * **Bảo mật:** Mã hóa khóa kết nối AES-256-GCM, bảo vệ chống brute force và tấn công CSRF.
 
 ---
 
 ### II. CHUẨN BỊ BIẾN MÔI TRƯỜNG (ENVIRONMENT VARIABLES)
 
-Khi tạo site trên Netlify, bạn **chỉ cần thêm 2 biến môi trường bắt buộc**:
+Khi tạo dự án trên Vercel (hoặc Netlify), bạn thêm các biến môi trường sau:
 
 | Tên biến | Bắt buộc | Mô tả & Giá trị mẫu |
 | :--- | :---: | :--- |
-| `ADMIN_PASSWORD` | **Có** | Mật khẩu đăng nhập vào khu vực Quản trị (`/admin/`). Ví dụ: `NamHan@Logistics2026!` |
-| `ADMIN_SECRET` | **Có** | Khóa bí mật dùng để mã hóa AES-256 các khóa kết nối và ký cookie phiên làm việc. Chuỗi ngẫu nhiên $\ge 32$ ký tự. Ví dụ: `namhan_prod_secret_8f9e2b1c4a7d6e5f0a3b2c1d` |
+| `ADMIN_PASSWORD` | **Bắt buộc** | Mật khẩu đăng nhập vào khu vực Quản trị (`/admin/`). Ví dụ: `NamHan@Logistics2026!` |
+| `ADMIN_SECRET` | **Bắt buộc** | Khóa bí mật dùng để mã hóa AES-256 các khóa kết nối và ký cookie phiên làm việc. Chuỗi ngẫu nhiên $\ge 32$ ký tự. Ví dụ: `namhan_prod_secret_8f9e2b1c4a7d6e5f0a3b2c1d` |
+| `UPSTASH_REDIS_REST_URL` | **Khuyên dùng** | URL kết nối cơ sở dữ liệu Upstash Redis (lấy từ [console.upstash.com](https://console.upstash.com/)). |
+| `UPSTASH_REDIS_REST_TOKEN` | **Khuyên dùng** | Token xác thực Upstash Redis. |
 
 > [!NOTE]
 > Không cần thêm `GOOGLE_CLIENT_ID` hay `GOOGLE_CLIENT_SECRET` vì hệ thống hiện đã sử dụng phương án Google Apps Script Web App (toàn bộ URL và Khóa bí mật được quản lý và lưu trực tiếp qua trang quản trị `/admin/google-sheets/`).
 
 ---
 
-### III. CÁC BƯỚC TRIỂN KHAI
+### III. CÁC BƯỚC TRIỂN KHAI LÊN VERCEL (CHÍNH THỨC)
 
-#### CÁCH 1: TRIỂN KHAI QUA GITHUB (KHUYÊN DÙNG — TỰ ĐỘNG BUILD MỖI KHI PUSH CODE)
+1. **Đẩy mã nguồn lên kho chứa GitHub:**
+   ```bash
+   git add .
+   git commit -m "feat: ready for vercel production deployment"
+   git push origin main
+   ```
+
+2. **Tạo Database Upstash Redis miễn phí (100% Free):**
+   * Truy cập [console.upstash.com](https://console.upstash.com/) và đăng nhập.
+   * Bấm **Create Database** &rarr; đặt tên `namhan-db` &rarr; chọn region `Singapore (ap-southeast-1)` &rarr; bấm **Create**.
+   * Cuộn xuống phần **REST API**, chọn tab **.env** để lấy `UPSTASH_REDIS_REST_URL` và `UPSTASH_REDIS_REST_TOKEN`.
+
+3. **Kết nối kho chứa trên Vercel:**
+   * Đăng nhập vào [Vercel Dashboard](https://vercel.com/).
+   * Bấm **Add New...** &rarr; Chọn **Project**.
+   * Chọn repo `SP_MinhNgoc` (hoặc `NamHan_Logistics`) từ GitHub.
+   * Framework Preset: Chọn **Astro** (Vercel tự động nhận diện).
+   * Tại mục **Environment Variables**, thêm 4 biến: `ADMIN_PASSWORD`, `ADMIN_SECRET`, `UPSTASH_REDIS_REST_URL`, `UPSTASH_REDIS_REST_TOKEN`.
+   * Bấm **Deploy**.
+
+4. **Kết quả:**
+   * Vercel tự động build và cấp tên miền (ví dụ: `https://nam-han-logistics.vercel.app`).
+   * Khi cần gắn tên miền riêng của doanh nghiệp: Vào **Settings** &rarr; **Domains** &rarr; Nhập tên miền (ví dụ: `namhanlogistics.com`).
+
+---
+
+### IV. TRIỂN KHAI DỰ PHÒNG LÊN NETLIFY (NẾU CẦN)
 
 1. **Đẩy mã nguồn lên kho chứa GitHub:**
    ```bash

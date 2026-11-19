@@ -32,3 +32,4 @@ export function isUpstashConfigured(): boolean {
   const token = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
   return Boolean(url && token);
 }
+
