@@ -148,7 +148,7 @@ export function searchLocations(query: string, limit: number = 8): LocationSugge
   const results: LocationSuggestion[] = [];
   const seen = new Set<string>();
 
-  // 1. Check matching provinces
+  // 1. Check matching provinces (each province appears exactly once)
   for (const prov of VIETNAM_PROVINCES) {
     const rawNameClean = removeVietnameseTones(prov.name);
     const fullNameClean = removeVietnameseTones(prov.fullName);
@@ -162,20 +162,9 @@ export function searchLocations(query: string, limit: number = 8): LocationSugge
           type: 'province',
           provinceName: prov.name,
           region: prov.region,
-          badge: prov.isHub ? 'Tỉnh trọng điểm' : undefined,
+          badge: prov.isHub ? 'Trọng điểm' : prov.region,
           isPopular: prov.isHub,
         });
-      }
-    }
-  }
-
-  // 2. Check matching major logistics hubs
-  for (const hub of MAJOR_LOGISTICS_HUBS) {
-    const hubNameClean = removeVietnameseTones(hub.name);
-    if (hubNameClean.includes(cleanQ)) {
-      if (!seen.has(hub.name)) {
-        seen.add(hub.name);
-        results.push(hub);
       }
     }
   }

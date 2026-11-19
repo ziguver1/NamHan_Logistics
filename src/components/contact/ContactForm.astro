@@ -1327,13 +1327,11 @@ import { VIETNAM_PROVINCES, MAJOR_LOGISTICS_HUBS } from '@/content/vietnam-provi
 
     const staticDataEl = document.getElementById('provincesStaticData');
     let provincesList: ProvinceRecord[] = [];
-    let hubsList: ProvinceRecord[] = [];
 
     if (staticDataEl && staticDataEl.textContent) {
       try {
         const parsed = JSON.parse(staticDataEl.textContent);
         if (Array.isArray(parsed.provinces)) provincesList = parsed.provinces;
-        if (Array.isArray(parsed.hubs)) hubsList = parsed.hubs;
       } catch (_) {}
     }
 
@@ -1343,7 +1341,6 @@ import { VIETNAM_PROVINCES, MAJOR_LOGISTICS_HUBS } from '@/content/vietnam-provi
       .then((resData) => {
         if (resData && resData.success && Array.isArray(resData.data) && resData.data.length > 0) {
           provincesList = resData.data;
-          if (Array.isArray(resData.hubs)) hubsList = resData.hubs;
         }
       })
       .catch(() => {
@@ -1384,7 +1381,7 @@ import { VIETNAM_PROVINCES, MAJOR_LOGISTICS_HUBS } from '@/content/vietnam-provi
       const matches: ProvinceRecord[] = [];
       const seen = new Set<string>();
 
-      // 1. Search provinces
+      // Search provinces (each province appears exactly once)
       for (const p of provincesList) {
         const nameClean = removeTones(p.name);
         const fullNameClean = removeTones(p.fullName || '');
@@ -1398,22 +1395,6 @@ import { VIETNAM_PROVINCES, MAJOR_LOGISTICS_HUBS } from '@/content/vietnam-provi
               region: p.region,
               badge: p.isHub ? 'Trọng điểm' : p.region,
               isHub: p.isHub
-            });
-          }
-        }
-      }
-
-      // 2. Search hubs
-      for (const h of hubsList) {
-        const hubClean = removeTones(h.name);
-        if (hubClean.includes(qClean)) {
-          if (!seen.has(h.name)) {
-            seen.add(h.name);
-            matches.push({
-              name: h.name,
-              region: h.region,
-              badge: h.badge || 'Hub Nam Hân',
-              isHub: true
             });
           }
         }
