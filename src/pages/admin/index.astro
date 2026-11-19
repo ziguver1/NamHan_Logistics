@@ -67,25 +67,6 @@ const countDeleted = allItems.filter((a) => a.status === 'deleted').length;
                 </svg>
                 <span>Tạo thông báo mới</span>
               </a>
-
-              <a href="/api/news/backup" download class="btn btn-outline" title="Tải xuống tệp sao lưu toàn bộ thông báo">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                  <polyline points="7 10 12 15 17 10"/>
-                  <line x1="12" y1="15" x2="12" y2="3"/>
-                </svg>
-                <span>Sao lưu JSON</span>
-              </a>
-
-              <button type="button" id="btnImportBackup" class="btn btn-outline" title="Khôi phục thông báo từ tệp JSON">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
-                  <polyline points="17 8 12 3 7 8"/>
-                  <line x1="12" y1="3" x2="12" y2="15"/>
-                </svg>
-                <span>Khôi phục</span>
-              </button>
-              <input type="file" id="backupFileInput" accept=".json,application/json" style="display: none;" />
             </div>
           </div>
 
@@ -948,46 +929,5 @@ const countDeleted = allItems.filter((a) => a.status === 'deleted').length;
       }
     });
   });
-
-  // Restore from JSON file
-  const btnImport = document.getElementById('btnImportBackup');
-  const fileInput = document.getElementById('backupFileInput') as HTMLInputElement | null;
-
-  if (btnImport && fileInput) {
-    btnImport.addEventListener('click', () => fileInput.click());
-
-    fileInput.addEventListener('change', async () => {
-      const file = fileInput.files?.[0];
-      if (!file) return;
-
-      if (!confirm(`Bạn có chắc muốn khôi phục dữ liệu từ tệp "${file.name}"? Dữ liệu mới sẽ được ghi đè/bổ sung vào hệ thống.`)) {
-        fileInput.value = '';
-        return;
-      }
-
-      try {
-        const text = await file.text();
-        const json = JSON.parse(text);
-
-        const res = await fetch('/api/news/backup', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(json)
-        });
-
-        const data = await res.json();
-        if (data.success) {
-          alert(data.message || 'Khôi phục thành công!');
-          window.location.reload();
-        } else {
-          alert('Lỗi khôi phục: ' + (data.error || 'Dữ liệu không hợp lệ'));
-        }
-      } catch (err: any) {
-        alert('Lỗi đọc tệp sao lưu: ' + err.message);
-      } finally {
-        fileInput.value = '';
-      }
-    });
-  }
 </script>
 
