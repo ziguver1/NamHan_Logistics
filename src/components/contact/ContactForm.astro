@@ -10,6 +10,7 @@
  * - Phase 1 Demo Compliance: Informative preview banner with direct hotline (no false success message)
  */
 import { companyInfo } from '@/content/company';
+import { VIETNAM_PROVINCES, MAJOR_LOGISTICS_HUBS } from '@/content/vietnam-provinces';
 ---
 
 <div class="contact-form-card" id="shipping-form">
@@ -28,6 +29,8 @@ import { companyInfo } from '@/content/company';
     <!-- Hidden metadata fields -->
     <input type="hidden" id="formRequestId" name="requestId" value="" />
     <input type="hidden" id="formSourceUrl" name="sourceUrl" value="/lien-he/" />
+    <!-- Embedded Vietnam Provinces & Hubs dataset for instant suggestion (0ms fallback) -->
+    <script type="application/json" id="provincesStaticData" set:html={JSON.stringify({ provinces: VIETNAM_PROVINCES, hubs: MAJOR_LOGISTICS_HUBS })}></script>
 
     <!-- Radio Toggle: Bạn là -->
     <fieldset class="form-group customer-type-group">
@@ -74,8 +77,11 @@ import { companyInfo } from '@/content/company';
     <!-- 2-col Row: Điểm đi & Điểm đến -->
     <div class="form-row-2">
       <!-- Điểm đi -->
-      <div class="form-group">
-        <label for="pickupLocation" class="form-label">Điểm đi</label>
+      <div class="form-group location-field-group" id="pickupLocationGroup">
+        <div class="location-label-row">
+          <label for="pickupLocation" class="form-label">Điểm đi</label>
+          <span class="location-hint-badge">Gợi ý 63 tỉnh/thành</span>
+        </div>
         <div class="input-with-icon">
           <span class="input-icon" aria-hidden="true">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -87,18 +93,28 @@ import { companyInfo } from '@/content/company';
             type="text"
             id="pickupLocation"
             name="pickupLocation"
-            class="form-input"
-            placeholder="Nhập tỉnh / thành hoặc địa điểm"
+            class="form-input location-suggest-input"
+            placeholder="Nhập hoặc chọn tỉnh / thành đi"
             required
             aria-required="true"
+            autocomplete="off"
+            aria-autocomplete="list"
+            aria-expanded="false"
+            aria-controls="pickupLocationDropdown"
           />
+          <button type="button" class="btn-clear-loc" id="pickupClearBtn" aria-label="Xóa điểm đi" style="display:none;">✕</button>
         </div>
+        <!-- Location Suggestions Dropdown -->
+        <div id="pickupLocationDropdown" class="location-dropdown" role="listbox" style="display:none;" aria-label="Gợi ý tỉnh thành điểm đi"></div>
         <span class="field-error" id="pickupLocationError" aria-live="polite"></span>
       </div>
 
       <!-- Điểm đến -->
-      <div class="form-group">
-        <label for="deliveryLocation" class="form-label">Điểm đến</label>
+      <div class="form-group location-field-group" id="deliveryLocationGroup">
+        <div class="location-label-row">
+          <label for="deliveryLocation" class="form-label">Điểm đến</label>
+          <span class="location-hint-badge">Gợi ý 63 tỉnh/thành</span>
+        </div>
         <div class="input-with-icon">
           <span class="input-icon" aria-hidden="true">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -110,12 +126,19 @@ import { companyInfo } from '@/content/company';
             type="text"
             id="deliveryLocation"
             name="deliveryLocation"
-            class="form-input"
-            placeholder="Nhập tỉnh / thành hoặc địa điểm"
+            class="form-input location-suggest-input"
+            placeholder="Nhập hoặc chọn tỉnh / thành đến"
             required
             aria-required="true"
+            autocomplete="off"
+            aria-autocomplete="list"
+            aria-expanded="false"
+            aria-controls="deliveryLocationDropdown"
           />
+          <button type="button" class="btn-clear-loc" id="deliveryClearBtn" aria-label="Xóa điểm đến" style="display:none;">✕</button>
         </div>
+        <!-- Location Suggestions Dropdown -->
+        <div id="deliveryLocationDropdown" class="location-dropdown" role="listbox" style="display:none;" aria-label="Gợi ý tỉnh thành điểm đến"></div>
         <span class="field-error" id="deliveryLocationError" aria-live="polite"></span>
       </div>
     </div>
@@ -442,6 +465,203 @@ import { companyInfo } from '@/content/company';
     font-size: 0.875rem;
     font-family: inherit;
     transition: border-color var(--transition-fast, 150ms ease), box-shadow var(--transition-fast, 150ms ease);
+  }
+
+  /* Location Autocomplete & Suggestion Dropdown */
+  .location-field-group {
+    position: relative;
+  }
+
+  .location-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.375rem;
+  }
+
+  .location-label-row .form-label {
+    margin-bottom: 0;
+  }
+
+  .location-hint-badge {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    color: #0284c7;
+    background-color: #e0f2fe;
+    padding: 0.125rem 0.45rem;
+    border-radius: 4px;
+    letter-spacing: 0.02em;
+  }
+
+  .location-suggest-input {
+    padding-right: 2.25rem;
+  }
+
+  .btn-clear-loc {
+    position: absolute;
+    right: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    background-color: #f1f5f9;
+    color: #64748b;
+    border: 1px solid #cbd5e1;
+    cursor: pointer;
+    font-size: 0.6875rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: all var(--transition-fast, 150ms ease);
+    z-index: 2;
+  }
+
+  .btn-clear-loc:hover {
+    background-color: #fee2e2;
+    border-color: #fca5a5;
+    color: #dc2626;
+  }
+
+  .location-dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    max-height: 280px;
+    overflow-y: auto;
+    background: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: var(--radius-md, 12px);
+    box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.18), 0 4px 8px -2px rgba(15, 23, 42, 0.08);
+    z-index: 1000;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  .location-dropdown-header {
+    padding: 0.45rem 0.75rem;
+    background-color: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.6875rem;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    color: #64748b;
+    text-transform: uppercase;
+  }
+
+  .location-popular-chips {
+    padding: 0.45rem 0.65rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    background-color: #fcfdfe;
+    border-bottom: 1px dashed #e2e8f0;
+  }
+
+  .loc-chip {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.2rem 0.55rem;
+    background-color: #f1f5f9;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-full, 9999px);
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #1e293b;
+    cursor: pointer;
+    transition: all var(--transition-fast, 150ms ease);
+    min-height: 28px;
+  }
+
+  .loc-chip:hover {
+    background-color: #e0f2fe;
+    border-color: #7dd3fc;
+    color: #0284c7;
+    transform: translateY(-1px);
+  }
+
+  .location-items-list {
+    list-style: none;
+    margin: 0;
+    padding: 0.25rem 0;
+  }
+
+  .location-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+    padding: 0.55rem 0.75rem;
+    min-height: 44px; /* Touch target >= 44px */
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: #1e293b;
+    transition: background-color var(--transition-fast, 150ms ease);
+    border-bottom: 1px solid #f8fafc;
+  }
+
+  .location-item:last-child {
+    border-bottom: none;
+  }
+
+  .location-item:hover,
+  .location-item.is-active {
+    background-color: #eff6ff;
+    color: #1d4ed8;
+  }
+
+  .location-item-left {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .loc-pin-icon {
+    color: #94a3b8;
+    flex-shrink: 0;
+  }
+
+  .location-item:hover .loc-pin-icon,
+  .location-item.is-active .loc-pin-icon {
+    color: #1d4ed8;
+  }
+
+  .loc-name {
+    font-weight: 600;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .loc-region-badge {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    padding: 0.125rem 0.45rem;
+    border-radius: 4px;
+    background-color: #f1f5f9;
+    color: #64748b;
+    flex-shrink: 0;
+  }
+
+  .loc-hub-badge {
+    background-color: #fef3c7;
+    color: #92400e;
+    font-weight: 700;
+  }
+
+  .location-empty-item {
+    padding: 1rem 0.875rem;
+    font-size: 0.8125rem;
+    color: #64748b;
+    text-align: center;
+    line-height: 1.5;
   }
 
   .form-input::placeholder {
@@ -1041,6 +1261,389 @@ import { companyInfo } from '@/content/company';
         }
       }
     }
+
+    // Initialize Vietnam Provinces Autocomplete for "Điểm đi" & "Điểm đến"
+    initLocationAutocomplete();
+  }
+
+  function initLocationAutocomplete() {
+    const pickupInput = document.getElementById('pickupLocation') as HTMLInputElement | null;
+    const pickupDropdown = document.getElementById('pickupLocationDropdown');
+    const pickupClear = document.getElementById('pickupClearBtn') as HTMLButtonElement | null;
+    const pickupGroup = document.getElementById('pickupLocationGroup');
+
+    const deliveryInput = document.getElementById('deliveryLocation') as HTMLInputElement | null;
+    const deliveryDropdown = document.getElementById('deliveryLocationDropdown');
+    const deliveryClear = document.getElementById('deliveryClearBtn') as HTMLButtonElement | null;
+    const deliveryGroup = document.getElementById('deliveryLocationGroup');
+
+    if (!pickupInput || !deliveryInput) return;
+
+    // Load prerendered data (guarantees 0ms instant display offline)
+    interface ProvinceRecord {
+      code?: string;
+      name: string;
+      fullName?: string;
+      region: string;
+      isHub?: boolean;
+      aliases?: string[];
+      badge?: string;
+    }
+
+    const staticDataEl = document.getElementById('provincesStaticData');
+    let provincesList: ProvinceRecord[] = [];
+    let hubsList: ProvinceRecord[] = [];
+
+    if (staticDataEl && staticDataEl.textContent) {
+      try {
+        const parsed = JSON.parse(staticDataEl.textContent);
+        if (Array.isArray(parsed.provinces)) provincesList = parsed.provinces;
+        if (Array.isArray(parsed.hubs)) hubsList = parsed.hubs;
+      } catch (_) {}
+    }
+
+    // Connect to Vietnam Provinces API endpoint
+    fetch('/api/locations/provinces')
+      .then((res) => res.json())
+      .then((resData) => {
+        if (resData && resData.success && Array.isArray(resData.data) && resData.data.length > 0) {
+          provincesList = resData.data;
+          if (Array.isArray(resData.hubs)) hubsList = resData.hubs;
+        }
+      })
+      .catch(() => {
+        // Fallback already loaded
+      });
+
+    // Helper: remove Vietnamese tones for flexible searching
+    function removeTones(str: string): string {
+      if (!str) return '';
+      return str
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/đ/g, 'd')
+        .replace(/Đ/g, 'D')
+        .toLowerCase()
+        .trim();
+    }
+
+    const POPULAR_CHIPS = [
+      'TP. Hồ Chí Minh',
+      'Bình Dương',
+      'Bình Phước',
+      'Đồng Nai',
+      'Thanh Hóa',
+      'Hà Nội',
+      'Hải Phòng',
+      'Đà Nẵng',
+      'Long An',
+      'Bà Rịa - Vũng Tàu',
+      'Cần Thơ',
+      'Bắc Ninh'
+    ];
+
+    function filterLocations(query: string) {
+      const qClean = removeTones(query);
+      if (!qClean) return [];
+
+      const matches: ProvinceRecord[] = [];
+      const seen = new Set<string>();
+
+      // 1. Search provinces
+      for (const p of provincesList) {
+        const nameClean = removeTones(p.name);
+        const fullNameClean = removeTones(p.fullName || '');
+        const aliasMatch = Array.isArray(p.aliases) && p.aliases.some((a) => removeTones(a).includes(qClean));
+
+        if (nameClean.includes(qClean) || fullNameClean.includes(qClean) || aliasMatch) {
+          if (!seen.has(p.name)) {
+            seen.add(p.name);
+            matches.push({
+              name: p.name,
+              region: p.region,
+              badge: p.isHub ? 'Trọng điểm' : p.region,
+              isHub: p.isHub
+            });
+          }
+        }
+      }
+
+      // 2. Search hubs
+      for (const h of hubsList) {
+        const hubClean = removeTones(h.name);
+        if (hubClean.includes(qClean)) {
+          if (!seen.has(h.name)) {
+            seen.add(h.name);
+            matches.push({
+              name: h.name,
+              region: h.region,
+              badge: h.badge || 'Hub Nam Hân',
+              isHub: true
+            });
+          }
+        }
+      }
+
+      return matches.slice(0, 8);
+    }
+
+    function escapeHtml(str: string): string {
+      return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    }
+
+    function setupField(
+      input: HTMLInputElement,
+      dropdown: HTMLElement | null,
+      clearBtn: HTMLButtonElement | null,
+      nextInput: HTMLInputElement | null
+    ) {
+      if (!dropdown) return { close: () => {} };
+      const dropdownEl = dropdown;
+      let activeIndex = -1;
+
+      function updateClearBtn() {
+        if (clearBtn) {
+          clearBtn.style.display = input.value.trim() ? 'inline-flex' : 'none';
+        }
+      }
+
+      function renderDefault() {
+        let html = `
+          <div class="location-dropdown-header">
+            <span>Tỉnh / thành phố phổ biến</span>
+            <span style="font-weight: normal; font-size: 0.65rem; opacity: 0.85;">1 chạm để chọn</span>
+          </div>
+          <div class="location-popular-chips">
+        `;
+        for (const chip of POPULAR_CHIPS) {
+          html += `<button type="button" class="loc-chip" data-val="${chip}">${chip}</button>`;
+        }
+        html += `</div>`;
+
+        html += `
+          <div class="location-dropdown-header" style="margin-top: 2px;">
+            <span>Toàn bộ 63 tỉnh thành Việt Nam</span>
+          </div>
+          <ul class="location-items-list" role="listbox">
+        `;
+
+        const displayList = provincesList.length > 0 ? provincesList : [
+          { name: 'TP. Hồ Chí Minh', region: 'Đông Nam Bộ', isHub: true },
+          { name: 'Bình Dương', region: 'Đông Nam Bộ', isHub: true },
+          { name: 'Bình Phước', region: 'Đông Nam Bộ', isHub: true },
+          { name: 'Đồng Nai', region: 'Đông Nam Bộ', isHub: true },
+          { name: 'Thanh Hóa', region: 'Miền Trung', isHub: true },
+          { name: 'Hà Nội', region: 'Miền Bắc', isHub: true },
+          { name: 'Hải Phòng', region: 'Miền Bắc', isHub: true },
+          { name: 'Đà Nẵng', region: 'Miền Trung', isHub: true }
+        ];
+
+        for (const p of displayList) {
+          html += `
+            <li class="location-item" role="option" data-val="${p.name}">
+              <div class="location-item-left">
+                <svg class="loc-pin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <span class="loc-name">${p.name}</span>
+              </div>
+              <span class="loc-region-badge ${p.isHub ? 'loc-hub-badge' : ''}">${p.isHub ? 'Trọng điểm' : p.region}</span>
+            </li>
+          `;
+        }
+        html += `</ul>`;
+
+        dropdownEl.innerHTML = html;
+        bindDropdownEvents();
+      }
+
+      function renderFiltered(query: string) {
+        const matches = filterLocations(query);
+        if (matches.length === 0) {
+          dropdownEl.innerHTML = `
+            <div class="location-empty-item">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" style="margin-bottom: 6px; display: inline-block;">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+              <div>Không tìm thấy tỉnh thành có tên "<strong>${escapeHtml(query)}</strong>".</div>
+              <div style="font-size: 0.75rem; color: #64748b; margin-top: 4px;">
+                Quý khách có thể giữ nguyên địa chỉ chi tiết vừa nhập (KCN, số nhà, phường/xã).
+              </div>
+            </div>
+          `;
+          return;
+        }
+
+        let html = `
+          <div class="location-dropdown-header">
+            <span>Gợi ý theo từ khóa "${escapeHtml(query)}" (${matches.length})</span>
+          </div>
+          <ul class="location-items-list" role="listbox">
+        `;
+        for (const m of matches) {
+          html += `
+            <li class="location-item" role="option" data-val="${m.name}">
+              <div class="location-item-left">
+                <svg class="loc-pin-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/>
+                  <circle cx="12" cy="10" r="3"/>
+                </svg>
+                <span class="loc-name">${m.name}</span>
+              </div>
+              <span class="loc-region-badge ${m.isHub ? 'loc-hub-badge' : ''}">${m.badge || m.region}</span>
+            </li>
+          `;
+        }
+        html += `</ul>`;
+
+        dropdownEl.innerHTML = html;
+        bindDropdownEvents();
+      }
+
+      function selectValue(val: string) {
+        input.value = val;
+        input.classList.remove('is-invalid');
+        const err = document.getElementById(`${input.id}Error`);
+        if (err) err.textContent = '';
+        updateClearBtn();
+        close();
+
+        // Forward focus to next input if empty
+        if (nextInput && !nextInput.value.trim()) {
+          setTimeout(() => {
+            nextInput.focus();
+          }, 60);
+        }
+      }
+
+      function bindDropdownEvents() {
+        // Quick chips
+        dropdownEl.querySelectorAll<HTMLButtonElement>('.loc-chip').forEach((btn) => {
+          btn.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            const val = btn.getAttribute('data-val') || '';
+            if (val) selectValue(val);
+          });
+        });
+
+        // Item rows
+        const items = dropdownEl.querySelectorAll<HTMLElement>('.location-item');
+        items.forEach((item, idx) => {
+          item.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            const val = item.getAttribute('data-val') || '';
+            if (val) selectValue(val);
+          });
+          item.addEventListener('mouseenter', () => {
+            items.forEach((it) => it.classList.remove('is-active'));
+            item.classList.add('is-active');
+            activeIndex = idx;
+          });
+        });
+      }
+
+      function open() {
+        const q = input.value.trim();
+        if (!q) {
+          renderDefault();
+        } else {
+          renderFiltered(q);
+        }
+        dropdownEl.style.display = 'block';
+        input.setAttribute('aria-expanded', 'true');
+        activeIndex = -1;
+      }
+
+      function close() {
+        dropdownEl.style.display = 'none';
+        input.setAttribute('aria-expanded', 'false');
+        activeIndex = -1;
+      }
+
+      input.addEventListener('input', () => {
+        updateClearBtn();
+        const q = input.value.trim();
+        if (!q) {
+          renderDefault();
+        } else {
+          renderFiltered(q);
+        }
+        dropdownEl.style.display = 'block';
+        input.setAttribute('aria-expanded', 'true');
+      });
+
+      input.addEventListener('focus', () => {
+        open();
+      });
+
+      input.addEventListener('keydown', (e) => {
+        if (dropdownEl.style.display !== 'block') {
+          if (e.key === 'ArrowDown' || e.key === 'Enter') {
+            open();
+            e.preventDefault();
+          }
+          return;
+        }
+
+        const items = dropdownEl.querySelectorAll<HTMLElement>('.location-item');
+        if (items.length === 0) return;
+
+        if (e.key === 'ArrowDown') {
+          e.preventDefault();
+          activeIndex = (activeIndex + 1) % items.length;
+          items.forEach((it, i) => it.classList.toggle('is-active', i === activeIndex));
+          const currentItem = items[activeIndex];
+          if (currentItem) currentItem.scrollIntoView({ block: 'nearest' });
+        } else if (e.key === 'ArrowUp') {
+          e.preventDefault();
+          activeIndex = (activeIndex - 1 + items.length) % items.length;
+          items.forEach((it, i) => it.classList.toggle('is-active', i === activeIndex));
+          const currentItem = items[activeIndex];
+          if (currentItem) currentItem.scrollIntoView({ block: 'nearest' });
+        } else if (e.key === 'Enter') {
+          if (activeIndex >= 0) {
+            const selectedItem = items[activeIndex];
+            if (selectedItem) {
+              e.preventDefault();
+              const val = selectedItem.getAttribute('data-val') || '';
+              if (val) selectValue(val);
+            }
+          }
+        } else if (e.key === 'Escape') {
+          e.preventDefault();
+          close();
+        }
+      });
+
+      if (clearBtn) {
+        clearBtn.addEventListener('click', () => {
+          input.value = '';
+          updateClearBtn();
+          input.focus();
+          open();
+        });
+      }
+
+      updateClearBtn();
+
+      return { close };
+    }
+
+    const pickupCtrl = setupField(pickupInput, pickupDropdown, pickupClear, deliveryInput);
+    const deliveryCtrl = setupField(deliveryInput, deliveryDropdown, deliveryClear, null);
+
+    // Close on outside clicks or taps
+    document.addEventListener('pointerdown', (e) => {
+      const target = e.target as Node;
+      if (pickupGroup && !pickupGroup.contains(target)) {
+        pickupCtrl.close();
+      }
+      if (deliveryGroup && !deliveryGroup.contains(target)) {
+        deliveryCtrl.close();
+      }
+    });
   }
 
   if (document.readyState === 'loading') {
