@@ -18,14 +18,14 @@ const STORE_NAME = 'namhan_news';
 const INDEX_KEY = 'announcements_index';
 
 function getNewsDataDir(): string {
-  if (process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+  if (process.env.VERCEL || process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME) {
     return path.join('/tmp', 'namhan_news_data');
   }
   return path.resolve(process.cwd(), '.data', 'news');
 }
 
 function getNewsMediaDir(): string {
-  if (process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+  if (process.env.VERCEL || process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME) {
     return path.join('/tmp', 'namhan_media_data');
   }
   return path.resolve(process.cwd(), '.data', 'media');

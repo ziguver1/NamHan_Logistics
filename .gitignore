@@ -32,7 +32,9 @@ node_modules/
 *.sqlite
 *.sqlite3
 
-# 5. Netlify Tooling & Deployment Cache
+# 5. Deployment Tooling & Deployment Cache (Vercel & Netlify)
+.vercel/
+.vercel
 .netlify/
 .netlify
 .netlify*

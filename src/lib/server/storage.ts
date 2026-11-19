@@ -39,7 +39,7 @@ export interface AppConfig {
 const STORAGE_KEY = 'connection_state';
 
 function getStorageDir(): string {
-  if (process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+  if (process.env.VERCEL || process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME) {
     return path.join('/tmp', 'namhan_config_data');
   }
   return path.resolve(process.cwd(), '.data');
