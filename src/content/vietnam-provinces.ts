@@ -182,3 +182,4 @@ export function searchLocations(query: string, limit: number = 8): LocationSugge
 
   return results.slice(0, limit);
 }
+
