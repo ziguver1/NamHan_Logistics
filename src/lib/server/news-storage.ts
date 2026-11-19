@@ -1,11 +1,11 @@
 /**
  * Persistent Storage Layer for Announcements & Media Files.
- * Uses Netlify Blobs in Production, with safe local filesystem storage for local development.
- * Strict compliance: Will NOT silently fallback to local storage in production.
+ * Uses Upstash Redis in Production (Vercel) with Netlify Blobs support and safe local fallback.
  */
 
 import fs from 'node:fs';
 import path from 'node:path';
+import { getUpstashRedis } from './redis-client.ts';
 import type {
   Announcement,
   AnnouncementSummary,
@@ -16,6 +16,7 @@ import type {
 
 const STORE_NAME = 'namhan_news';
 const INDEX_KEY = 'announcements_index';
+const REDIS_INDEX_KEY = 'namhan:news:index';
 
 function getNewsDataDir(): string {
   if (process.env.VERCEL || process.env.NETLIFY || process.env.AWS_LAMBDA_FUNCTION_NAME) {
@@ -127,7 +128,28 @@ const INITIAL_SEEDS: Announcement[] = [
  * Reads the announcements index summary list.
  */
 export async function getAnnouncementsIndex(): Promise<AnnouncementSummary[]> {
-  // 1. Try Netlify Blobs if store is active
+  // 1. Try Upstash Redis if available
+  const redis = getUpstashRedis();
+  if (redis) {
+    try {
+      const data = await redis.get<AnnouncementSummary[]>(REDIS_INDEX_KEY);
+      if (Array.isArray(data) && data.length > 0) {
+        inMemoryIndex = data;
+        return inMemoryIndex;
+      }
+      // If store is empty, initialize with seeds
+      await seedInitialDataRedis(redis);
+      const seeded = await redis.get<AnnouncementSummary[]>(REDIS_INDEX_KEY);
+      if (Array.isArray(seeded) && seeded.length > 0) {
+        inMemoryIndex = seeded;
+        return inMemoryIndex;
+      }
+    } catch (err) {
+      console.warn('[NewsStorage] Upstash Redis index read error:', err);
+    }
+  }
+
+  // 2. Try Netlify Blobs if store is active
   const store = await getNetlifyBlobStore();
 
   if (store) {
@@ -147,12 +169,12 @@ export async function getAnnouncementsIndex(): Promise<AnnouncementSummary[]> {
     } catch {}
   }
 
-  // 2. Try In-Memory Cache
+  // 3. Try In-Memory Cache
   if (inMemoryIndex && inMemoryIndex.length > 0) {
     return inMemoryIndex;
   }
 
-  // 3. Local/tmp directory fallback
+  // 4. Local/tmp directory fallback
   ensureLocalDirs();
   const localIndexFile = path.join(getNewsDataDir(), 'index.json');
   try {
@@ -168,7 +190,7 @@ export async function getAnnouncementsIndex(): Promise<AnnouncementSummary[]> {
     console.warn('[NewsStorage] Error reading local index:', err);
   }
 
-  // 4. Seed locally
+  // 5. Seed locally
   await seedInitialDataLocal();
   try {
     if (fs.existsSync(localIndexFile)) {
@@ -186,6 +208,15 @@ export async function getAnnouncementsIndex(): Promise<AnnouncementSummary[]> {
  */
 async function saveAnnouncementsIndex(summaries: AnnouncementSummary[]): Promise<void> {
   inMemoryIndex = summaries;
+
+  const redis = getUpstashRedis();
+  if (redis) {
+    try {
+      await redis.set(REDIS_INDEX_KEY, summaries);
+    } catch (err) {
+      console.warn('[NewsStorage] Upstash Redis index save error:', err);
+    }
+  }
 
   const store = await getNetlifyBlobStore();
   if (store) {
@@ -214,6 +245,19 @@ export async function getAnnouncementById(id: string): Promise<Announcement | nu
     return inMemoryArticles.get(id)!;
   }
 
+  // 1. Try Upstash Redis if available
+  const redis = getUpstashRedis();
+  if (redis) {
+    try {
+      const data = await redis.get<Announcement>(`namhan:news:article:${id}`);
+      if (data && typeof data === 'object') {
+        inMemoryArticles.set(id, data);
+        return data;
+      }
+    } catch {}
+  }
+
+  // 2. Try Netlify Blobs if store is active
   const store = await getNetlifyBlobStore();
   if (store) {
     try {
@@ -346,6 +390,17 @@ export async function saveAnnouncement(
   // 4. Save article payload
   inMemoryArticles.set(article.id, article);
 
+  // 4a. Try Upstash Redis if available
+  const redis = getUpstashRedis();
+  if (redis) {
+    try {
+      await redis.set(`namhan:news:article:${article.id}`, article);
+    } catch (err) {
+      console.warn('[NewsStorage] Upstash Redis article write error:', err);
+    }
+  }
+
+  // 4b. Try Netlify Blobs if store is active
   const store = await getNetlifyBlobStore();
   if (store) {
     try {
@@ -406,6 +461,13 @@ export async function restoreAnnouncement(id: string): Promise<boolean> {
 export async function hardDeleteAnnouncement(id: string): Promise<boolean> {
   inMemoryArticles.delete(id);
 
+  const redis = getUpstashRedis();
+  if (redis) {
+    try {
+      await redis.del(`namhan:news:article:${id}`);
+    } catch {}
+  }
+
   const store = await getNetlifyBlobStore();
   if (store) {
     try {
@@ -458,6 +520,24 @@ export async function saveMediaFile(
     buffer
   });
 
+  // 1. Try Upstash Redis if available
+  const redis = getUpstashRedis();
+  if (redis) {
+    try {
+      await redis.set(`namhan:news:media_meta:${fileId}`, {
+        originalName: meta.originalName,
+        mimeType: meta.mimeType,
+        sizeBytes,
+        uploadedAt
+      });
+      // Store base64-encoded binary string in Redis
+      await redis.set(`namhan:news:media_bin:${fileId}`, buffer.toString('base64'));
+    } catch (err) {
+      console.warn('[NewsStorage] Upstash Redis media write error:', err);
+    }
+  }
+
+  // 2. Try Netlify Blobs if store is active
   const store = await getNetlifyBlobStore();
   if (store) {
     try {
@@ -506,6 +586,30 @@ export async function getMediaFile(fileId: string): Promise<StoredMediaFile | nu
     return inMemoryMedia.get(fileId)!;
   }
 
+  // 1. Try Upstash Redis if available
+  const redis = getUpstashRedis();
+  if (redis) {
+    try {
+      const meta = await redis.get<any>(`namhan:news:media_meta:${fileId}`);
+      const binBase64 = await redis.get<string>(`namhan:news:media_bin:${fileId}`);
+      if (meta && binBase64) {
+        const stored: StoredMediaFile = {
+          id: fileId,
+          originalName: meta.originalName,
+          mimeType: meta.mimeType,
+          sizeBytes: meta.sizeBytes,
+          uploadedAt: meta.uploadedAt,
+          buffer: Buffer.from(binBase64, 'base64')
+        };
+        inMemoryMedia.set(fileId, stored);
+        return stored;
+      }
+    } catch (err) {
+      console.warn('[NewsStorage] Upstash Redis media read error:', err);
+    }
+  }
+
+  // 2. Try Netlify Blobs if store is active
   const store = await getNetlifyBlobStore();
   if (store) {
     try {
@@ -616,6 +720,13 @@ async function seedInitialData(store: any): Promise<void> {
     await store.setJSON(`article:${seed.id}`, seed);
   }
   await store.setJSON(INDEX_KEY, INITIAL_SEEDS.map(toSummary));
+}
+
+async function seedInitialDataRedis(redis: NonNullable<ReturnType<typeof getUpstashRedis>>): Promise<void> {
+  for (const seed of INITIAL_SEEDS) {
+    await redis.set(`namhan:news:article:${seed.id}`, seed);
+  }
+  await redis.set(REDIS_INDEX_KEY, INITIAL_SEEDS.map(toSummary));
 }
 
 async function seedInitialDataLocal(): Promise<void> {

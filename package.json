@@ -12,6 +12,7 @@
   "dependencies": {
     "@astrojs/vercel": "^11.0.22",
     "@netlify/blobs": "^11.1.9",
+    "@upstash/redis": "^1.41.0",
     "astro": "^7.4.4"
   },
   "devDependencies": {
