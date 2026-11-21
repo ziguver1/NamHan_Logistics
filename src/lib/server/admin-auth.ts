@@ -81,7 +81,8 @@ export async function createAdminSessionCookie(isSecure = false): Promise<string
   });
 
   const signedToken = await signSession(payload, secret);
-  const secureFlag = (isSecure || Boolean(process.env.NETLIFY)) ? 'Secure;' : '';
+  const isCloudProd = Boolean(process.env.VERCEL || process.env.NETLIFY);
+  const secureFlag = (isSecure || isCloudProd) ? 'Secure;' : '';
 
   return `${COOKIE_NAME}=${signedToken}; Path=/; Max-Age=${SESSION_MAX_AGE_SECONDS}; HttpOnly; SameSite=Lax; ${secureFlag}`.trim();
 }
@@ -89,8 +90,9 @@ export async function createAdminSessionCookie(isSecure = false): Promise<string
 /**
  * Creates an expired Set-Cookie header to log out the admin.
  */
-export function createAdminLogoutCookie(): string {
-  const secureFlag = Boolean(process.env.NETLIFY) ? 'Secure;' : '';
+export function createAdminLogoutCookie(isSecure = false): string {
+  const isCloudProd = Boolean(process.env.VERCEL || process.env.NETLIFY);
+  const secureFlag = (isSecure || isCloudProd) ? 'Secure;' : '';
   return `${COOKIE_NAME}=; Path=/; Max-Age=0; HttpOnly; SameSite=Lax; ${secureFlag}`.trim();
 }
 

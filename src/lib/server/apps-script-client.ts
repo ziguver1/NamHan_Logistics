@@ -244,11 +244,11 @@ export async function submitToAppsScript(
 
   const res = await callAppsScript(webAppUrl, payload);
 
-  if (res && res.ok) {
+  if (res && (res.ok || res.success || res.status === 'ok' || res.status === 'success')) {
     return {
       success: true,
       ok: true,
-      code: res.code,
+      code: res.code || 'SUCCESS',
       requestId: res.requestId || submission.requestId,
       message: res.message || 'Ghi nhận yêu cầu thành công!',
       duplicate: res.code === 'DUPLICATE_ACCEPTED'

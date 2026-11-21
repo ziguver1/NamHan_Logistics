@@ -15,7 +15,9 @@ export const GET: APIRoute = async ({ request, url, redirect }) => {
   }
 
   const state = await generateOAuthState();
-  const origin = url.origin;
+  const forwardedHost = request.headers.get('x-forwarded-host');
+  const forwardedProto = request.headers.get('x-forwarded-proto') || 'https';
+  const origin = forwardedHost ? `${forwardedProto}://${forwardedHost}` : url.origin;
   const redirectUri = `${origin}/api/auth/google/callback`;
   const authUrl = buildGoogleAuthUrl(state, redirectUri);
 

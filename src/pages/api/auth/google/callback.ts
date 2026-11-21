@@ -32,7 +32,9 @@ export const GET: APIRoute = async ({ request, url, redirect }) => {
   }
 
   try {
-    const origin = url.origin;
+    const forwardedHost = request.headers.get('x-forwarded-host');
+    const forwardedProto = request.headers.get('x-forwarded-proto') || 'https';
+    const origin = forwardedHost ? `${forwardedProto}://${forwardedHost}` : url.origin;
     const redirectUri = `${origin}/api/auth/google/callback`;
 
     // 1. Exchange code for tokens

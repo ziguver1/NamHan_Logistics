@@ -126,26 +126,20 @@ export const POST: APIRoute = async ({ request }) => {
     // 6. Check Active Integration Method
     const config = await getConfig();
 
-    // Determine which method is active: 'apps_script' | 'oauth'
-    let activeMethod: 'apps_script' | 'oauth' | null = null;
-    if (config.activeMethod) {
+    // Check direct Environment Variable shortcut first (Fastest & simplest connection!)
+    const envAppsScriptUrl = (process.env.GOOGLE_APPS_SCRIPT_URL || process.env.GOOGLE_SHEET_WEBAPP_URL || '').trim();
+    const envAppsScriptKey = (process.env.GOOGLE_APPS_SCRIPT_KEY || '').trim();
+
+    // Determine which method is active: 'env_apps_script' | 'apps_script' | 'oauth'
+    let activeMethod: 'env_apps_script' | 'apps_script' | 'oauth' | null = null;
+    if (envAppsScriptUrl) {
+      activeMethod = 'env_apps_script';
+    } else if (config.activeMethod) {
       activeMethod = config.activeMethod;
     } else if (config.appsScriptConnection?.status === 'active') {
       activeMethod = 'apps_script';
     } else if (config.activeConnection?.status === 'active') {
       activeMethod = 'oauth';
-    }
-
-    if (!activeMethod) {
-      console.warn('[Contact Submit] No active Google Sheets connection configured.');
-      return new Response(
-        JSON.stringify({
-          success: false,
-          error: 'SYSTEM_NOT_CONNECTED',
-          message: 'Hệ thống tiếp nhận tự động đang bảo trì hoặc chưa kết nối Google Sheets. Quý khách vui lòng liên hệ Hotline trực tiếp để được phục vụ ngay.'
-        }),
-        { status: 503, headers: { 'Content-Type': 'application/json' } }
-      );
     }
 
     // 7. Format Vietnam timestamp (UTC+7)
@@ -168,8 +162,73 @@ export const POST: APIRoute = async ({ request }) => {
       sourceUrl
     };
 
+    // If no active connection configured:
+    if (!activeMethod) {
+      const isProduction = Boolean(
+        process.env.VERCEL ||
+        process.env.NETLIFY ||
+        process.env.NODE_ENV === 'production'
+      );
+
+      // On Localhost / Dev mode: Gracefully accept submission as dev mock so developers can test form
+      if (!isProduction) {
+        console.log('[Contact Submit - LOCAL DEV MOCK]:', submissionData);
+        await markRequestIdSeen(requestId);
+        return new Response(
+          JSON.stringify({
+            success: true,
+            isDevMock: true,
+            requestId,
+            message: 'Đang chạy ở môi trường máy chủ cục bộ (Localhost). Yêu cầu đã được kiểm thử và ghi nhận thành công!'
+          }),
+          { status: 200, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+
+      console.warn('[Contact Submit] No active Google Sheets connection configured on Production.');
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: 'SYSTEM_NOT_CONNECTED',
+          message: 'Hệ thống tiếp nhận tự động đang bảo trì hoặc chưa kết nối Google Sheets. Quý khách vui lòng liên hệ Hotline trực tiếp để được phục vụ ngay.'
+        }),
+        { status: 503, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
     // =========================================================================
-    // METHOD A: GOOGLE APPS SCRIPT WEB APP (Khuyên dùng, không cần Google Cloud)
+    // METHOD 0: DIRECT ENVIRONMENT VARIABLE APPS SCRIPT URL (Siêu rút gọn)
+    // =========================================================================
+    if (activeMethod === 'env_apps_script' && envAppsScriptUrl) {
+      const result = await submitToAppsScript(envAppsScriptUrl, envAppsScriptKey, submissionData);
+
+      if (!result.success) {
+        console.error('[Contact Submit] Env Apps Script rejected submission:', result);
+        return new Response(
+          JSON.stringify({
+            success: false,
+            error: result.code || 'SUBMIT_ERROR',
+            message: result.message || 'Lỗi khi ghi nhận yêu cầu vào Google Sheets.'
+          }),
+          { status: 502, headers: { 'Content-Type': 'application/json' } }
+        );
+      }
+
+      await markRequestIdSeen(requestId);
+
+      return new Response(
+        JSON.stringify({
+          success: true,
+          requestId,
+          duplicate: Boolean(result.duplicate),
+          message: 'Gửi yêu cầu vận chuyển thành công! Đội ngũ Nam Hân Logistics sẽ liên hệ lại với quý khách trong thời gian sớm nhất.'
+        }),
+        { status: 200, headers: { 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // =========================================================================
+    // METHOD A: GOOGLE APPS SCRIPT WEB APP (Cấu hình qua trang /admin/google-sheets/)
     // =========================================================================
     if (activeMethod === 'apps_script') {
       const appsConn = config.appsScriptConnection;

@@ -144,11 +144,11 @@ export const POST: APIRoute = async ({ request, url }) => {
     // Login successful: reset failed attempts
     failedAttempts.delete(ip);
 
-    // Determine secure cookie flag (always secure on https or Netlify production)
-    const isSecure =
-      url.protocol === 'https:' ||
-      request.headers.get('x-forwarded-proto') === 'https' ||
-      Boolean(process.env.NETLIFY);
+    // Determine secure cookie flag (secure on https/cloud production, never on localhost)
+    const host = request.headers.get('x-forwarded-host') || url.host || '';
+    const proto = request.headers.get('x-forwarded-proto') || (url.protocol.replace(':', ''));
+    const isLocalhost = host.includes('localhost') || host.includes('127.0.0.1');
+    const isSecure = (proto === 'https' || Boolean(process.env.VERCEL || process.env.NETLIFY)) && !isLocalhost;
 
     const cookie = await createAdminSessionCookie(isSecure);
 
