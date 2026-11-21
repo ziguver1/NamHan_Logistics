@@ -819,8 +819,14 @@ const isEditing = Boolean(article);
   // Insert Link button
   const btnLink = document.getElementById('btnInsertLink');
   if (btnLink) {
-    btnLink.addEventListener('click', () => {
-      const url = prompt('Nhập địa chỉ liên kết (URL):', 'https://');
+    btnLink.addEventListener('click', async () => {
+      const url = await (window as any).showPrompt({
+        title: 'Chèn liên kết web',
+        message: 'Nhập địa chỉ URL cần gắn liên kết vào nội dung:',
+        defaultValue: 'https://',
+        placeholder: 'https://...',
+        confirmText: 'Chèn liên kết'
+      });
       if (url && url !== 'https://') {
         document.execCommand('createLink', false, url);
         richEditor?.focus();
@@ -851,11 +857,12 @@ const isEditing = Boolean(article);
         if (data.success && data.file?.url) {
           document.execCommand('insertImage', false, data.file.url);
           richEditor?.focus();
+          (window as any).showToast('Tải ảnh chèn vào bài viết thành công!', 'success');
         } else {
-          alert('Lỗi tải ảnh: ' + (data.error || 'Không thể tải lên'));
+          (window as any).showToast('Lỗi tải ảnh: ' + (data.error || 'Không thể tải lên'), 'error');
         }
       } catch {
-        alert('Lỗi kết nối tải ảnh');
+        (window as any).showToast('Lỗi kết nối khi tải ảnh lên máy chủ', 'error');
       } finally {
         inlineFileInput.value = '';
       }
@@ -892,11 +899,12 @@ const isEditing = Boolean(article);
           if (coverPreviewImg) coverPreviewImg.src = data.file.url;
           if (coverPreviewWrap) coverPreviewWrap.style.display = 'block';
           if (coverUploadActions) coverUploadActions.style.display = 'none';
+          (window as any).showToast('Đã tải ảnh đại diện thành công!', 'success');
         } else {
-          alert('Lỗi tải ảnh đại diện: ' + (data.error || 'Thất bại'));
+          (window as any).showToast('Lỗi tải ảnh đại diện: ' + (data.error || 'Thất bại'), 'error');
         }
       } catch {
-        alert('Lỗi kết nối máy chủ');
+        (window as any).showToast('Lỗi kết nối máy chủ khi tải ảnh đại diện', 'error');
       } finally {
         coverFileInput.value = '';
       }
@@ -909,6 +917,7 @@ const isEditing = Boolean(article);
       if (coverPreviewImg) coverPreviewImg.src = '';
       if (coverPreviewWrap) coverPreviewWrap.style.display = 'none';
       if (coverUploadActions) coverUploadActions.style.display = 'block';
+      (window as any).showToast('Đã gỡ ảnh đại diện', 'info');
     });
   }
 
@@ -962,16 +971,25 @@ const isEditing = Boolean(article);
           `;
           attList?.appendChild(item);
           bindAttRemoveButtons();
+          (window as any).showToast('Đã tải tài liệu PDF thành công!', 'success');
         } else {
-          alert('Lỗi tải tệp: ' + (data.error || 'Thất bại'));
+          (window as any).showToast('Lỗi tải tệp: ' + (data.error || 'Thất bại'), 'error');
         }
       } catch {
-        alert('Lỗi kết nối máy chủ');
+        (window as any).showToast('Lỗi kết nối máy chủ khi tải tài liệu', 'error');
       } finally {
         attFileInput.value = '';
       }
     });
   }
+
+  // Clear validation error on user typing
+  titleInput?.addEventListener('input', () => {
+    titleInput.classList.remove('input-field-error');
+  });
+  summaryInput?.addEventListener('input', () => {
+    summaryInput.classList.remove('input-field-error');
+  });
 
   // Save / Publish logic
   async function submitForm(targetStatus: 'draft' | 'published') {
@@ -979,15 +997,17 @@ const isEditing = Boolean(article);
 
     const title = titleInput?.value.trim() || '';
     if (!title) {
-      alert('Vui lòng nhập tiêu đề thông báo.');
+      titleInput?.classList.add('input-field-error');
       titleInput?.focus();
+      (window as any).showToast('Vui lòng nhập tiêu đề thông báo.', 'warning');
       return;
     }
 
     const summary = summaryInput?.value.trim() || '';
     if (!summary) {
-      alert('Vui lòng nhập mô tả ngắn gọn.');
+      summaryInput?.classList.add('input-field-error');
       summaryInput?.focus();
+      (window as any).showToast('Vui lòng nhập mô tả ngắn gọn thông báo.', 'warning');
       return;
     }
 
@@ -1041,6 +1061,7 @@ const isEditing = Boolean(article);
       const data = await res.json();
 
       if (res.ok && data.success) {
+        (window as any).showToast(data.message || (targetStatus === 'published' ? 'Đã xuất bản thông báo thành công!' : 'Đã lưu bản nháp thành công!'), 'success');
         if (editorAlert) {
           editorAlert.className = 'editor-alert alert-success';
           editorAlert.textContent = data.message || 'Lưu thành công!';
@@ -1052,11 +1073,18 @@ const isEditing = Boolean(article);
         }, 1200);
       } else {
         if (res.status === 409) {
-          if (confirm('XUNG ĐỘT PHIÊN BẢN:\n' + data.error + '\nBạn có muốn tải lại nội dung mới nhất không?')) {
+          const reloadConfirmed = await (window as any).showConfirm({
+            title: 'Xung đột phiên bản',
+            message: (data.error || 'Bài viết đã được cập nhật từ một phiên làm việc khác.') + '\n\nBạn có muốn tải lại nội dung mới nhất không?',
+            confirmText: 'Tải lại bài viết',
+            isDanger: true
+          });
+          if (reloadConfirmed) {
             window.location.reload();
             return;
           }
         }
+        (window as any).showToast('Lỗi: ' + (data.error || 'Không thể lưu thông báo'), 'error');
         if (editorAlert) {
           editorAlert.className = 'editor-alert alert-danger';
           editorAlert.textContent = 'Lỗi: ' + (data.error || 'Không thể lưu thông báo');
@@ -1064,6 +1092,7 @@ const isEditing = Boolean(article);
         }
       }
     } catch {
+      (window as any).showToast('Không thể kết nối đến máy chủ.', 'error');
       if (editorAlert) {
         editorAlert.className = 'editor-alert alert-danger';
         editorAlert.textContent = 'Không thể kết nối đến máy chủ.';

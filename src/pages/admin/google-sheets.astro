@@ -1489,8 +1489,10 @@ if (isAdmin) {
       const data = await res.json();
 
       if (data.success) {
-        alert(data.message || 'Lưu cấu hình thành công!');
-        window.location.href = '/admin/google-sheets?success=appsscript_saved';
+        (window as any).showToast(data.message || 'Lưu cấu hình thành công!', 'success');
+        setTimeout(() => {
+          window.location.href = '/admin/google-sheets?success=appsscript_saved';
+        }, 800);
       } else {
         showAppsAlert('danger', `❌ <strong>Lưu cấu hình thất bại:</strong> ${data.error}`);
         btnSaveAppsScript.removeAttribute('disabled');
@@ -1603,7 +1605,14 @@ if (isAdmin) {
   // 4.3 Reload code from server
   const btnReloadCode = document.getElementById('btnReloadCode');
   btnReloadCode?.addEventListener('click', async () => {
-    if (!confirm('Bạn có chắc muốn tải lại mã nguồn gốc từ máy chủ? Các chỉnh sửa chưa lưu sẽ bị hủy.')) return;
+    const confirmed = await (window as any).showConfirm({
+      title: 'Tải lại mã nguồn gốc',
+      message: 'Các chỉnh sửa chưa lưu sẽ bị hủy.\n\nBạn có chắc chắn muốn nạp lại mã nguồn gốc từ máy chủ?',
+      confirmText: 'Đồng ý nạp lại',
+      cancelText: 'Hủy bỏ',
+      isDanger: true
+    });
+    if (!confirmed) return;
     try {
       const res = await fetch('/api/admin/apps-script/code');
       const data = await res.json();

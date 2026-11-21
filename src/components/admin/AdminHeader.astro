@@ -3,12 +3,16 @@
  * Shared Admin Navigation Header Component
  * Unifies Admin Sections: Bảng tin & Kết nối Google Sheets.
  */
+import AdminUIFeedback from './AdminUIFeedback.astro';
+
 interface Props {
   activeTab: 'news' | 'google-sheets';
 }
 
 const { activeTab } = Astro.props;
 ---
+
+<AdminUIFeedback />
 
 <div class="admin-nav-bar">
   <div class="admin-nav-inner">

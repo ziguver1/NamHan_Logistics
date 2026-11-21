@@ -885,12 +885,13 @@ const countDeleted = allItems.filter((a) => a.status === 'deleted').length;
         });
         const data = await res.json();
         if (data.success) {
-          window.location.reload();
+          (window as any).showToast(data.message || 'Cập nhật trạng thái ghim thành công!', 'success');
+          setTimeout(() => window.location.reload(), 600);
         } else {
-          alert(data.error || 'Lỗi ghim bài');
+          (window as any).showToast(data.error || 'Lỗi ghim bài', 'error');
         }
       } catch {
-        alert('Lỗi kết nối máy chủ');
+        (window as any).showToast('Lỗi kết nối máy chủ', 'error');
       }
     });
   });
@@ -903,13 +904,23 @@ const countDeleted = allItems.filter((a) => a.status === 'deleted').length;
       if (!id || !action) return;
 
       if (action === 'delete') {
-        if (!confirm('HÀNH ĐỘNG NÀY KHÔNG THỂ PHỤC HỒI!\nBạn có chắc chắn muốn xóa vĩnh viễn thông báo này không?')) {
-          return;
-        }
+        const confirmed = await (window as any).showConfirm({
+          title: 'Xóa vĩnh viễn thông báo',
+          message: 'HÀNH ĐỘNG NÀY KHÔNG THỂ PHỤC HỒI!\n\nBạn có chắc chắn muốn xóa vĩnh viễn thông báo này không?',
+          confirmText: 'Xóa vĩnh viễn',
+          cancelText: 'Hủy bỏ',
+          isDanger: true
+        });
+        if (!confirmed) return;
       } else if (action === 'trash') {
-        if (!confirm('Bạn có chắc muốn chuyển thông báo này vào thùng rác?')) {
-          return;
-        }
+        const confirmed = await (window as any).showConfirm({
+          title: 'Chuyển vào thùng rác',
+          message: 'Bạn có chắc chắn muốn chuyển thông báo này vào thùng rác không?',
+          confirmText: 'Chuyển vào thùng rác',
+          cancelText: 'Hủy bỏ',
+          isDanger: true
+        });
+        if (!confirmed) return;
       }
 
       try {
@@ -920,12 +931,13 @@ const countDeleted = allItems.filter((a) => a.status === 'deleted').length;
         });
         const data = await res.json();
         if (data.success) {
-          window.location.reload();
+          (window as any).showToast(data.message || 'Thao tác thành công!', 'success');
+          setTimeout(() => window.location.reload(), 700);
         } else {
-          alert('Lỗi: ' + (data.error || 'Không thể thực hiện'));
+          (window as any).showToast('Lỗi: ' + (data.error || 'Không thể thực hiện'), 'error');
         }
       } catch {
-        alert('Lỗi kết nối');
+        (window as any).showToast('Lỗi kết nối máy chủ', 'error');
       }
     });
   });

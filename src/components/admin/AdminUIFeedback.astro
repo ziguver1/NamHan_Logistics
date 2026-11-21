@@ -1,0 +1,511 @@
+---
+/**
+ * Admin UI Feedback Component
+ * Replaces ugly browser native alert(), confirm(), prompt() with sleek,
+ * enterprise-grade toast notifications and modal dialogs.
+ */
+---
+
+<!-- Toast Notifications Container -->
+<div id="adminToastContainer" class="admin-toast-container" aria-live="polite"></div>
+
+<!-- Modern Confirm / Prompt Modal -->
+<div id="adminFeedbackModal" class="admin-feedback-modal-backdrop" style="display: none;" role="dialog" aria-modal="true">
+  <div class="admin-feedback-modal-card">
+    <div class="admin-modal-header">
+      <div id="adminModalIconWrap" class="admin-modal-icon-wrap">
+        <!-- SVG icon injected dynamically -->
+      </div>
+      <div>
+        <h3 id="adminModalTitle" class="admin-modal-title">Thông báo</h3>
+        <p id="adminModalDesc" class="admin-modal-desc"></p>
+      </div>
+    </div>
+
+    <!-- Optional Prompt Input -->
+    <div id="adminModalInputGroup" class="admin-modal-input-group" style="display: none;">
+      <input type="text" id="adminModalInput" class="admin-modal-input" placeholder="Nhập thông tin..." />
+    </div>
+
+    <div class="admin-modal-actions">
+      <button type="button" id="adminModalBtnCancel" class="btn-modal btn-modal-cancel">Hủy bỏ</button>
+      <button type="button" id="adminModalBtnConfirm" class="btn-modal btn-modal-confirm">Xác nhận</button>
+    </div>
+  </div>
+</div>
+
+<script is:inline>
+  (function () {
+    // -------------------------------------------------------------------------
+    // 1. TOAST NOTIFICATION SYSTEM
+    // -------------------------------------------------------------------------
+    const container = document.getElementById('adminToastContainer');
+
+    const ICONS = {
+      success: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`,
+      error: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`,
+      warning: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>`,
+      info: `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>`
+    };
+
+    window.showToast = function (message, type = 'info', duration = 3800) {
+      if (!container) return;
+
+      const toast = document.createElement('div');
+      toast.className = `admin-toast admin-toast-${type}`;
+
+      const iconSvg = ICONS[type] || ICONS.info;
+      toast.innerHTML = `
+        <div class="admin-toast-icon">${iconSvg}</div>
+        <div class="admin-toast-msg">${message}</div>
+        <button type="button" class="admin-toast-close" title="Đóng">✕</button>
+      `;
+
+      container.appendChild(toast);
+
+      // Force reflow for CSS animation
+      void toast.offsetHeight;
+      toast.classList.add('is-visible');
+
+      let timer = null;
+
+      const removeToast = () => {
+        if (!toast.parentNode) return;
+        toast.classList.remove('is-visible');
+        toast.classList.add('is-leaving');
+        setTimeout(() => {
+          if (toast.parentNode) toast.remove();
+        }, 300);
+      };
+
+      if (duration > 0) {
+        timer = setTimeout(removeToast, duration);
+      }
+
+      const closeBtn = toast.querySelector('.admin-toast-close');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', () => {
+          if (timer) clearTimeout(timer);
+          removeToast();
+        });
+      }
+    };
+
+    // Safeguard: Intercept any legacy alert() in admin views so it NEVER shows the browser modal
+    window.alert = function (msg) {
+      window.showToast(msg, 'warning', 4500);
+    };
+
+    // -------------------------------------------------------------------------
+    // 2. CONFIRM & PROMPT MODAL DIALOGS
+    // -------------------------------------------------------------------------
+    const modalBackdrop = document.getElementById('adminFeedbackModal');
+    const modalIconWrap = document.getElementById('adminModalIconWrap');
+    const modalTitle = document.getElementById('adminModalTitle');
+    const modalDesc = document.getElementById('adminModalDesc');
+    const modalInputGroup = document.getElementById('adminModalInputGroup');
+    const modalInput = document.getElementById('adminModalInput');
+    const btnCancel = document.getElementById('adminModalBtnCancel');
+    const btnConfirm = document.getElementById('adminModalBtnConfirm');
+
+    let currentResolve = null;
+
+    function closeModal() {
+      if (modalBackdrop) {
+        modalBackdrop.style.display = 'none';
+      }
+      if (modalInput) {
+        modalInput.value = '';
+      }
+    }
+
+    if (btnCancel) {
+      btnCancel.addEventListener('click', () => {
+        closeModal();
+        if (currentResolve) currentResolve(false);
+        currentResolve = null;
+      });
+    }
+
+    // Close on backdrop click
+    if (modalBackdrop) {
+      modalBackdrop.addEventListener('click', (e) => {
+        if (e.target === modalBackdrop) {
+          closeModal();
+          if (currentResolve) currentResolve(false);
+          currentResolve = null;
+        }
+      });
+    }
+
+    // Close on ESC key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modalBackdrop && modalBackdrop.style.display !== 'none') {
+        closeModal();
+        if (currentResolve) currentResolve(false);
+        currentResolve = null;
+      }
+    });
+
+    /**
+     * Replaces confirm() with a beautiful custom promise dialog
+     */
+    window.showConfirm = function ({
+      title = 'Xác nhận hành động',
+      message = 'Bạn có chắc chắn muốn thực hiện hành động này?',
+      confirmText = 'Xác nhận',
+      cancelText = 'Hủy bỏ',
+      isDanger = false
+    }) {
+      return new Promise((resolve) => {
+        currentResolve = resolve;
+
+        if (modalTitle) modalTitle.textContent = title;
+        if (modalDesc) modalDesc.textContent = message;
+        if (modalInputGroup) modalInputGroup.style.display = 'none';
+
+        if (btnCancel) btnCancel.textContent = cancelText;
+        if (btnConfirm) {
+          btnConfirm.textContent = confirmText;
+          btnConfirm.className = `btn-modal ${isDanger ? 'btn-modal-danger' : 'btn-modal-confirm'}`;
+          btnConfirm.onclick = () => {
+            closeModal();
+            resolve(true);
+            currentResolve = null;
+          };
+        }
+
+        if (modalIconWrap) {
+          modalIconWrap.className = `admin-modal-icon-wrap ${isDanger ? 'icon-danger' : 'icon-info'}`;
+          modalIconWrap.innerHTML = isDanger ? ICONS.warning : ICONS.info;
+        }
+
+        if (modalBackdrop) {
+          modalBackdrop.style.display = 'flex';
+          btnConfirm?.focus();
+        }
+      });
+    };
+
+    /**
+     * Replaces prompt() with an inline dialog
+     */
+    window.showPrompt = function ({
+      title = 'Nhập thông tin',
+      message = 'Vui lòng nhập giá trị:',
+      defaultValue = '',
+      placeholder = 'https://...',
+      confirmText = 'Xác nhận',
+      cancelText = 'Hủy bỏ'
+    }) {
+      return new Promise((resolve) => {
+        currentResolve = resolve;
+
+        if (modalTitle) modalTitle.textContent = title;
+        if (modalDesc) modalDesc.textContent = message;
+
+        if (modalInputGroup) modalInputGroup.style.display = 'block';
+        if (modalInput) {
+          modalInput.value = defaultValue;
+          modalInput.placeholder = placeholder;
+        }
+
+        if (btnCancel) btnCancel.textContent = cancelText;
+        if (btnConfirm) {
+          btnConfirm.textContent = confirmText;
+          btnConfirm.className = 'btn-modal btn-modal-confirm';
+          btnConfirm.onclick = () => {
+            const val = modalInput ? modalInput.value.trim() : '';
+            closeModal();
+            resolve(val);
+            currentResolve = null;
+          };
+        }
+
+        if (modalIconWrap) {
+          modalIconWrap.className = 'admin-modal-icon-wrap icon-info';
+          modalIconWrap.innerHTML = ICONS.info;
+        }
+
+        if (modalBackdrop) {
+          modalBackdrop.style.display = 'flex';
+          setTimeout(() => {
+            modalInput?.focus();
+            modalInput?.select();
+          }, 50);
+        }
+      });
+    };
+  })();
+</script>
+
+<style is:global>
+  /* -------------------------------------------------------------------------
+     TOAST NOTIFICATIONS STYLES (Global for Admin)
+     ------------------------------------------------------------------------- */
+  .admin-toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 99999;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    pointer-events: none;
+    max-width: 420px;
+    width: calc(100vw - 40px);
+  }
+
+  .admin-toast {
+    pointer-events: auto;
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 10px;
+    background: #ffffff;
+    box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.15), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
+    border: 1px solid #e2e8f0;
+    color: #1e293b;
+    font-size: 0.925rem;
+    line-height: 1.45;
+    opacity: 0;
+    transform: translateX(110%);
+    transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.25s ease;
+  }
+
+  .admin-toast.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  .admin-toast.is-leaving {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+
+  .admin-toast-icon {
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1px;
+  }
+
+  .admin-toast-msg {
+    flex: 1;
+    font-weight: 500;
+  }
+
+  .admin-toast-close {
+    flex-shrink: 0;
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 0 2px;
+    line-height: 1;
+    border-radius: 4px;
+    transition: color 0.15s;
+  }
+
+  .admin-toast-close:hover {
+    color: #334155;
+  }
+
+  /* Toast Variants */
+  .admin-toast-success {
+    border-left: 4px solid #10b981;
+  }
+  .admin-toast-success .admin-toast-icon {
+    color: #10b981;
+  }
+
+  .admin-toast-warning {
+    border-left: 4px solid #f59e0b;
+  }
+  .admin-toast-warning .admin-toast-icon {
+    color: #f59e0b;
+  }
+
+  .admin-toast-error {
+    border-left: 4px solid #ef4444;
+  }
+  .admin-toast-error .admin-toast-icon {
+    color: #ef4444;
+  }
+
+  .admin-toast-info {
+    border-left: 4px solid #0284c7;
+  }
+  .admin-toast-info .admin-toast-icon {
+    color: #0284c7;
+  }
+
+  /* -------------------------------------------------------------------------
+     MODAL DIALOG STYLES
+     ------------------------------------------------------------------------- */
+  .admin-feedback-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 99998;
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(4px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    animation: fadeInModal 0.2s ease-out;
+  }
+
+  @keyframes fadeInModal {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .admin-feedback-modal-card {
+    background: #ffffff;
+    border-radius: 14px;
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.08);
+    width: 100%;
+    max-width: 460px;
+    padding: 1.75rem;
+    animation: scaleInCard 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes scaleInCard {
+    from {
+      opacity: 0;
+      transform: scale(0.94) translateY(8px);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+    }
+  }
+
+  .admin-modal-header {
+    display: flex;
+    gap: 1rem;
+    align-items: flex-start;
+  }
+
+  .admin-modal-icon-wrap {
+    flex-shrink: 0;
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .admin-modal-icon-wrap.icon-info {
+    background: #e0f2fe;
+    color: #0284c7;
+  }
+
+  .admin-modal-icon-wrap.icon-danger {
+    background: #fee2e2;
+    color: #dc2626;
+  }
+
+  .admin-modal-title {
+    margin: 0 0 0.4rem 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: #0f172a;
+  }
+
+  .admin-modal-desc {
+    margin: 0;
+    font-size: 0.925rem;
+    color: #64748b;
+    line-height: 1.5;
+    white-space: pre-line;
+  }
+
+  .admin-modal-input-group {
+    margin-top: 1.25rem;
+  }
+
+  .admin-modal-input {
+    width: 100%;
+    padding: 0.75rem 0.9rem;
+    font-size: 0.95rem;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 8px;
+    outline: none;
+    transition: all 0.15s ease;
+  }
+
+  .admin-modal-input:focus {
+    border-color: #0284c7;
+    box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.15);
+  }
+
+  .admin-modal-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1.75rem;
+  }
+
+  .btn-modal {
+    padding: 0.65rem 1.15rem;
+    font-size: 0.925rem;
+    font-weight: 600;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .btn-modal-cancel {
+    background: #f1f5f9;
+    color: #475569;
+  }
+
+  .btn-modal-cancel:hover {
+    background: #e2e8f0;
+    color: #1e293b;
+  }
+
+  .btn-modal-confirm {
+    background: #0B2545;
+    color: #ffffff;
+  }
+
+  .btn-modal-confirm:hover {
+    background: #134074;
+  }
+
+  .btn-modal-danger {
+    background: #dc2626;
+    color: #ffffff;
+  }
+
+  .btn-modal-danger:hover {
+    background: #b91c1c;
+  }
+
+  /* -------------------------------------------------------------------------
+     INPUT FIELD ERROR HIGHLIGHT
+     ------------------------------------------------------------------------- */
+  .input-field-error {
+    border-color: #ef4444 !important;
+    background-color: #fef2f2 !important;
+    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.2) !important;
+    animation: shakeInput 0.35s ease-in-out;
+  }
+
+  @keyframes shakeInput {
+    0%, 100% { transform: translateX(0); }
+    20% { transform: translateX(-5px); }
+    40% { transform: translateX(5px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(3px); }
+  }
+</style>
