@@ -1,13 +1,15 @@
 ---
 // Night Highway Animation Component
-// 2D Night Expressway with Nam Han Logistics Container Truck & Neon Light-Trails
+// 2D Vivid Twilight Expressway with Nam Han Logistics Container Truck in Video-Replay Motion
 // Fully responsive, zero horizontal overflow (strictly contained within viewBox & clip-path)
 ---
 
 <div class="night-highway-scene" aria-hidden="true">
-  <!-- Sky Backdrop with Ambient Stars & Moonlight Horizon -->
+  <!-- Sky Backdrop with Ambient Stars, Twilight Glow & Distant Infrastructure -->
   <div class="sky-backdrop">
     <div class="moon-glow"></div>
+    <div class="horizon-glow"></div>
+
     <div class="stars-cluster">
       <span class="star s1"></span>
       <span class="star s2"></span>
@@ -17,71 +19,139 @@
       <span class="star s6"></span>
       <span class="star s7"></span>
       <span class="star s8"></span>
+      <span class="star s9"></span>
+      <span class="star s10"></span>
+      <span class="star s11"></span>
+      <span class="star s12"></span>
     </div>
-    <!-- Distant Mountains & Logistics Hub Silhouette -->
+
+    <!-- Distant Mountain Ranges, Logistics Depots & City Skylines -->
     <svg class="distant-landscape" viewBox="0 0 1440 180" preserveAspectRatio="none">
       <defs>
-        <linearGradient id="mountainsGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-          <stop offset="0%" stop-color="#0a1d36" stop-opacity="0.8" />
-          <stop offset="100%" stop-color="#061324" stop-opacity="0.95" />
+        <linearGradient id="mountainsGradFar" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#163e72" stop-opacity="0.85" />
+          <stop offset="100%" stop-color="#0b2347" stop-opacity="0.95" />
+        </linearGradient>
+        <linearGradient id="mountainsGradNear" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#10315c" stop-opacity="0.9" />
+          <stop offset="100%" stop-color="#081b36" stop-opacity="1" />
         </linearGradient>
       </defs>
-      <!-- Mountain Layer -->
+
+      <!-- Far Mountain Silhouette -->
       <path
-        d="M0,130 Q180,60 360,110 T720,80 T1080,120 T1440,70 L1440,180 L0,180 Z"
-        fill="url(#mountainsGrad)"
+        d="M0,110 Q240,40 480,95 T960,65 T1440,85 L1440,180 L0,180 Z"
+        fill="url(#mountainsGradFar)"
       />
-      <!-- Logistics Warehouse & Beacon Silhouettes in Distance -->
-      <rect x="820" y="115" width="70" height="25" fill="#0c2340" rx="2" />
-      <polygon points="815,115 855,102 895,115" fill="#0f2b4e" />
-      <circle cx="830" cy="122" r="1.5" fill="#38bdf8" class="beacon-pulse" />
-      <circle cx="870" cy="122" r="1.5" fill="#fbbf24" class="beacon-pulse" />
-      <rect x="940" y="105" width="110" height="35" fill="#08182b" rx="2" />
-      <circle cx="955" cy="112" r="1.5" fill="#34d399" class="beacon-pulse" />
-      <circle cx="1025" cy="112" r="1.5" fill="#38bdf8" class="beacon-pulse" />
+
+      <!-- Near Mountain Silhouette -->
+      <path
+        d="M0,135 Q180,85 360,120 T720,95 T1080,130 T1440,100 L1440,180 L0,180 Z"
+        fill="url(#mountainsGradNear)"
+      />
+
+      <!-- Distant Logistics Warehouses, Port Cranes & Radio Mast Silhouettes -->
+      <!-- Radio Mast with Red Warning Beacon -->
+      <line x1="780" y1="140" x2="780" y2="70" stroke="#1d4ed8" stroke-width="2" />
+      <line x1="772" y1="95" x2="788" y2="95" stroke="#1d4ed8" stroke-width="1.5" />
+      <line x1="775" y1="115" x2="785" y2="115" stroke="#1d4ed8" stroke-width="1.5" />
+      <circle cx="780" cy="68" r="3" fill="#ef4444" class="beacon-pulse beacon-fast" />
+
+      <!-- Logistics Hub 1 -->
+      <rect x="830" y="125" width="85" height="30" fill="#0f2b4e" rx="2" />
+      <polygon points="825,125 872,110 920,125" fill="#143763" />
+      <circle cx="845" cy="132" r="2" fill="#38bdf8" class="beacon-pulse" />
+      <circle cx="890" cy="132" r="2" fill="#fbbf24" class="beacon-pulse" />
+
+      <!-- Port Crane Silhouette -->
+      <path d="M1010,140 L1010,80 L1060,50 M1010,80 L980,105 M1010,100 L1035,70" stroke="#1e3a5f" stroke-width="2" fill="none" />
+      <circle cx="1060" cy="50" r="2.5" fill="#ef4444" class="beacon-pulse" />
+
+      <!-- Logistics Hub 2 -->
+      <rect x="1100" y="118" width="130" height="38" fill="#0c2340" rx="3" />
+      <polygon points="1095,118 1165,102 1235,118" fill="#123056" />
+      <circle cx="1120" cy="126" r="2" fill="#34d399" class="beacon-pulse" />
+      <circle cx="1180" cy="126" r="2" fill="#38bdf8" class="beacon-pulse" />
+      <circle cx="1215" cy="126" r="2" fill="#fbbf24" class="beacon-pulse" />
     </svg>
+  </div>
+
+  <!-- Overhead Highway Electronic Sign Gantry (Frame spanning expressway) -->
+  <div class="expressway-gantry" aria-hidden="true">
+    <div class="gantry-structure">
+      <div class="gantry-truss"></div>
+      <div class="gantry-signboard">
+        <div class="sign-top-row">
+          <span class="sign-badge">CT.01</span>
+          <span class="sign-title">CAO TỐC BẮC — NAM | TOÀN TRÌNH 24/7</span>
+        </div>
+        <div class="sign-bottom-row">
+          <span class="sign-dest">HÀ NỘI ⇄ ĐÀ NẴNG ⇄ TP.HCM</span>
+          <div class="sign-lane-indicators">
+            <span class="lane-led active">↓</span>
+            <span class="lane-led active">↓</span>
+            <span class="lane-led active">↓</span>
+          </div>
+        </div>
+      </div>
+      <div class="gantry-flasher flasher-left"></div>
+      <div class="gantry-flasher flasher-right"></div>
+    </div>
   </div>
 
   <!-- Highway Roadway Infrastructure -->
   <div class="roadway-wrap">
-    <!-- Road Surface Gradient -->
+    <!-- Road Surface Gradient with Asphalt Sheen & Reflections -->
     <div class="road-surface">
+      <div class="road-sheen"></div>
       <!-- Animated Lane Markings using pure background-position (ZERO layout displacement) -->
       <div class="lane-markings"></div>
       <div class="edge-line edge-top"></div>
       <div class="edge-line edge-bottom"></div>
+
+      <!-- Highway Cat-Eye Reflective Road Studs (Illuminated markers) -->
+      <div class="cat-eyes-stream">
+        <span class="cat-eye c1"></span>
+        <span class="cat-eye c2"></span>
+        <span class="cat-eye c3"></span>
+        <span class="cat-eye c4"></span>
+        <span class="cat-eye c5"></span>
+        <span class="cat-eye c6"></span>
+      </div>
     </div>
 
-    <!-- Highway Streetlights Layer -->
+    <!-- Highway Streetlights Layer with Radiant Light Cones -->
     <div class="streetlights-stream">
-      <div class="light-pole p1"><div class="lamp-head"></div><div class="light-cone"></div></div>
-      <div class="light-pole p2"><div class="lamp-head"></div><div class="light-cone"></div></div>
-      <div class="light-pole p3"><div class="lamp-head"></div><div class="light-cone"></div></div>
-      <div class="light-pole p4"><div class="lamp-head"></div><div class="light-cone"></div></div>
+      <div class="light-pole p1"><div class="lamp-arm"></div><div class="lamp-head"></div><div class="light-cone"></div></div>
+      <div class="light-pole p2"><div class="lamp-arm"></div><div class="lamp-head"></div><div class="light-cone"></div></div>
+      <div class="light-pole p3"><div class="lamp-arm"></div><div class="lamp-head"></div><div class="light-cone"></div></div>
+      <div class="light-pole p4"><div class="lamp-arm"></div><div class="lamp-head"></div><div class="light-cone"></div></div>
+      <div class="light-pole p5"><div class="lamp-arm"></div><div class="lamp-head"></div><div class="light-cone"></div></div>
     </div>
 
-    <!-- Fast Speed Light Trails (Strictly clipped within 100% container) -->
+    <!-- Fast Speed Light Trails (Zooming traffic in adjacent lanes) -->
     <div class="light-trails-container">
       <div class="trail trail-cyan t1"></div>
       <div class="trail trail-red t2"></div>
-      <div class="trail trail-gold t3"></div>
-      <div class="trail trail-cyan t4"></div>
+      <div class="trail trail-white t3"></div>
+      <div class="trail trail-gold t4"></div>
       <div class="trail trail-red t5"></div>
+      <div class="trail trail-cyan t6"></div>
     </div>
 
-    <!-- The 2D Nam Han Container Truck (Self-contained SVG with Headlights & Taillights inside viewBox) -->
+    <!-- The 2D Nam Han Container Truck (Dynamic Video Replay: drives across from left to right, disappears, loops) -->
     <div class="truck-convoy">
-      <div class="truck-vehicle">
+      <div class="truck-suspension-bounce">
         <svg
           class="truck-svg"
-          viewBox="0 0 700 180"
+          viewBox="0 0 760 180"
           xmlns="http://www.w3.org/2000/svg"
         >
           <defs>
             <!-- Trailer Container Gradient -->
             <linearGradient id="containerGrad" x1="0%" y1="0%" x2="0%" y2="100%">
               <stop offset="0%" stop-color="#ffffff" />
-              <stop offset="18%" stop-color="#f1f5f9" />
+              <stop offset="15%" stop-color="#f8fafc" />
               <stop offset="70%" stop-color="#e2e8f0" />
               <stop offset="100%" stop-color="#cbd5e1" />
             </linearGradient>
@@ -89,165 +159,211 @@
             <!-- Cabin Gradient -->
             <linearGradient id="cabinGrad" x1="0%" y1="0%" x2="100%" y2="100%">
               <stop offset="0%" stop-color="#0284c7" />
-              <stop offset="50%" stop-color="#0369a1" />
-              <stop offset="100%" stop-color="#0b2545" />
+              <stop offset="45%" stop-color="#0369a1" />
+              <stop offset="100%" stop-color="#082f49" />
             </linearGradient>
 
             <!-- Chassis Gradient -->
             <linearGradient id="chassisGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-              <stop offset="0%" stop-color="#334155" />
+              <stop offset="0%" stop-color="#475569" />
               <stop offset="100%" stop-color="#0f172a" />
             </linearGradient>
 
             <!-- Wheel Rim Gradient -->
             <radialGradient id="rimGrad" cx="50%" cy="50%" r="50%">
-              <stop offset="0%" stop-color="#f8fafc" />
-              <stop offset="45%" stop-color="#94a3b8" />
-              <stop offset="75%" stop-color="#475569" />
+              <stop offset="0%" stop-color="#ffffff" />
+              <stop offset="40%" stop-color="#cbd5e1" />
+              <stop offset="75%" stop-color="#64748b" />
               <stop offset="100%" stop-color="#1e293b" />
             </radialGradient>
 
-            <!-- Headlight Beam Gradient (Inside SVG) -->
-            <linearGradient id="headlightGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stop-color="#fef08a" stop-opacity="0.85" />
-              <stop offset="35%" stop-color="#fef08a" stop-opacity="0.35" />
-              <stop offset="100%" stop-color="#fef08a" stop-opacity="0" />
+            <!-- Powerful Forward Headlight Fan Beam Gradient -->
+            <linearGradient id="headlightBeamGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stop-color="#fef08a" stop-opacity="0.95" />
+              <stop offset="25%" stop-color="#fde047" stop-opacity="0.55" />
+              <stop offset="70%" stop-color="#38bdf8" stop-opacity="0.2" />
+              <stop offset="100%" stop-color="#38bdf8" stop-opacity="0" />
             </linearGradient>
 
-            <!-- Taillight Trail Gradient (Inside SVG) -->
-            <linearGradient id="taillightGrad" x1="100%" y1="0%" x2="0%" y2="0%">
-              <stop offset="0%" stop-color="#ff2a55" stop-opacity="0.95" />
-              <stop offset="40%" stop-color="#ef4444" stop-opacity="0.45" />
+            <!-- Forward Road Illumination Spotlight Gradient -->
+            <radialGradient id="roadSpotlightGrad" cx="30%" cy="50%" r="70%">
+              <stop offset="0%" stop-color="#fef08a" stop-opacity="0.6" />
+              <stop offset="45%" stop-color="#fef08a" stop-opacity="0.25" />
+              <stop offset="100%" stop-color="#fef08a" stop-opacity="0" />
+            </radialGradient>
+
+            <!-- Taillight Red Streak Gradient -->
+            <linearGradient id="taillightStreakGrad" x1="100%" y1="0%" x2="0%" y2="0%">
+              <stop offset="0%" stop-color="#ff2a55" stop-opacity="1" />
+              <stop offset="35%" stop-color="#ef4444" stop-opacity="0.6" />
               <stop offset="100%" stop-color="#ef4444" stop-opacity="0" />
             </linearGradient>
           </defs>
 
-          <!-- TAILLIGHT RED TRAIL (Fully inside SVG viewBox 0 to 120) -->
-          <rect x="5" y="112" width="118" height="6" rx="3" fill="url(#taillightGrad)" />
-          <rect x="25" y="60" width="98" height="4" rx="2" fill="url(#taillightGrad)" opacity="0.6" />
+          <!-- TAILLIGHT RED TRAIL (Rushing behind truck trailer) -->
+          <rect x="5" y="112" width="130" height="7" rx="3.5" fill="url(#taillightStreakGrad)" />
+          <rect x="25" y="60" width="110" height="5" rx="2.5" fill="url(#taillightStreakGrad)" opacity="0.75" />
+          <circle cx="136" cy="115" r="4" fill="#ff2a55" filter="drop-shadow(0 0 6px #ff2a55)" />
 
-          <!-- HEADLIGHT YELLOW BEAM (Fully inside SVG viewBox 568 to 695) -->
-          <polygon points="568,134 695,108 695,160 568,142" fill="url(#headlightGrad)" />
+          <!-- FORWARD ROAD ILLUMINATION SPOTLIGHT (Casts light patch onto the road ahead) -->
+          <ellipse cx="660" cy="164" rx="90" ry="14" fill="url(#roadSpotlightGrad)" />
 
-          <!-- Drop Shadow underneath vehicle -->
-          <ellipse cx="350" cy="168" rx="230" ry="8" fill="#000000" opacity="0.65" />
+          <!-- HEADLIGHT VOLUMETRIC HIGH BEAM (Projects forward from cabin) -->
+          <polygon points="590,132 755,95 755,168 590,144" fill="url(#headlightBeamGrad)" />
 
-          <!-- CHASSIS & LOWER FRAME (Shifted +100 to fit inside 700 viewBox) -->
-          <rect x="125" y="142" width="445" height="12" rx="3" fill="url(#chassisGrad)" />
-          <!-- Fuel Tank & Battery Box -->
-          <rect x="360" y="132" width="55" height="18" rx="4" fill="#64748b" stroke="#334155" stroke-width="1.5" />
-          <rect x="310" y="134" width="38" height="15" rx="2" fill="#475569" />
+          <!-- Real Vehicle Drop Shadow on Asphalt -->
+          <ellipse cx="375" cy="168" rx="255" ry="9" fill="#000000" opacity="0.7" />
 
-          <!-- TRAILER BODY (Container) -->
+          <!-- CHASSIS & LOWER FRAMEWORK -->
+          <rect x="140" y="142" width="455" height="13" rx="3" fill="url(#chassisGrad)" />
+          <!-- Aluminum Fuel Tank with Straps -->
+          <rect x="380" y="130" width="62" height="20" rx="4" fill="#94a3b8" stroke="#475569" stroke-width="1.5" />
+          <line x1="395" y1="130" x2="395" y2="150" stroke="#334155" stroke-width="1.5" />
+          <line x1="427" y1="130" x2="427" y2="150" stroke="#334155" stroke-width="1.5" />
+          <!-- Toolbox & Battery Enclosure -->
+          <rect x="325" y="133" width="45" height="16" rx="2" fill="#475569" stroke="#1e293b" stroke-width="1" />
+
+          <!-- TRAILER CONTAINER BODY -->
           <g class="container-body">
-            <!-- Main Box -->
-            <rect x="120" y="32" width="320" height="110" rx="4" fill="url(#containerGrad)" stroke="#94a3b8" stroke-width="1.5" />
+            <!-- Main Insulated White Box -->
+            <rect x="135" y="30" width="335" height="112" rx="4" fill="url(#containerGrad)" stroke="#94a3b8" stroke-width="1.8" />
             
-            <!-- Blue Brand Accent Stripe along bottom of container -->
-            <rect x="120" y="128" width="320" height="14" fill="#0070ba" />
-            <rect x="120" y="125" width="320" height="3" fill="#38bdf8" />
+            <!-- Dynamic Blue Brand Accent Stripe along bottom -->
+            <rect x="135" y="127" width="335" height="15" fill="#0070ba" />
+            <rect x="135" y="124" width="335" height="3" fill="#38bdf8" />
 
-            <!-- Vertical Corrugation Ribs of the Container -->
-            <path d="M150,34 L150,125 M180,34 L180,125 M210,34 L210,125 M240,34 L240,125 M270,34 L270,125 M300,34 L300,125 M330,34 L330,125 M360,34 L360,125 M390,34 L390,125 M420,34 L420,125" stroke="#cbd5e1" stroke-width="1.2" opacity="0.75" />
+            <!-- Vertical Corrugation Ribs of High-Cube Container -->
+            <path
+              d="M165,32 L165,124 M195,32 L195,124 M225,32 L225,124 M255,32 L255,124 M285,32 L285,124 M315,32 L315,124 M345,32 L345,124 M375,32 L375,124 M405,32 L405,124 M435,32 L435,124 M460,32 L460,124"
+              stroke="#cbd5e1"
+              stroke-width="1.5"
+              opacity="0.85"
+            />
 
-            <!-- Nam Han Brand Logo & Identification Badge on Container -->
-            <circle cx="195" cy="72" r="18" fill="#ffffff" stroke="#0070ba" stroke-width="2" />
-            <ellipse cx="195" cy="72" rx="18" ry="7" fill="none" stroke="#0284c7" stroke-width="1.2" transform="rotate(-25 195 72)" />
-            <path d="M184,72 Q195,60 206,72" fill="none" stroke="#e11d48" stroke-width="1.8" />
+            <!-- Nam Han Brand Logo Emblem on Trailer -->
+            <circle cx="215" cy="72" r="20" fill="#ffffff" stroke="#0070ba" stroke-width="2.2" />
+            <ellipse cx="215" cy="72" rx="20" ry="8" fill="none" stroke="#0284c7" stroke-width="1.5" transform="rotate(-25 215 72)" />
+            <path d="M203,72 Q215,58 227,72" fill="none" stroke="#e11d48" stroke-width="2" />
             
-            <!-- Brand Text Typography -->
-            <text x="222" y="68" font-family="system-ui, -apple-system, sans-serif" font-size="16" font-weight="900" fill="#0b2545" letter-spacing="1">NAM HÂN</text>
-            <text x="222" y="85" font-family="system-ui, -apple-system, sans-serif" font-size="9" font-weight="700" fill="#0070ba" letter-spacing="2.5">LOGISTICS</text>
-            <text x="222" y="98" font-family="system-ui, -apple-system, sans-serif" font-size="6.5" font-weight="600" fill="#64748b" letter-spacing="0.5">VẬN TẢI ĐƯỜNG BỘ TOÀN QUỐC</text>
+            <!-- Nam Han Brand Typography on Container -->
+            <text x="245" y="68" font-family="system-ui, -apple-system, sans-serif" font-size="17" font-weight="900" fill="#0b2545" letter-spacing="1.2">NAM HÂN</text>
+            <text x="245" y="86" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="800" fill="#0070ba" letter-spacing="2.8">LOGISTICS</text>
+            <text x="245" y="100" font-family="system-ui, -apple-system, sans-serif" font-size="7" font-weight="700" fill="#475569" letter-spacing="0.8">VẬN TẢI ĐƯỜNG BỘ TOÀN QUỐC</text>
 
-            <!-- Container Corner Castings -->
-            <rect x="120" y="32" width="8" height="12" fill="#64748b" />
-            <rect x="120" y="130" width="8" height="12" fill="#64748b" />
-            <!-- Rear Red Reflectors on Container -->
-            <rect x="120" y="55" width="3" height="16" fill="#ef4444" rx="1" />
-            <rect x="120" y="110" width="3" height="16" fill="#ef4444" rx="1" />
+            <!-- Corner Castings & Locking Bars -->
+            <rect x="135" y="30" width="8" height="14" fill="#475569" />
+            <rect x="135" y="128" width="8" height="14" fill="#475569" />
+            <rect x="462" y="30" width="8" height="14" fill="#475569" />
+            <rect x="462" y="128" width="8" height="14" fill="#475569" />
+
+            <!-- Safety Reflective Red/Yellow Chevrons on Rear Edge -->
+            <rect x="135" y="55" width="4" height="18" fill="#ef4444" rx="1" />
+            <rect x="135" y="80" width="4" height="18" fill="#fbbf24" rx="1" />
+            <rect x="135" y="105" width="4" height="18" fill="#ef4444" rx="1" />
           </g>
 
-          <!-- TRACTOR CABIN (Modern Heavy-Duty Truck Head) -->
+          <!-- MODERN HEAVY-DUTY PRIME MOVER CABIN -->
           <g class="truck-cabin">
-            <!-- Aerodynamic Roof Fairing / Deflector -->
-            <path d="M438,70 Q445,26 495,22 L525,24 Q540,32 545,68 Z" fill="url(#cabinGrad)" stroke="#0369a1" stroke-width="1" />
-            <!-- Main Cabin Body -->
-            <path d="M438,70 L548,70 L558,95 L568,112 L568,142 L438,142 Z" fill="url(#cabinGrad)" />
+            <!-- Aerodynamic Roof Fairing & Air Deflector -->
+            <path d="M465,68 Q472,24 525,20 L555,22 Q572,30 578,68 Z" fill="url(#cabinGrad)" stroke="#0284c7" stroke-width="1.2" />
+            <!-- Main Cab Body -->
+            <path d="M465,68 L580,68 L590,95 L600,114 L600,144 L465,144 Z" fill="url(#cabinGrad)" />
             
-            <!-- Windshield Glass -->
-            <path d="M498,34 L535,36 L548,68 L495,68 Z" fill="#0c4a6e" opacity="0.85" />
-            <path d="M505,40 L530,42 L522,62 L502,62 Z" fill="#38bdf8" opacity="0.45" />
+            <!-- Tinted Windshield Glass with Sunlight Sheen -->
+            <path d="M528,32 L568,34 L580,66 L525,66 Z" fill="#082f49" />
+            <path d="M535,38 L562,40 L554,60 L532,60 Z" fill="#38bdf8" opacity="0.55" />
 
-            <!-- Side Window -->
-            <path d="M462,48 L492,48 L492,72 L458,72 Z" fill="#0c4a6e" opacity="0.9" />
-            <!-- Driver Mirror -->
-            <rect x="524" y="50" width="6" height="22" rx="2" fill="#1e293b" />
-            <line x1="518" y1="56" x2="524" y2="56" stroke="#1e293b" stroke-width="2" />
-            <line x1="518" y1="68" x2="524" y2="68" stroke="#1e293b" stroke-width="2" />
+            <!-- Side Door Window -->
+            <path d="M488,46 L522,46 L522,72 L484,72 Z" fill="#082f49" />
+            <line x1="484" y1="72" x2="522" y2="72" stroke="#0369a1" stroke-width="2" />
 
-            <!-- Radiator Chrome Grill -->
-            <rect x="560" y="105" width="9" height="32" rx="2" fill="#1e293b" stroke="#94a3b8" stroke-width="1" />
-            <line x1="562" y1="112" x2="567" y2="112" stroke="#cbd5e1" stroke-width="1.2" />
-            <line x1="562" y1="118" x2="567" y2="118" stroke="#cbd5e1" stroke-width="1.2" />
-            <line x1="562" y1="124" x2="567" y2="124" stroke="#cbd5e1" stroke-width="1.2" />
-            <line x1="562" y1="130" x2="567" y2="130" stroke="#cbd5e1" stroke-width="1.2" />
+            <!-- Aerodynamic Side Mirrors -->
+            <rect x="556" y="48" width="7" height="24" rx="2" fill="#0f172a" />
+            <line x1="550" y1="54" x2="556" y2="54" stroke="#1e293b" stroke-width="2" />
+            <line x1="550" y1="66" x2="556" y2="66" stroke="#1e293b" stroke-width="2" />
 
-            <!-- Powerful Headlight Unit -->
-            <rect x="558" y="128" width="11" height="12" rx="2" fill="#fef08a" stroke="#ffffff" stroke-width="1" />
-            <circle cx="563" cy="134" r="3.5" fill="#ffffff" />
-            <circle cx="552" cy="138" r="3" fill="#facc15" />
+            <!-- Chrome Radiator Front Grille -->
+            <rect x="592" y="105" width="9" height="34" rx="2" fill="#1e293b" stroke="#cbd5e1" stroke-width="1.2" />
+            <line x1="594" y1="112" x2="599" y2="112" stroke="#ffffff" stroke-width="1.4" />
+            <line x1="594" y1="118" x2="599" y2="118" stroke="#ffffff" stroke-width="1.4" />
+            <line x1="594" y1="124" x2="599" y2="124" stroke="#ffffff" stroke-width="1.4" />
+            <line x1="594" y1="130" x2="599" y2="130" stroke="#ffffff" stroke-width="1.4" />
 
-            <!-- Steps & Handles -->
-            <rect x="468" y="88" width="10" height="3" rx="1" fill="#cbd5e1" />
-            <rect x="475" y="132" width="18" height="3" fill="#94a3b8" />
-            <rect x="477" y="138" width="15" height="3" fill="#94a3b8" />
+            <!-- High-Intensity Xenon Headlight Cluster -->
+            <rect x="589" y="128" width="12" height="14" rx="2.5" fill="#fef08a" stroke="#ffffff" stroke-width="1.5" />
+            <circle cx="595" cy="134" r="4" fill="#ffffff" filter="drop-shadow(0 0 4px #ffffff)" />
+            <circle cx="583" cy="138" r="3.5" fill="#f59e0b" />
+
+            <!-- Cabin Steps, Door Handles & Roof Clearance Amber Lamps -->
+            <rect x="495" y="86" width="11" height="3" rx="1.5" fill="#e2e8f0" />
+            <rect x="502" y="132" width="20" height="3" fill="#94a3b8" />
+            <rect x="504" y="138" width="17" height="3" fill="#94a3b8" />
+            
+            <!-- 3 Amber Roof Marker Lights -->
+            <circle cx="538" cy="22" r="2" fill="#fbbf24" filter="drop-shadow(0 0 3px #fbbf24)" />
+            <circle cx="550" cy="22" r="2" fill="#fbbf24" filter="drop-shadow(0 0 3px #fbbf24)" />
+            <circle cx="562" cy="22" r="2" fill="#fbbf24" filter="drop-shadow(0 0 3px #fbbf24)" />
           </g>
 
-          <!-- WHEEL UNITS (5 Sets with Rotating Alloy Rims) -->
-          <g class="wheel-unit" transform="translate(162, 150)">
+          <!-- 5 HEAVY TRUCK WHEEL UNITS WITH SPINNING ALLOY RIMS -->
+          <!-- Trailer Tandem Axle 1 -->
+          <g class="wheel-unit" transform="translate(180, 150)">
             <circle cx="0" cy="0" r="19" fill="#0f172a" />
             <circle cx="0" cy="0" r="14" fill="url(#rimGrad)" />
             <circle cx="0" cy="0" r="6" fill="#1e293b" />
-            <circle cx="0" cy="0" r="2.5" fill="#cbd5e1" />
-            <line x1="-10" y1="0" x2="10" y2="0" stroke="#334155" stroke-width="1.5" class="wheel-spin" />
-            <line x1="0" y1="-10" x2="0" y2="10" stroke="#334155" stroke-width="1.5" class="wheel-spin" />
+            <circle cx="0" cy="0" r="2.5" fill="#ffffff" />
+            <line x1="-10" y1="0" x2="10" y2="0" stroke="#334155" stroke-width="1.8" class="wheel-spin" />
+            <line x1="0" y1="-10" x2="0" y2="10" stroke="#334155" stroke-width="1.8" class="wheel-spin" />
+            <line x1="-7" y1="-7" x2="7" y2="7" stroke="#334155" stroke-width="1.2" class="wheel-spin" />
+            <line x1="-7" y1="7" x2="7" y2="-7" stroke="#334155" stroke-width="1.2" class="wheel-spin" />
           </g>
 
-          <g class="wheel-unit" transform="translate(208, 150)">
+          <!-- Trailer Tandem Axle 2 -->
+          <g class="wheel-unit" transform="translate(230, 150)">
             <circle cx="0" cy="0" r="19" fill="#0f172a" />
             <circle cx="0" cy="0" r="14" fill="url(#rimGrad)" />
             <circle cx="0" cy="0" r="6" fill="#1e293b" />
-            <circle cx="0" cy="0" r="2.5" fill="#cbd5e1" />
-            <line x1="-10" y1="0" x2="10" y2="0" stroke="#334155" stroke-width="1.5" class="wheel-spin" />
-            <line x1="0" y1="-10" x2="0" y2="10" stroke="#334155" stroke-width="1.5" class="wheel-spin" />
+            <circle cx="0" cy="0" r="2.5" fill="#ffffff" />
+            <line x1="-10" y1="0" x2="10" y2="0" stroke="#334155" stroke-width="1.8" class="wheel-spin" />
+            <line x1="0" y1="-10" x2="0" y2="10" stroke="#334155" stroke-width="1.8" class="wheel-spin" />
+            <line x1="-7" y1="-7" x2="7" y2="7" stroke="#334155" stroke-width="1.2" class="wheel-spin" />
+            <line x1="-7" y1="7" x2="7" y2="-7" stroke="#334155" stroke-width="1.2" class="wheel-spin" />
           </g>
 
-          <g class="wheel-unit" transform="translate(445, 150)">
+          <!-- Tractor Drive Axle 1 -->
+          <g class="wheel-unit" transform="translate(475, 150)">
             <circle cx="0" cy="0" r="19" fill="#0f172a" />
             <circle cx="0" cy="0" r="14" fill="url(#rimGrad)" />
             <circle cx="0" cy="0" r="6" fill="#1e293b" />
-            <circle cx="0" cy="0" r="2.5" fill="#cbd5e1" />
-            <line x1="-10" y1="0" x2="10" y2="0" stroke="#334155" stroke-width="1.5" class="wheel-spin" />
-            <line x1="0" y1="-10" x2="0" y2="10" stroke="#334155" stroke-width="1.5" class="wheel-spin" />
+            <circle cx="0" cy="0" r="2.5" fill="#ffffff" />
+            <line x1="-10" y1="0" x2="10" y2="0" stroke="#334155" stroke-width="1.8" class="wheel-spin" />
+            <line x1="0" y1="-10" x2="0" y2="10" stroke="#334155" stroke-width="1.8" class="wheel-spin" />
+            <line x1="-7" y1="-7" x2="7" y2="7" stroke="#334155" stroke-width="1.2" class="wheel-spin" />
+            <line x1="-7" y1="7" x2="7" y2="-7" stroke="#334155" stroke-width="1.2" class="wheel-spin" />
           </g>
 
-          <g class="wheel-unit" transform="translate(490, 150)">
+          <!-- Tractor Drive Axle 2 -->
+          <g class="wheel-unit" transform="translate(525, 150)">
             <circle cx="0" cy="0" r="19" fill="#0f172a" />
             <circle cx="0" cy="0" r="14" fill="url(#rimGrad)" />
             <circle cx="0" cy="0" r="6" fill="#1e293b" />
-            <circle cx="0" cy="0" r="2.5" fill="#cbd5e1" />
-            <line x1="-10" y1="0" x2="10" y2="0" stroke="#334155" stroke-width="1.5" class="wheel-spin" />
-            <line x1="0" y1="-10" x2="0" y2="10" stroke="#334155" stroke-width="1.5" class="wheel-spin" />
+            <circle cx="0" cy="0" r="2.5" fill="#ffffff" />
+            <line x1="-10" y1="0" x2="10" y2="0" stroke="#334155" stroke-width="1.8" class="wheel-spin" />
+            <line x1="0" y1="-10" x2="0" y2="10" stroke="#334155" stroke-width="1.8" class="wheel-spin" />
+            <line x1="-7" y1="-7" x2="7" y2="7" stroke="#334155" stroke-width="1.2" class="wheel-spin" />
+            <line x1="-7" y1="7" x2="7" y2="-7" stroke="#334155" stroke-width="1.2" class="wheel-spin" />
           </g>
 
-          <g class="wheel-unit" transform="translate(542, 150)">
+          <!-- Tractor Steer Axle Front -->
+          <g class="wheel-unit" transform="translate(578, 150)">
             <circle cx="0" cy="0" r="19" fill="#0f172a" />
             <circle cx="0" cy="0" r="14" fill="url(#rimGrad)" />
             <circle cx="0" cy="0" r="6" fill="#1e293b" />
-            <circle cx="0" cy="0" r="2.5" fill="#cbd5e1" />
-            <line x1="-10" y1="0" x2="10" y2="0" stroke="#334155" stroke-width="1.5" class="wheel-spin" />
-            <line x1="0" y1="-10" x2="0" y2="10" stroke="#334155" stroke-width="1.5" class="wheel-spin" />
+            <circle cx="0" cy="0" r="2.5" fill="#ffffff" />
+            <line x1="-10" y1="0" x2="10" y2="0" stroke="#334155" stroke-width="1.8" class="wheel-spin" />
+            <line x1="0" y1="-10" x2="0" y2="10" stroke="#334155" stroke-width="1.8" class="wheel-spin" />
+            <line x1="-7" y1="-7" x2="7" y2="7" stroke="#334155" stroke-width="1.2" class="wheel-spin" />
+            <line x1="-7" y1="7" x2="7" y2="-7" stroke="#334155" stroke-width="1.2" class="wheel-spin" />
           </g>
         </svg>
       </div>
@@ -265,12 +381,13 @@
     overflow: hidden;
     contain: paint;
     clip-path: inset(0);
-    background: radial-gradient(circle at 75% 20%, #0d284a 0%, #06152b 55%, #030c18 100%);
+    /* Brighter, vibrant blue-hour twilight gradient */
+    background: radial-gradient(ellipse at 70% 30%, #16437d 0%, #0d2a54 42%, #071933 78%, #030e20 100%);
     pointer-events: none;
     z-index: 1;
   }
 
-  /* Sky Backdrop & Stars */
+  /* Sky Backdrop, Horizon Glow & Stars */
   .sky-backdrop {
     position: absolute;
     top: 0;
@@ -283,12 +400,24 @@
 
   .moon-glow {
     position: absolute;
-    top: 8%;
-    right: 18%;
-    width: 140px;
-    height: 140px;
-    background: radial-gradient(circle, rgba(56, 189, 248, 0.18) 0%, rgba(14, 165, 233, 0.05) 50%, transparent 70%);
+    top: 6%;
+    right: 22%;
+    width: 180px;
+    height: 180px;
+    background: radial-gradient(circle, rgba(56, 189, 248, 0.25) 0%, rgba(14, 165, 233, 0.08) 50%, transparent 75%);
     border-radius: 50%;
+    filter: blur(10px);
+  }
+
+  /* Vibrant Horizon Ambient Light */
+  .horizon-glow {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 70px;
+    background: linear-gradient(180deg, transparent 0%, rgba(56, 189, 248, 0.16) 55%, rgba(2, 132, 199, 0.28) 100%);
+    pointer-events: none;
   }
 
   .stars-cluster {
@@ -303,22 +432,26 @@
     height: 2px;
     background-color: #ffffff;
     border-radius: 50%;
-    box-shadow: 0 0 4px #ffffff;
+    box-shadow: 0 0 5px #ffffff, 0 0 8px rgba(56, 189, 248, 0.8);
     animation: starTwinkle 3s ease-in-out infinite alternate;
   }
 
-  .s1 { top: 12%; left: 15%; animation-delay: 0.2s; }
-  .s2 { top: 22%; left: 32%; animation-delay: 1.5s; width: 3px; height: 3px; }
-  .s3 { top: 8%; left: 55%; animation-delay: 0.8s; }
-  .s4 { top: 18%; left: 70%; animation-delay: 2.1s; width: 2.5px; height: 2.5px; }
-  .s5 { top: 28%; left: 82%; animation-delay: 0.5s; }
-  .s6 { top: 15%; left: 92%; animation-delay: 1.8s; }
-  .s7 { top: 32%; left: 45%; animation-delay: 2.4s; }
-  .s8 { top: 25%; left: 8%; animation-delay: 1.1s; width: 3px; height: 3px; }
+  .s1 { top: 10%; left: 12%; animation-delay: 0.2s; }
+  .s2 { top: 20%; left: 28%; animation-delay: 1.5s; width: 3px; height: 3px; }
+  .s3 { top: 7%; left: 48%; animation-delay: 0.8s; }
+  .s4 { top: 16%; left: 62%; animation-delay: 2.1s; width: 2.5px; height: 2.5px; }
+  .s5 { top: 25%; left: 76%; animation-delay: 0.5s; }
+  .s6 { top: 12%; left: 88%; animation-delay: 1.8s; }
+  .s7 { top: 30%; left: 40%; animation-delay: 2.4s; }
+  .s8 { top: 22%; left: 6%; animation-delay: 1.1s; width: 3px; height: 3px; }
+  .s9 { top: 8%; left: 95%; animation-delay: 0.7s; }
+  .s10 { top: 32%; left: 84%; animation-delay: 1.3s; }
+  .s11 { top: 18%; left: 52%; animation-delay: 2.7s; width: 2.5px; height: 2.5px; }
+  .s12 { top: 28%; left: 20%; animation-delay: 0.4s; }
 
   @keyframes starTwinkle {
-    0% { opacity: 0.3; transform: scale(0.8); }
-    100% { opacity: 1; transform: scale(1.3); }
+    0% { opacity: 0.35; transform: scale(0.85); }
+    100% { opacity: 1; transform: scale(1.4); }
   }
 
   .distant-landscape {
@@ -327,17 +460,154 @@
     left: 0;
     width: 100%;
     max-width: 100%;
-    height: 90px;
-    opacity: 0.6;
+    height: 105px;
+    opacity: 0.85;
   }
 
   .beacon-pulse {
     animation: beaconBlink 1.8s infinite;
   }
 
+  .beacon-fast {
+    animation-duration: 0.9s;
+  }
+
   @keyframes beaconBlink {
-    0%, 100% { opacity: 0.2; }
-    50% { opacity: 1; filter: drop-shadow(0 0 3px currentColor); }
+    0%, 100% { opacity: 0.25; }
+    50% { opacity: 1; filter: drop-shadow(0 0 4px currentColor); }
+  }
+
+  /* Overhead Highway Electronic Sign Gantry */
+  .expressway-gantry {
+    position: absolute;
+    top: 15%;
+    right: 4%;
+    width: clamp(280px, 38vw, 480px);
+    z-index: 3;
+    pointer-events: none;
+  }
+
+  @media (max-width: 767px) {
+    .expressway-gantry {
+      top: 10%;
+      right: 2%;
+      width: clamp(220px, 65vw, 320px);
+      opacity: 0.85;
+    }
+  }
+
+  .gantry-structure {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .gantry-truss {
+    width: 100%;
+    height: 6px;
+    background: repeating-linear-gradient(
+      90deg,
+      #334155 0px,
+      #334155 12px,
+      #1e293b 12px,
+      #1e293b 16px
+    );
+    border-radius: 3px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.6);
+  }
+
+  .gantry-signboard {
+    background: linear-gradient(180deg, #065f46 0%, #047857 60%, #064e3b 100%);
+    border: 2px solid #34d399;
+    border-radius: 6px;
+    padding: 6px 12px;
+    margin-top: 2px;
+    box-shadow: 0 4px 16px rgba(4, 120, 87, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    width: 95%;
+  }
+
+  .sign-top-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px dashed rgba(255, 255, 255, 0.35);
+    padding-bottom: 4px;
+    margin-bottom: 4px;
+  }
+
+  .sign-badge {
+    background: #fbbf24;
+    color: #0f172a;
+    font-size: 9px;
+    font-weight: 900;
+    padding: 1px 4px;
+    border-radius: 3px;
+    letter-spacing: 0.5px;
+  }
+
+  .sign-title {
+    color: #ffffff;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.8px;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .sign-bottom-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .sign-dest {
+    color: #a7f3d0;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+
+  .sign-lane-indicators {
+    display: flex;
+    gap: 8px;
+  }
+
+  .lane-led {
+    color: #34d399;
+    font-size: 11px;
+    font-weight: 900;
+    text-shadow: 0 0 6px #34d399;
+    animation: ledPulse 1.4s ease-in-out infinite alternate;
+  }
+
+  .lane-led:nth-child(2) { animation-delay: 0.3s; }
+  .lane-led:nth-child(3) { animation-delay: 0.6s; }
+
+  @keyframes ledPulse {
+    0% { opacity: 0.6; }
+    100% { opacity: 1; filter: drop-shadow(0 0 4px #34d399); }
+  }
+
+  .gantry-flasher {
+    position: absolute;
+    top: -4px;
+    width: 8px;
+    height: 8px;
+    background: #fbbf24;
+    border-radius: 50%;
+    box-shadow: 0 0 10px #f59e0b;
+    animation: flasherBlink 0.8s ease-in-out infinite alternate;
+  }
+
+  .flasher-left { left: 5px; }
+  .flasher-right { right: 5px; }
+
+  @keyframes flasherBlink {
+    0% { opacity: 0.2; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1.3); box-shadow: 0 0 12px #fbbf24; }
   }
 
   /* Highway Roadway Infrastructure */
@@ -348,7 +618,7 @@
     width: 100%;
     max-width: 100%;
     height: 48%;
-    min-height: 180px;
+    min-height: 190px;
     overflow: hidden;
     contain: paint;
     clip-path: inset(0);
@@ -359,9 +629,17 @@
     inset: 0;
     width: 100%;
     max-width: 100%;
-    background: linear-gradient(180deg, #091a2e 0%, #0d1e33 25%, #081321 100%);
-    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.8);
+    background: linear-gradient(180deg, #0b1c30 0%, #10263f 28%, #0d1e33 70%, #071322 100%);
+    box-shadow: inset 0 3px 12px rgba(0, 0, 0, 0.85);
     overflow: hidden;
+  }
+
+  /* Asphalt Sheen with Subtle Highway Reflection */
+  .road-sheen {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 60% 0%, rgba(56, 189, 248, 0.12) 0%, transparent 65%);
+    pointer-events: none;
   }
 
   .edge-line {
@@ -374,46 +652,79 @@
 
   .edge-top {
     top: 0;
-    background: linear-gradient(90deg, #1e3a5f, #38bdf8, #1e3a5f);
-    opacity: 0.7;
-    box-shadow: 0 0 6px rgba(56, 189, 248, 0.4);
+    background: linear-gradient(90deg, #1e3a5f 0%, #38bdf8 30%, #60a5fa 70%, #1e3a5f 100%);
+    opacity: 0.85;
+    box-shadow: 0 0 8px rgba(56, 189, 248, 0.6);
   }
 
   .edge-bottom {
     bottom: 4px;
     background: #1e293b;
+    box-shadow: 0 -1px 3px rgba(0, 0, 0, 0.6);
   }
 
-  /* High-Speed Moving Dashed Markings - ZERO layout displacement via background-position-x */
+  /* High-Speed Moving Dashed Markings - ZERO layout displacement */
   .lane-markings {
     position: absolute;
-    top: 55%;
+    top: 54%;
     left: 0;
     right: 0;
     width: 100%;
     max-width: 100%;
-    height: 4px;
+    height: 5px;
     background-image: repeating-linear-gradient(
       90deg,
       #fbbf24 0px,
-      #fbbf24 35px,
-      transparent 35px,
-      transparent 75px
+      #fbbf24 45px,
+      transparent 45px,
+      transparent 95px
     );
-    opacity: 0.8;
-    filter: drop-shadow(0 0 4px rgba(251, 191, 36, 0.6));
-    animation: highwayMarkingsMove 0.5s linear infinite;
+    opacity: 0.9;
+    filter: drop-shadow(0 0 6px rgba(251, 191, 36, 0.8));
+    animation: highwayMarkingsMove 0.45s linear infinite;
   }
 
   @keyframes highwayMarkingsMove {
     0% { background-position-x: 0px; }
-    100% { background-position-x: -75px; }
+    100% { background-position-x: -95px; }
   }
 
-  /* Streetlights stream passing overhead */
+  /* Highway Cat-Eye Reflective Road Studs */
+  .cat-eyes-stream {
+    position: absolute;
+    top: 52%;
+    left: 0;
+    width: 100%;
+    height: 10px;
+    pointer-events: none;
+  }
+
+  .cat-eye {
+    position: absolute;
+    width: 4px;
+    height: 4px;
+    background: #ffffff;
+    border-radius: 50%;
+    box-shadow: 0 0 8px #fef08a, 0 0 12px #fbbf24;
+    animation: catEyeGleam 0.9s ease-in-out infinite alternate;
+  }
+
+  .c1 { left: 8%; animation-delay: 0.1s; }
+  .c2 { left: 26%; animation-delay: 0.4s; }
+  .c3 { left: 45%; animation-delay: 0.7s; }
+  .c4 { left: 63%; animation-delay: 0.2s; }
+  .c5 { left: 80%; animation-delay: 0.5s; }
+  .c6 { left: 94%; animation-delay: 0.8s; }
+
+  @keyframes catEyeGleam {
+    0% { opacity: 0.3; transform: scale(0.8); }
+    100% { opacity: 1; transform: scale(1.4); }
+  }
+
+  /* Modern Highway Streetlights with Realistic Arm & Radiant Lamp Cone */
   .streetlights-stream {
     position: absolute;
-    top: -30px;
+    top: -35px;
     left: 0;
     width: 100%;
     max-width: 100%;
@@ -426,38 +737,49 @@
     position: absolute;
     top: 0;
     width: 4px;
-    height: 60px;
-    background: linear-gradient(180deg, #475569 0%, #1e293b 100%);
+    height: 70px;
+    background: linear-gradient(180deg, #64748b 0%, #1e293b 100%);
   }
 
-  .p1 { left: 15%; }
-  .p2 { left: 42%; }
-  .p3 { left: 68%; }
-  .p4 { left: 90%; }
+  .p1 { left: 10%; }
+  .p2 { left: 32%; }
+  .p3 { left: 54%; }
+  .p4 { left: 74%; }
+  .p5 { left: 92%; }
+
+  .lamp-arm {
+    position: absolute;
+    top: 0;
+    right: -10px;
+    width: 14px;
+    height: 4px;
+    background: #64748b;
+    border-radius: 2px 2px 0 0;
+  }
 
   .lamp-head {
     position: absolute;
-    top: 0;
-    right: 0;
-    width: 12px;
-    height: 5px;
-    background: #f8fafc;
-    border-radius: 2px;
-    box-shadow: 0 0 8px #fef08a;
+    top: 3px;
+    right: -14px;
+    width: 14px;
+    height: 6px;
+    background: #ffffff;
+    border-radius: 3px;
+    box-shadow: 0 0 12px #fef08a, 0 0 20px #fde047;
   }
 
   .light-cone {
     position: absolute;
-    top: 5px;
-    right: -20px;
-    width: 50px;
-    height: 110px;
-    background: linear-gradient(180deg, rgba(254, 240, 138, 0.16) 0%, transparent 80%);
-    clip-path: polygon(45% 0%, 55% 0%, 100% 100%, 0% 100%);
+    top: 8px;
+    right: -36px;
+    width: 65px;
+    height: 125px;
+    background: linear-gradient(180deg, rgba(254, 240, 138, 0.25) 0%, rgba(254, 240, 138, 0.08) 50%, transparent 85%);
+    clip-path: polygon(42% 0%, 58% 0%, 100% 100%, 0% 100%);
     pointer-events: none;
   }
 
-  /* Fast Neon Light Trails - strictly contained */
+  /* Fast Neon Light Trails - Rushing traffic stream */
   .light-trails-container {
     position: absolute;
     inset: 0;
@@ -470,7 +792,7 @@
 
   .trail {
     position: absolute;
-    height: 2px;
+    height: 2.5px;
     border-radius: 999px;
     filter: blur(0.5px);
     will-change: transform;
@@ -478,52 +800,64 @@
 
   .trail-cyan {
     background: linear-gradient(90deg, transparent, #38bdf8 30%, #ffffff 85%, transparent);
-    box-shadow: 0 0 8px #0284c7;
+    box-shadow: 0 0 10px #0284c7, 0 0 16px #38bdf8;
   }
 
   .trail-red {
     background: linear-gradient(90deg, transparent, #f43f5e 30%, #ff2a55 85%, transparent);
-    box-shadow: 0 0 10px #e11d48;
+    box-shadow: 0 0 12px #e11d48, 0 0 18px #ff2a55;
+  }
+
+  .trail-white {
+    background: linear-gradient(90deg, transparent, #e2e8f0 30%, #ffffff 85%, transparent);
+    box-shadow: 0 0 10px #ffffff;
   }
 
   .trail-gold {
     background: linear-gradient(90deg, transparent, #fbbf24 30%, #fffbeb 85%, transparent);
-    box-shadow: 0 0 8px #d97706;
+    box-shadow: 0 0 10px #d97706;
   }
 
   .t1 {
-    top: 25%;
-    width: 240px;
-    animation: trailRush 1.4s ease-out infinite;
+    top: 22%;
+    width: 260px;
+    animation: trailRush 1.3s ease-out infinite;
     animation-delay: 0.1s;
   }
 
   .t2 {
-    top: 68%;
-    width: 320px;
-    animation: trailRush 1.1s ease-out infinite;
-    animation-delay: 0.6s;
+    top: 66%;
+    width: 340px;
+    animation: trailRush 1.0s ease-out infinite;
+    animation-delay: 0.5s;
   }
 
   .t3 {
-    top: 42%;
-    width: 190px;
-    animation: trailRush 1.7s ease-out infinite;
-    animation-delay: 0.9s;
+    top: 38%;
+    width: 210px;
+    animation: trailRush 1.6s ease-out infinite;
+    animation-delay: 0.8s;
   }
 
   .t4 {
-    top: 78%;
-    width: 260px;
-    animation: trailRush 1.3s ease-out infinite;
-    animation-delay: 0.3s;
+    top: 76%;
+    width: 290px;
+    animation: trailRush 1.2s ease-out infinite;
+    animation-delay: 0.25s;
   }
 
   .t5 {
     top: 15%;
-    width: 150px;
-    animation: trailRush 2.1s ease-out infinite;
-    animation-delay: 1.2s;
+    width: 170px;
+    animation: trailRush 2.0s ease-out infinite;
+    animation-delay: 1.1s;
+  }
+
+  .t6 {
+    top: 84%;
+    width: 320px;
+    animation: trailRush 0.9s ease-out infinite;
+    animation-delay: 0.7s;
   }
 
   @keyframes trailRush {
@@ -543,37 +877,88 @@
     }
   }
 
-  /* Truck Convoy Positioning & Animation - strictly bound inside 100% width */
+  /* Truck Convoy: DYNAMIC VIDEO REPLAY MOTION (Left to Right, Exit Offscreen, Loop) */
   .truck-convoy {
     position: absolute;
     bottom: 8px;
-    right: 2%;
-    width: clamp(250px, 40vw, 520px);
-    max-width: 96%;
+    left: 0;
+    width: clamp(280px, 42vw, 560px);
+    max-width: none;
     z-index: 5;
     pointer-events: none;
+    will-change: transform;
+    /* Video replay drive across animation */
+    animation: truckReplayDrive 8.5s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
+  }
+
+  @keyframes truckReplayDrive {
+    /* 0%: Offscreen to the far left (hidden) */
+    0% {
+      transform: translate3d(-125%, 0, 0);
+      opacity: 0;
+    }
+    /* 3%: Entering smoothly onto the highway */
+    3% {
+      opacity: 1;
+    }
+    /* 68%: Cruising powerfully across highway, reaching far right */
+    68% {
+      transform: translate3d(calc(100vw + 60px), 0, 0);
+      opacity: 1;
+    }
+    /* 72%: Completely offscreen to the right ("mất tiêu") */
+    72% {
+      transform: translate3d(calc(100vw + 140px), 0, 0);
+      opacity: 0;
+    }
+    /* 72% - 100%: Replay intermission pause while traffic flows, then loops */
+    100% {
+      transform: translate3d(calc(100vw + 140px), 0, 0);
+      opacity: 0;
+    }
   }
 
   @media (max-width: 767px) {
     .truck-convoy {
-      right: 1%;
       bottom: 6px;
-      width: min(290px, 84vw);
-      max-width: 94%;
-      opacity: 0.95;
+      width: clamp(230px, 72vw, 360px);
+      /* Mobile duration slightly faster for punchy screen traversal */
+      animation-duration: 7.2s;
+    }
+
+    @keyframes truckReplayDrive {
+      0% {
+        transform: translate3d(-120%, 0, 0);
+        opacity: 0;
+      }
+      3% {
+        opacity: 1;
+      }
+      70% {
+        transform: translate3d(calc(100vw + 40px), 0, 0);
+        opacity: 1;
+      }
+      74% {
+        transform: translate3d(calc(100vw + 100px), 0, 0);
+        opacity: 0;
+      }
+      100% {
+        transform: translate3d(calc(100vw + 100px), 0, 0);
+        opacity: 0;
+      }
     }
   }
 
-  .truck-vehicle {
+  /* Truck Suspension Vibration */
+  .truck-suspension-bounce {
     position: relative;
     width: 100%;
-    max-width: 100%;
-    animation: truckVibration 0.35s ease-in-out infinite alternate;
+    animation: truckVibration 0.32s ease-in-out infinite alternate;
   }
 
   @keyframes truckVibration {
     0% { transform: translate3d(0, 0, 0); }
-    100% { transform: translate3d(0, -1.8px, 0); }
+    100% { transform: translate3d(0, -2.2px, 0); }
   }
 
   .truck-svg {
@@ -581,13 +966,13 @@
     max-width: 100%;
     height: auto;
     display: block;
-    filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.7));
+    filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.75));
   }
 
   /* Wheel Spin Keyframe */
   .wheel-spin {
     transform-origin: center;
-    animation: wheelRotate 0.28s linear infinite;
+    animation: wheelRotate 0.24s linear infinite;
   }
 
   @keyframes wheelRotate {
@@ -597,14 +982,23 @@
 
   /* Accessibility & Reduced Motion */
   @media (prefers-reduced-motion: reduce) {
+    .truck-convoy {
+      animation: none !important;
+      left: auto !important;
+      right: 4% !important;
+      transform: none !important;
+      opacity: 1 !important;
+    }
     .lane-markings,
     .trail,
-    .truck-vehicle,
+    .truck-suspension-bounce,
     .wheel-spin,
     .star,
-    .beacon-pulse {
+    .beacon-pulse,
+    .lane-led,
+    .gantry-flasher,
+    .cat-eye {
       animation: none !important;
-      transform: none !important;
     }
   }
 </style>
