@@ -1,27 +1,41 @@
 ---
 // Hero Section for Home page (Frame 44:1456)
+// Bee Logistics-inspired bright, clean sky-blue canvas with photorealistic drifting clouds,
+// Forklift handling unit & Nam Han Logistics Flagship Container Semi-Truck
 import NightHighwayAnimation from './NightHighwayAnimation.astro';
 ---
 
 <section class="hero-section" aria-label="Giới thiệu Nam Hân Logistics">
-  <!-- 2D Night Expressway Animation with Light-Trails -->
+  <!-- Bee Logistics-Style Canvas: Sky-Blue, Clouds, Forklift & Replay Truck -->
   <NightHighwayAnimation />
 
-  <!-- High-contrast vignette ensuring text legibility on left side -->
+  <!-- Subtle Light Frosted Vignette for crisp text contrast on left side -->
   <div class="hero-overlay" aria-hidden="true"></div>
 
   <div class="container hero-container">
     <div class="hero-content">
-      <p class="hero-tag">NAM HÂN LOGISTICS</p>
+      <div class="hero-brand-pill">
+        <span class="pill-dot"></span>
+        <span class="pill-text">NAM HÂN LOGISTICS</span>
+      </div>
+
       <h1 class="hero-title">
         DOANH NGHIỆP VẬN TẢI ĐƯỜNG BỘ<br class="br-desktop" />
         CUNG CẤP GIẢI PHÁP LOGISTICS<br class="br-desktop" />
         TOÀN QUỐC
       </h1>
+
+      <p class="hero-bullets">
+        &bull; Đội xe Container &amp; Tải nặng hùng hậu &nbsp;&bull;&nbsp; Chuyên tuyến Bắc — Nam 24/7 &nbsp;&bull;&nbsp; Bốc xếp &amp; Lưu kho an toàn
+      </p>
+
       <div class="hero-actions">
-        <a href="#overview" class="btn-hero">
-          <span>Xem thêm</span>
+        <a href="#overview" class="btn-hero-primary">
+          <span>Xem thêm dịch vụ</span>
           <span class="btn-arrow" aria-hidden="true">&rarr;</span>
+        </a>
+        <a href="/lien-he" class="btn-hero-secondary">
+          <span>Liên hệ báo giá</span>
         </a>
       </div>
     </div>
@@ -33,28 +47,30 @@ import NightHighwayAnimation from './NightHighwayAnimation.astro';
     position: relative;
     width: 100%;
     max-width: 100%;
-    min-height: 460px;
+    min-height: 480px;
     display: flex;
     align-items: center;
     overflow: hidden;
     contain: paint;
     clip-path: inset(0);
-    background-color: #1d64ad;
+    /* Bee Logistics-style Sky-Blue base */
+    background-color: #7ec4f8;
   }
 
   @media (min-width: 768px) {
     .hero-section {
-      min-height: 480px;
+      min-height: 520px;
     }
   }
 
   @media (min-width: 1024px) {
     .hero-section {
-      min-height: 520px;
-      height: 520px;
+      min-height: 560px;
+      height: 560px;
     }
   }
 
+  /* Soft Light Vignette: preserves crisp contrast on left while opening up sky on right */
   .hero-overlay {
     position: absolute;
     inset: 0;
@@ -62,9 +78,9 @@ import NightHighwayAnimation from './NightHighwayAnimation.astro';
     z-index: 2;
     background: linear-gradient(
       180deg,
-      rgba(11, 37, 69, 0.85) 0%,
-      rgba(11, 37, 69, 0.55) 45%,
-      rgba(11, 37, 69, 0.08) 85%,
+      rgba(255, 255, 255, 0.65) 0%,
+      rgba(255, 255, 255, 0.4) 50%,
+      rgba(255, 255, 255, 0.05) 85%,
       transparent 100%
     );
   }
@@ -73,10 +89,10 @@ import NightHighwayAnimation from './NightHighwayAnimation.astro';
     .hero-overlay {
       background: linear-gradient(
         90deg,
-        rgba(11, 37, 69, 0.92) 0%,
-        rgba(11, 37, 69, 0.76) 35%,
-        rgba(11, 37, 69, 0.2) 58%,
-        transparent 78%
+        rgba(255, 255, 255, 0.8) 0%,
+        rgba(255, 255, 255, 0.6) 38%,
+        rgba(255, 255, 255, 0.15) 62%,
+        transparent 82%
       );
     }
   }
@@ -85,42 +101,77 @@ import NightHighwayAnimation from './NightHighwayAnimation.astro';
   .hero-container {
     position: relative;
     z-index: 3;
-    padding-top: clamp(2.5rem, 6vw, 9.25rem);
-    padding-bottom: clamp(6.75rem, 15vw, 5.5rem);
+    padding-top: clamp(2rem, 5vw, 4.5rem);
+    padding-bottom: clamp(6.5rem, 16vw, 6rem);
   }
 
   @media (min-width: 768px) {
     .hero-container {
-      padding-top: clamp(3.5rem, 8vw, 9.25rem);
-      padding-bottom: clamp(2.5rem, 5vw, 5.5rem);
+      padding-top: clamp(2.5rem, 6vw, 5rem);
+      padding-bottom: clamp(3rem, 6vw, 5.5rem);
     }
   }
 
   .hero-content {
-    max-width: 40rem; /* ~640px on desktop */
+    max-width: 44rem;
   }
 
-  .hero-tag {
-    color: #38bdf8; /* Cyan/sky-blue matching design */
-    font-size: clamp(0.75rem, 1vw, 0.875rem);
-    font-weight: 700;
+  @media (max-width: 767px) {
+    .hero-content {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(8px);
+      border-radius: 12px;
+      padding: 1.25rem 1.25rem 1.5rem 1.25rem;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 8px 24px rgba(11, 37, 69, 0.08);
+    }
+  }
+
+  /* Brand Pill Badge */
+  .hero-brand-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    background: rgba(0, 112, 186, 0.1);
+    border: 1px solid rgba(0, 112, 186, 0.3);
+    padding: 0.35rem 0.85rem;
+    border-radius: 999px;
+    margin-bottom: 0.85rem;
+  }
+
+  .pill-dot {
+    width: 8px;
+    height: 8px;
+    background-color: #0070ba;
+    border-radius: 50%;
+    box-shadow: 0 0 6px rgba(0, 112, 186, 0.6);
+    animation: pillPulse 1.8s ease-in-out infinite alternate;
+  }
+
+  @keyframes pillPulse {
+    0% { transform: scale(0.85); opacity: 0.7; }
+    100% { transform: scale(1.2); opacity: 1; }
+  }
+
+  .pill-text {
+    color: #0070ba;
+    font-size: 0.8125rem;
+    font-weight: 800;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    margin: 0 0 0.75rem 0;
-    line-height: 1.2;
-    text-shadow: 0 1px 8px rgba(2, 8, 20, 0.6);
   }
 
+  /* Main Title - Deep Navy with exceptional contrast against sky-blue */
   .hero-title {
-    color: #ffffff;
-    font-size: clamp(1.1875rem, 5.2vw, 2.25rem);
-    font-weight: 800;
-    line-height: 1.3;
+    color: #0b2545;
+    font-size: clamp(1.25rem, 5.2vw, 2.375rem);
+    font-weight: 900;
+    line-height: 1.25;
     text-transform: uppercase;
-    letter-spacing: -0.01em;
-    margin: 0 0 1.25rem 0;
+    letter-spacing: -0.015em;
+    margin: 0 0 0.85rem 0;
     overflow-wrap: break-word;
-    text-shadow: 0 2px 14px rgba(2, 8, 20, 0.75), 0 1px 3px rgba(0, 0, 0, 0.9);
+    text-shadow: 0 1px 3px rgba(255, 255, 255, 0.9), 0 2px 8px rgba(255, 255, 255, 0.6);
   }
 
   .br-desktop {
@@ -133,13 +184,25 @@ import NightHighwayAnimation from './NightHighwayAnimation.astro';
     }
   }
 
-  .hero-actions {
-    display: flex;
-    align-items: center;
+  /* Bee Logistics-style Bullet Line */
+  .hero-bullets {
+    color: #1e3a5f;
+    font-size: clamp(0.8125rem, 1.1vw, 0.9375rem);
+    font-weight: 600;
+    line-height: 1.5;
+    margin: 0 0 1.5rem 0;
+    text-shadow: 0 1px 2px rgba(255, 255, 255, 0.8);
   }
 
-  /* Blue Call to Action Button */
-  .btn-hero {
+  .hero-actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  /* Primary Blue Button */
+  .btn-hero-primary {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -148,29 +211,29 @@ import NightHighwayAnimation from './NightHighwayAnimation.astro';
     background-color: #0070ba;
     color: #ffffff;
     font-size: 0.875rem;
-    font-weight: 600;
-    padding: 0.5rem 1.125rem;
+    font-weight: 700;
+    padding: 0.55rem 1.25rem;
     border-radius: 6px;
     text-decoration: none;
-    box-shadow: 0 2px 8px rgba(0, 112, 186, 0.35);
+    box-shadow: 0 4px 14px rgba(0, 112, 186, 0.35);
     transition: background-color var(--transition-fast, 150ms ease),
                 transform var(--transition-fast, 150ms ease),
                 box-shadow var(--transition-fast, 150ms ease);
   }
 
-  .btn-hero:hover {
+  .btn-hero-primary:hover {
     background-color: #005a96;
     color: #ffffff;
     transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 112, 186, 0.45);
+    box-shadow: 0 6px 18px rgba(0, 112, 186, 0.45);
   }
 
-  .btn-hero:active {
+  .btn-hero-primary:active {
     transform: translateY(0);
   }
 
-  .btn-hero:focus-visible {
-    outline: 2px solid #ffffff;
+  .btn-hero-primary:focus-visible {
+    outline: 2px solid #0070ba;
     outline-offset: 2px;
   }
 
@@ -179,15 +242,44 @@ import NightHighwayAnimation from './NightHighwayAnimation.astro';
     transition: transform var(--transition-fast, 150ms ease);
   }
 
-  .btn-hero:hover .btn-arrow {
+  .btn-hero-primary:hover .btn-arrow {
     transform: translateX(3px);
   }
 
+  /* Secondary Outline Button */
+  .btn-hero-secondary {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: var(--touch-target-min, 44px);
+    background-color: rgba(255, 255, 255, 0.9);
+    color: #0b2545;
+    font-size: 0.875rem;
+    font-weight: 700;
+    padding: 0.55rem 1.25rem;
+    border-radius: 6px;
+    border: 1.5px solid #0070ba;
+    text-decoration: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: background-color var(--transition-fast, 150ms ease),
+                color var(--transition-fast, 150ms ease),
+                transform var(--transition-fast, 150ms ease);
+  }
+
+  .btn-hero-secondary:hover {
+    background-color: #0070ba;
+    color: #ffffff;
+    transform: translateY(-1px);
+  }
+
   @media (prefers-reduced-motion: reduce) {
-    .btn-hero,
-    .btn-arrow {
+    .btn-hero-primary,
+    .btn-hero-secondary,
+    .btn-arrow,
+    .pill-dot {
       transition: none;
       transform: none !important;
+      animation: none !important;
     }
   }
 </style>
