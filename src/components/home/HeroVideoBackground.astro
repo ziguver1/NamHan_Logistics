@@ -1,0 +1,351 @@
+---
+// Hero Background Video Component
+// High-Definition corporate logistics footage with progressive preload,
+// cinematic dark veil fade-in reveal ("màn đen rồi sáng dần"),
+// and integrated audio toggle control.
+---
+
+<div class="hero-video-scene" aria-hidden="true" id="hero-video-stage">
+  <!-- 1. Cinematic Preload Veil / Curtain: "Màn đen rồi sáng dần" -->
+  <div class="video-curtain" id="video-curtain">
+    <div class="curtain-loader">
+      <div class="curtain-pulse-ring"></div>
+      <div class="curtain-brand-glow">
+        <span class="curtain-brand-tag">NAM HÂN LOGISTICS</span>
+        <span class="curtain-brand-sub">ĐANG KHỞI CHẠY HỆ THỐNG</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Fast-Streaming HTML5 Background Video with Poster Fallback -->
+  <video
+    id="hero-bg-video"
+    class="hero-video-elem"
+    autoplay
+    muted
+    loop
+    playsinline
+    preload="auto"
+    poster="/videos/hero-poster.webp"
+  >
+    <source src="/videos/hero-namhan.mp4" type="video/mp4" />
+    Trình duyệt của bạn không hỗ trợ thẻ video HTML5.
+  </video>
+
+  <!-- 3. Cinematic Vignette & Gradient Scrim for WCAG AAA Text Legibility -->
+  <div class="video-scrim-left" aria-hidden="true"></div>
+  <div class="video-scrim-bottom" aria-hidden="true"></div>
+
+  <!-- 4. Interactive Video Control (Mute/Unmute toggle) -->
+  <div class="video-controls" id="video-controls" aria-hidden="false">
+    <button
+      type="button"
+      id="btn-video-sound"
+      class="btn-video-sound"
+      title="Bật/Tắt âm thanh video"
+      aria-label="Bật hoặc tắt âm thanh video"
+    >
+      <svg class="ctrl-icon icon-muted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <line x1="23" y1="9" x2="17" y2="15"></line>
+        <line x1="17" y1="9" x2="23" y2="15"></line>
+      </svg>
+      <svg class="ctrl-icon icon-unmuted" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true" style="display: none;">
+        <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+      </svg>
+      <span class="ctrl-label" id="sound-ctrl-label">Bật tiếng</span>
+    </button>
+  </div>
+</div>
+
+<script>
+  // Progressive Enhancement for Video Preload & Smooth Veil Reveal
+  function initHeroVideo() {
+    const stage = document.getElementById('hero-video-stage');
+    const video = document.getElementById('hero-bg-video') as HTMLVideoElement | null;
+    const soundBtn = document.getElementById('btn-video-sound');
+    const soundLabel = document.getElementById('sound-ctrl-label');
+
+    if (!video || !stage) return;
+
+    let hasRevealed = false;
+    const revealVideo = () => {
+      if (hasRevealed) return;
+      hasRevealed = true;
+      stage.classList.add('is-ready');
+    };
+
+    // If video is already playing or buffered
+    if (video.readyState >= 3 && !video.paused) {
+      revealVideo();
+    } else {
+      video.addEventListener('playing', revealVideo, { once: true });
+      video.addEventListener('canplay', () => {
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+          playPromise.then(() => {
+            setTimeout(revealVideo, 180);
+          }).catch(() => {
+            // Autoplay with muted might be delayed, reveal anyway
+            revealVideo();
+          });
+        }
+      }, { once: true });
+
+      video.addEventListener('loadeddata', () => {
+        const playPromise = video.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(() => {});
+        }
+      }, { once: true });
+    }
+
+    // Safety failsafe: ensure curtain dissolves after max 2.2s under slow network
+    setTimeout(revealVideo, 2200);
+
+    // Audio Mute/Unmute Toggle Controller
+    if (soundBtn && soundLabel) {
+      const iconMuted = soundBtn.querySelector('.icon-muted') as HTMLElement | null;
+      const iconUnmuted = soundBtn.querySelector('.icon-unmuted') as HTMLElement | null;
+
+      soundBtn.addEventListener('click', () => {
+        video.muted = !video.muted;
+        if (video.muted) {
+          if (iconMuted) iconMuted.style.display = 'block';
+          if (iconUnmuted) iconUnmuted.style.display = 'none';
+          soundLabel.textContent = 'Bật tiếng';
+          soundBtn.classList.remove('is-active');
+        } else {
+          video.volume = 0.85;
+          if (iconMuted) iconMuted.style.display = 'none';
+          if (iconUnmuted) iconUnmuted.style.display = 'block';
+          soundLabel.textContent = 'Tắt tiếng';
+          soundBtn.classList.add('is-active');
+        }
+      });
+    }
+  }
+
+  // Initialize on load and on View Transitions if present
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initHeroVideo);
+  } else {
+    initHeroVideo();
+  }
+  document.addEventListener('astro:page-load', initHeroVideo);
+</script>
+
+<style>
+  .hero-video-scene {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    overflow: hidden;
+    contain: paint;
+    clip-path: inset(0);
+    background-color: #050b14;
+    z-index: 1;
+  }
+
+  /* 1. Cinematic Curtain: Solid black fading smoothly to illuminated video */
+  .video-curtain {
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    background-color: #050b14;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 1;
+    visibility: visible;
+    transition: opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1),
+                visibility 1.4s cubic-bezier(0.16, 1, 0.3, 1);
+    pointer-events: none;
+    will-change: opacity;
+  }
+
+  /* Once ready: curtain dissolves into brightness */
+  .hero-video-scene.is-ready .video-curtain {
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .curtain-loader {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  .curtain-pulse-ring {
+    width: 44px;
+    height: 44px;
+    border: 2px solid rgba(56, 189, 248, 0.25);
+    border-top-color: #38bdf8;
+    border-radius: 50%;
+    animation: curtainSpin 0.9s linear infinite;
+  }
+
+  @keyframes curtainSpin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+
+  .curtain-brand-glow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.375rem;
+    text-align: center;
+  }
+
+  .curtain-brand-tag {
+    color: #f8fafc;
+    font-size: 0.8125rem;
+    font-weight: 800;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    opacity: 0.9;
+  }
+
+  .curtain-brand-sub {
+    color: #38bdf8;
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    opacity: 0.75;
+  }
+
+  /* 2. Background Video Element */
+  .hero-video-elem {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center 38%;
+    opacity: 0;
+    filter: brightness(0.88) contrast(1.05);
+    transition: opacity 1.4s cubic-bezier(0.16, 1, 0.3, 1),
+                filter 1.4s ease;
+    will-change: opacity, filter;
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  /* When ready: video shines through */
+  .hero-video-scene.is-ready .hero-video-elem {
+    opacity: 1;
+    filter: brightness(0.95) contrast(1.04);
+  }
+
+  /* 3. Cinematic Scrims for Text Readability */
+  .video-scrim-left {
+    position: absolute;
+    inset: 0;
+    z-index: 3;
+    pointer-events: none;
+    background: linear-gradient(
+      90deg,
+      rgba(5, 11, 22, 0.92) 0%,
+      rgba(5, 11, 22, 0.76) 38%,
+      rgba(5, 11, 22, 0.35) 68%,
+      rgba(5, 11, 22, 0.2) 100%
+    );
+  }
+
+  @media (max-width: 767px) {
+    .video-scrim-left {
+      background: linear-gradient(
+        180deg,
+        rgba(5, 11, 22, 0.9) 0%,
+        rgba(5, 11, 22, 0.78) 55%,
+        rgba(5, 11, 22, 0.45) 100%
+      );
+    }
+  }
+
+  .video-scrim-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: clamp(80px, 15vw, 140px);
+    z-index: 3;
+    pointer-events: none;
+    background: linear-gradient(
+      180deg,
+      transparent 0%,
+      rgba(5, 11, 22, 0.8) 60%,
+      #050b14 100%
+    );
+  }
+
+  /* 4. Interactive Sound Toggle Button */
+  .video-controls {
+    position: absolute;
+    bottom: 1.5rem;
+    right: clamp(1rem, 4vw, 2.5rem);
+    z-index: 6;
+    pointer-events: auto;
+  }
+
+  .btn-video-sound {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.45rem 0.85rem;
+    background: rgba(15, 23, 42, 0.75);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 9999px;
+    color: #e2e8f0;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    cursor: pointer;
+    backdrop-filter: blur(8px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+  }
+
+  .btn-video-sound:hover {
+    background: rgba(30, 41, 59, 0.9);
+    border-color: rgba(56, 189, 248, 0.5);
+    color: #38bdf8;
+    transform: translateY(-1px);
+  }
+
+  .btn-video-sound.is-active {
+    background: rgba(14, 116, 144, 0.85);
+    border-color: #38bdf8;
+    color: #ffffff;
+  }
+
+  .ctrl-icon {
+    width: 15px;
+    height: 15px;
+    flex-shrink: 0;
+  }
+
+  /* Accessibility & Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    .video-curtain {
+      transition: none !important;
+      opacity: 0 !important;
+      visibility: hidden !important;
+    }
+    .hero-video-elem {
+      opacity: 1 !important;
+      transition: none !important;
+    }
+    .curtain-pulse-ring {
+      animation: none !important;
+    }
+  }
+</style>

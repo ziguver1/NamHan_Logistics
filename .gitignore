@@ -67,6 +67,8 @@ NAM HAN LOGISTICS/
 NAM HÂN LOGISTICS/
 design-reference/
 *.fig
+public/videos/HomeVideo/
+*.WAV
 
 # 9. Operating System Files
 # macOS
