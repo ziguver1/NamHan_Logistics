@@ -1,7 +1,8 @@
 ---
 // Bee Logistics-Inspired Hero Canvas Component
 // Bright Sunny Sky-Blue canvas with photorealistic drifting clouds,
-// Ground-level roadway, forklift handling unit & Nam Han Logistics Flagship Container Semi-Truck
+// Ground-level roadway & Nam Han Logistics Flagship Container Semi-Truck in video replay motion
+// Replay loop: Drives from left -> stops at center for 2s -> accelerates slowly then quickly to the right -> repeats
 ---
 
 <div class="bee-hero-scene" aria-hidden="true">
@@ -34,25 +35,12 @@
 
   <!-- Vehicles Stage Layer: Spans 100% height of scene so vehicles are NEVER clipped from above -->
   <div class="vehicles-stage">
-    <!-- Forklift Cargo Handling Unit (Placed at right roadside) -->
-    <div class="forklift-unit">
-      <img
-        src="/images/home/bee-forklift.webp"
-        alt=""
-        class="forklift-img"
-        width="341"
-        height="260"
-        loading="eager"
-        decoding="async"
-      />
-    </div>
-
     <!-- Nam Han Logistics Flagship Container Semi-Truck (Video-Replay Motion Loop) -->
     <div class="truck-convoy">
       <div class="truck-suspension-bounce">
         <img
           src="/images/home/bee-truck-namhan.webp"
-          alt=""
+          alt="Xe container Nam Hân Logistics"
           class="truck-img"
           width="1000"
           height="302"
@@ -242,7 +230,7 @@
     100% { background-position-x: -95px; }
   }
 
-  /* Vehicles Stage Layer: Covers entire canvas so vehicles are 100% intact and never cut off from above */
+  /* Vehicles Stage Layer: Covers entire canvas so truck is 100% intact and never cut off from above */
   .vehicles-stage {
     position: absolute;
     inset: 0;
@@ -256,38 +244,7 @@
     z-index: 3;
   }
 
-  /* Forklift Cargo Handling Unit (Placed at right roadside) */
-  .forklift-unit {
-    position: absolute;
-    bottom: 8px;
-    right: 3%;
-    width: clamp(95px, 13vw, 150px);
-    pointer-events: none;
-    filter: drop-shadow(0 6px 12px rgba(15, 23, 42, 0.35));
-    animation: forkliftHover 3s ease-in-out infinite alternate;
-  }
-
-  @keyframes forkliftHover {
-    0% { transform: translate3d(0, 0, 0); }
-    100% { transform: translate3d(0, -3px, 0); }
-  }
-
-  .forklift-img {
-    width: 100%;
-    height: auto;
-    display: block;
-  }
-
-  @media (max-width: 767px) {
-    .forklift-unit {
-      right: 2%;
-      bottom: 6px;
-      width: clamp(75px, 20vw, 110px);
-      opacity: 0.9;
-    }
-  }
-
-  /* Nam Han Container Truck: DYNAMIC VIDEO REPLAY MOTION (Left to Right, Exit, Loop) */
+  /* Nam Han Container Truck: VIDEO REPLAY WITH 2-SECOND CENTER PAUSE & ACCELERATION */
   .truck-convoy {
     position: absolute;
     bottom: 6px;
@@ -296,30 +253,51 @@
     max-width: none;
     pointer-events: none;
     will-change: transform;
-    animation: truckReplayDrive 8.5s cubic-bezier(0.22, 0.61, 0.36, 1) infinite;
+    /* 10s loop: Drives in -> Stops at center 2s -> Rolls slowly -> Accelerates to right -> Loops */
+    animation: truckReplayDrive 10s cubic-bezier(0.25, 0.1, 0.25, 1) infinite;
   }
 
   @keyframes truckReplayDrive {
-    /* 0%: Offscreen to the far left (hidden) */
+    /* 0%: Starts off-screen on the left */
     0% {
       transform: translate3d(-125%, 0, 0);
       opacity: 0;
     }
-    /* 3%: Entering smoothly onto the highway */
-    3% {
+    /* 2%: Enters smoothly into view */
+    2% {
       opacity: 1;
     }
-    /* 68%: Cruising powerfully across highway, reaching far right */
-    68% {
+    /* 24%: Arrives smoothly at the center of the viewport */
+    24% {
+      transform: translate3d(calc(50vw - 50%), 0, 0);
+      opacity: 1;
+    }
+    /* 24% - 46%: STOPS AT CENTER FOR ~2.2 SECONDS (clear view of Nam Han branding) */
+    46% {
+      transform: translate3d(calc(50vw - 50%), 0, 0);
+      opacity: 1;
+    }
+    /* 53%: Starts moving forward slowly ("đi từ từ") */
+    53% {
+      transform: translate3d(calc(50vw - 50% + 45px), 0, 0);
+      opacity: 1;
+    }
+    /* 62%: Accelerating smoothly */
+    62% {
+      transform: translate3d(calc(50vw - 50% + 160px), 0, 0);
+      opacity: 1;
+    }
+    /* 73%: Fast exit to the right ("đi nhanh lên sang phải") */
+    73% {
       transform: translate3d(calc(100vw + 60px), 0, 0);
       opacity: 1;
     }
-    /* 72%: Completely offscreen to the right ("mất tiêu") */
-    72% {
+    /* 76%: Completely disappears off-screen right ("mất tiêu") */
+    76% {
       transform: translate3d(calc(100vw + 140px), 0, 0);
       opacity: 0;
     }
-    /* 72% - 100%: Replay intermission pause while clouds & road move, then loops */
+    /* 76% - 100%: Intermission pause while road & clouds move, then replay restarts */
     100% {
       transform: translate3d(calc(100vw + 140px), 0, 0);
       opacity: 0;
@@ -330,7 +308,7 @@
     .truck-convoy {
       bottom: 4px;
       width: clamp(220px, 68vw, 320px);
-      animation-duration: 7.2s;
+      animation-duration: 9s;
     }
 
     @keyframes truckReplayDrive {
@@ -338,14 +316,26 @@
         transform: translate3d(-120%, 0, 0);
         opacity: 0;
       }
-      3% {
+      2% {
         opacity: 1;
       }
-      70% {
+      24% {
+        transform: translate3d(calc(50vw - 50%), 0, 0);
+        opacity: 1;
+      }
+      46% {
+        transform: translate3d(calc(50vw - 50%), 0, 0);
+        opacity: 1;
+      }
+      54% {
+        transform: translate3d(calc(50vw - 50% + 35px), 0, 0);
+        opacity: 1;
+      }
+      72% {
         transform: translate3d(calc(100vw + 40px), 0, 0);
         opacity: 1;
       }
-      74% {
+      76% {
         transform: translate3d(calc(100vw + 100px), 0, 0);
         opacity: 0;
       }
@@ -379,14 +369,12 @@
   @media (prefers-reduced-motion: reduce) {
     .truck-convoy {
       animation: none !important;
-      left: auto !important;
-      right: 15% !important;
-      transform: none !important;
+      left: 50% !important;
+      transform: translateX(-50%) !important;
       opacity: 1 !important;
     }
     .lane-markings,
     .clouds-stream,
-    .forklift-unit,
     .truck-suspension-bounce {
       animation: none !important;
     }
