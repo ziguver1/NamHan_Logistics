@@ -114,12 +114,11 @@ import NightHighwayAnimation from './NightHighwayAnimation.astro';
     }
   }
 
-  /* Foreground Container - Top-aligned with ample bottom spacing before road */
+  /* Foreground Container - Aligned with site container grid, ample top & bottom spacing */
   .hero-container {
     position: relative;
     z-index: 3;
-    width: 100%;
-    padding-top: clamp(2.25rem, 5vw, 4.25rem);
+    padding-top: clamp(2.75rem, 5.5vw, 4.75rem);
     padding-bottom: clamp(9rem, 20vw, 11rem); /* Large bottom clearance guarantees text never touches road */
   }
 
