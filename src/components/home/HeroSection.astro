@@ -64,8 +64,8 @@ import HeroVideoBackground from './HeroVideoBackground.astro';
     position: relative;
     width: 100%;
     max-width: 100%;
-    min-height: calc(100vh - 4.5rem);
-    min-height: calc(100svh - 4.5rem);
+    min-height: clamp(520px, calc(100vh - 4.5rem), 880px);
+    min-height: clamp(520px, calc(100svh - 4.5rem), 880px);
     display: flex;
     align-items: center; /* Balanced vertical centering */
     overflow: hidden;
@@ -76,8 +76,8 @@ import HeroVideoBackground from './HeroVideoBackground.astro';
 
   @media (min-width: 1024px) {
     .hero-section {
-      min-height: calc(100vh - 4.5rem);
-      height: calc(100vh - 4.5rem);
+      min-height: clamp(580px, calc(100vh - 4.5rem), 880px);
+      height: clamp(580px, calc(100vh - 4.5rem), 920px);
     }
   }
 

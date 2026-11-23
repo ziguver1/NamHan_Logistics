@@ -244,7 +244,7 @@
     filter: brightness(1) contrast(1.02);
   }
 
-  /* 3. Soft Ambient Vignette - Seamlessly blends text without any visible box or dark film */
+  /* 3. Feathered Ambient Vignette - Localized gently to the left to let the video shine naturally */
   .video-scrim-left {
     position: absolute;
     inset: 0;
@@ -252,10 +252,10 @@
     pointer-events: none;
     background: linear-gradient(
       90deg,
-      rgba(3, 7, 18, 0.75) 0%,
-      rgba(3, 7, 18, 0.48) 32%,
-      rgba(3, 7, 18, 0.12) 58%,
-      transparent 76%
+      rgba(5, 11, 20, 0.6) 0%,
+      rgba(5, 11, 20, 0.32) 25%,
+      rgba(5, 11, 20, 0.08) 42%,
+      transparent 55%
     );
   }
 
@@ -263,9 +263,9 @@
     .video-scrim-left {
       background: linear-gradient(
         180deg,
-        rgba(3, 7, 18, 0.75) 0%,
-        rgba(3, 7, 18, 0.45) 55%,
-        transparent 100%
+        rgba(5, 11, 20, 0.62) 0%,
+        rgba(5, 11, 20, 0.25) 45%,
+        transparent 75%
       );
     }
   }
@@ -275,13 +275,13 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: 80px;
+    height: 60px;
     z-index: 3;
     pointer-events: none;
     background: linear-gradient(
       180deg,
       transparent 0%,
-      rgba(5, 11, 20, 0.75) 100%
+      rgba(5, 11, 20, 0.5) 100%
     );
   }
 
