@@ -97,6 +97,223 @@ export const VIETNAM_PROVINCES: ProvinceItem[] = [
   { code: '96', name: 'Cà Mau', fullName: 'Tỉnh Cà Mau', region: 'Tây Nam Bộ', aliases: ['ca mau'] },
 ];
 
+export interface DepotYardItem {
+  id: string;
+  name: string;
+  address: string;
+  city: 'TP. Hồ Chí Minh' | 'Bình Dương' | 'Hà Nội';
+  area: string;
+  aliases?: string[];
+}
+
+export const DEPOT_YARDS: DepotYardItem[] = [
+  // TP. Hồ Chí Minh
+  {
+    id: 'hcm-nam-bac-q12',
+    name: 'Bãi xe Nam – Bắc (Quận 12)',
+    address: '415 Lê Thị Riêng, P. Thới An, Quận 12, TP. HCM',
+    city: 'TP. Hồ Chí Minh',
+    area: 'Quận 12',
+    aliases: ['quan 12', 'q12', 'le thi rieng', 'nam bac', 'quoc lo 1a', 'hcm', 'ho chi minh', 'bai xe'],
+  },
+  {
+    id: 'hcm-trong-tan-q12',
+    name: 'Bãi xe Trọng Tấn (Quận 12)',
+    address: '789 Lê Thị Riêng, P. Thới An, Quận 12, TP. HCM',
+    city: 'TP. Hồ Chí Minh',
+    area: 'Quận 12',
+    aliases: ['quan 12', 'q12', 'le thi rieng', 'trong tan', 'hcm', 'ho chi minh', 'bai xe'],
+  },
+  {
+    id: 'hcm-quang-dung-hoc-mon',
+    name: 'Bãi xe Quang Dũng (Hóc Môn)',
+    address: '1/3B Nguyễn Ảnh Thủ, H. Hóc Môn (giáp Quận 12), TP. HCM',
+    city: 'TP. Hồ Chí Minh',
+    area: 'Hóc Môn',
+    aliases: ['hoc mon', 'nguyen anh thu', 'quang dung', 'hcm', 'ho chi minh', 'bai xe'],
+  },
+  {
+    id: 'hcm-an-khang-hoc-mon',
+    name: 'Bãi gửi xe An Khang (Hóc Môn)',
+    address: '54/9 Tỉnh Lộ 14A, Ấp Tiền Lân, Xã Bà Điểm, H. Hóc Môn, TP. HCM',
+    city: 'TP. Hồ Chí Minh',
+    area: 'Hóc Môn',
+    aliases: ['hoc mon', 'ba diem', 'an khang', 'hcm', 'ho chi minh', 'bai xe'],
+  },
+  {
+    id: 'hcm-cat-lai-thu-duc',
+    name: 'Bãi xe & Depot Cảng Cát Lái',
+    address: 'Đường Nguyễn Thị Định – Nguyễn Duy Trinh, TP. Thủ Đức, TP. HCM',
+    city: 'TP. Hồ Chí Minh',
+    area: 'TP. Thủ Đức',
+    aliases: ['cat lai', 'thu duc', 'nguyen thi dinh', 'nguyen duy trinh', 'cang', 'hcm', 'ho chi minh', 'bai xe'],
+  },
+  {
+    id: 'hcm-hoang-huu-nam',
+    name: 'Bãi xe Hoàng Hữu Nam (Thủ Đức)',
+    address: 'Đường Hoàng Hữu Nam, P. Tân Phú, TP. Thủ Đức, TP. HCM',
+    city: 'TP. Hồ Chí Minh',
+    area: 'TP. Thủ Đức',
+    aliases: ['hoang huu nam', 'thu duc', 'suoi tien', 'tan phu', 'hcm', 'ho chi minh', 'bai xe'],
+  },
+  {
+    id: 'hcm-phu-huu',
+    name: 'Bãi xe Vòng xoay Phú Hữu',
+    address: 'Đường Võ Chí Công, P. Phú Hữu, TP. Thủ Đức, TP. HCM',
+    city: 'TP. Hồ Chí Minh',
+    area: 'TP. Thủ Đức',
+    aliases: ['phu huu', 'vo chi cong', 'thu duc', 'hcm', 'ho chi minh', 'bai xe'],
+  },
+  {
+    id: 'hcm-tan-thuan-nha-be',
+    name: 'Bãi xe Cảng Tân Thuận & Nhà Bè',
+    address: 'Trục Nguyễn Văn Linh – Huỳnh Tấn Phát, Quận 7 / Nhà Bè, TP. HCM',
+    city: 'TP. Hồ Chí Minh',
+    area: 'Quận 7 – Nhà Bè',
+    aliases: ['tan thuan', 'nha be', 'quan 7', 'q7', 'hiep phuoc', 'nguyen van linh', 'hcm', 'ho chi minh', 'bai xe'],
+  },
+  {
+    id: 'hcm-nam-han-vinhomes',
+    name: 'Chi nhánh Nam Hân TP. HCM',
+    address: 'Đường V3, Số V3-37, Manhattan Vinhomes Grand Park, P. Long Bình, TP. Thủ Đức, TP. HCM',
+    city: 'TP. Hồ Chí Minh',
+    area: 'TP. Thủ Đức',
+    aliases: ['nam han', 'vinhomes', 'long binh', 'thu duc', 'chi nhanh', 'hcm', 'ho chi minh'],
+  },
+
+  // Bình Dương
+  {
+    id: 'bd-an-binh-song-than',
+    name: 'Tổng kho An Bình – Sóng Thần',
+    address: 'KP. Bình Đường 1, P. An Bình (KCN Sóng Thần), TP. Dĩ An, Bình Dương',
+    city: 'Bình Dương',
+    area: 'TP. Dĩ An',
+    aliases: ['song than', 'an binh', 'di an', 'binh duong', 'tong kho', 'bai xe'],
+  },
+  {
+    id: 'bd-depot-ga-song-than',
+    name: 'Hệ thống Depot Ga Sóng Thần',
+    address: 'Đại lộ Độc Lập / Đường số 2 & 14, KCN Sóng Thần 1 & 2, TP. Dĩ An, Bình Dương',
+    city: 'Bình Dương',
+    area: 'TP. Dĩ An',
+    aliases: ['ga song than', 'kcn song than', 'doc lap', 'di an', 'binh duong', 'depot', 'bai xe'],
+  },
+  {
+    id: 'bd-tan-van-dt743',
+    name: 'Bãi xe Ngã ba Tân Vạn – ĐT743',
+    address: 'Tuyến ĐT743 & Ngã ba Tân Vạn, P. Bình Thắng, TP. Dĩ An, Bình Dương',
+    city: 'Bình Dương',
+    area: 'TP. Dĩ An',
+    aliases: ['tan van', 'dt743', 'binh thang', 'di an', 'binh duong', 'bai xe'],
+  },
+  {
+    id: 'bd-vsip-1',
+    name: 'Bãi xe & Depot KCN VSIP 1',
+    address: 'Đường Hữu Nghị / Đại lộ Tự Do, KCN VSIP 1, TP. Thuận An, Bình Dương',
+    city: 'Bình Dương',
+    area: 'TP. Thuận An',
+    aliases: ['vsip', 'vsip 1', 'thuan an', 'binh hoa', 'binh duong', 'bai xe'],
+  },
+  {
+    id: 'bd-my-phuoc-tan-van',
+    name: 'Bãi xe trục Mỹ Phước – Tân Vạn',
+    address: 'Đường Mỹ Phước – Tân Vạn, P. An Phú / Thuận Giao, TP. Thuận An, Bình Dương',
+    city: 'Bình Dương',
+    area: 'TP. Thuận An',
+    aliases: ['my phuoc tan van', 'an phu', 'thuan giao', 'thuan an', 'binh duong', 'bai xe'],
+  },
+  {
+    id: 'bd-vinh-phu',
+    name: 'Bãi xe Vĩnh Phú (Thuận An)',
+    address: 'Đường Vĩnh Phú 21, P. Vĩnh Phú, TP. Thuận An, Bình Dương',
+    city: 'Bình Dương',
+    area: 'TP. Thuận An',
+    aliases: ['vinh phu', 'thuan an', 'binh duong', 'bai xe'],
+  },
+
+  // Hà Nội
+  {
+    id: 'hn-s9-thanh-tri',
+    name: 'Bãi xe S9 – Chân cầu Thanh Trì',
+    address: 'Tổ 21, P. Thanh Trì, Quận Hoàng Mai, Hà Nội',
+    city: 'Hà Nội',
+    area: 'Q. Hoàng Mai',
+    aliases: ['s9', 'thanh tri', 'hoang mai', 'cau thanh tri', 'ha noi', 'bai xe'],
+  },
+  {
+    id: 'hn-gam-cau-thanh-tri-h3',
+    name: 'Bãi xe Gầm cầu Thanh Trì – Trụ H3',
+    address: 'Đường gom Vành đai 3, P. Lĩnh Nam, Quận Hoàng Mai, Hà Nội',
+    city: 'Hà Nội',
+    area: 'Q. Hoàng Mai',
+    aliases: ['gam cau thanh tri', 'tru h3', 'vanh dai 3', 'linh nam', 'hoang mai', 'ha noi', 'bai xe'],
+  },
+  {
+    id: 'hn-thuy-linh',
+    name: 'Bãi xe Thúy Lĩnh – Lĩnh Nam',
+    address: 'Số 1 / Ngõ 49 Thúy Lĩnh, P. Lĩnh Nam, Quận Hoàng Mai, Hà Nội',
+    city: 'Hà Nội',
+    area: 'Q. Hoàng Mai',
+    aliases: ['thuy linh', 'linh nam', 'hoang mai', 'ha noi', 'bai xe'],
+  },
+  {
+    id: 'hn-phap-van',
+    name: 'Bãi xe Pháp Vân – Tứ Hiệp',
+    address: 'Đường Trần Thủ Độ, KĐT Pháp Vân, Quận Hoàng Mai, Hà Nội',
+    city: 'Hà Nội',
+    area: 'Q. Hoàng Mai',
+    aliases: ['phap van', 'tu hiep', 'tran thu do', 'hoang mai', 'ha noi', 'bai xe'],
+  },
+  {
+    id: 'hn-ngoc-hoi',
+    name: 'Tổng kho & Bãi xe Ngọc Hồi',
+    address: 'Km10 Đường Giải Phóng / KCN Ngọc Hồi, H. Thanh Trì, Hà Nội',
+    city: 'Hà Nội',
+    area: 'H. Thanh Trì',
+    aliases: ['ngoc hoi', 'giai phong', 'thanh tri', 'ha noi', 'tong kho', 'bai xe'],
+  },
+  {
+    id: 'hn-vinh-quynh',
+    name: 'Bãi xe Vĩnh Quỳnh (QL1A cũ)',
+    address: 'Xã Vĩnh Quỳnh, Huyện Thanh Trì, Hà Nội',
+    city: 'Hà Nội',
+    area: 'H. Thanh Trì',
+    aliases: ['vinh quynh', 'thanh tri', 'quoc lo 1a', 'ha noi', 'bai xe'],
+  },
+  {
+    id: 'hn-lien-ninh',
+    name: 'Bãi xe Liên Ninh (Thanh Trì)',
+    address: 'Xã Liên Ninh, Huyện Thanh Trì, Hà Nội',
+    city: 'Hà Nội',
+    area: 'H. Thanh Trì',
+    aliases: ['lien ninh', 'thanh tri', 'ha noi', 'bai xe'],
+  },
+  {
+    id: 'hn-tran-van-tra',
+    name: 'Bãi xe Phố Trần Văn Trà',
+    address: 'Phố Trần Văn Trà, P. Việt Hưng, Quận Long Biên, Hà Nội',
+    city: 'Hà Nội',
+    area: 'Q. Long Biên',
+    aliases: ['tran van tra', 'viet hung', 'long bien', 'ha noi', 'bai xe'],
+  },
+  {
+    id: 'hn-thach-ban-co-linh',
+    name: 'Bãi xe Thạch Bàn – Cổ Linh',
+    address: 'P. Thạch Bàn (gần cầu Vĩnh Tuy & Thanh Trì), Quận Long Biên, Hà Nội',
+    city: 'Hà Nội',
+    area: 'Q. Long Biên',
+    aliases: ['thach ban', 'co linh', 'long bien', 'ha noi', 'bai xe'],
+  },
+  {
+    id: 'hn-ngo-gia-tu',
+    name: 'Bãi xe Ngô Gia Tự – Đức Giang',
+    address: 'Phố Ngô Gia Tự, P. Đức Giang, Quận Long Biên, Hà Nội',
+    city: 'Hà Nội',
+    area: 'Q. Long Biên',
+    aliases: ['ngo gia tu', 'duc giang', 'long bien', 'ha noi', 'bai xe'],
+  },
+];
+
 /**
  * Prominent B2B Logistics Hubs, Industrial Parks & Ports
  */

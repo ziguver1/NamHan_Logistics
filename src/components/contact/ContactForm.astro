@@ -10,7 +10,7 @@
  * - Phase 1 Demo Compliance: Informative preview banner with direct hotline (no false success message)
  */
 import { companyInfo } from '@/content/company';
-import { VIETNAM_PROVINCES, MAJOR_LOGISTICS_HUBS } from '@/content/vietnam-provinces';
+import { VIETNAM_PROVINCES, MAJOR_LOGISTICS_HUBS, DEPOT_YARDS } from '@/content/vietnam-provinces';
 ---
 
 <div class="contact-form-card" id="shipping-form">
@@ -29,8 +29,8 @@ import { VIETNAM_PROVINCES, MAJOR_LOGISTICS_HUBS } from '@/content/vietnam-provi
     <!-- Hidden metadata fields -->
     <input type="hidden" id="formRequestId" name="requestId" value="" />
     <input type="hidden" id="formSourceUrl" name="sourceUrl" value="/lien-he/" />
-    <!-- Embedded Vietnam Provinces & Hubs dataset for instant suggestion (0ms fallback) -->
-    <script type="application/json" id="provincesStaticData" set:html={JSON.stringify({ provinces: VIETNAM_PROVINCES, hubs: MAJOR_LOGISTICS_HUBS })}></script>
+    <!-- Embedded Vietnam Provinces, Hubs & Depots dataset for instant suggestion (0ms fallback) -->
+    <script type="application/json" id="provincesStaticData" set:html={JSON.stringify({ provinces: VIETNAM_PROVINCES, hubs: MAJOR_LOGISTICS_HUBS, depots: DEPOT_YARDS })}></script>
 
     <!-- Radio Toggle: Bạn là -->
     <fieldset class="form-group customer-type-group">
@@ -503,7 +503,7 @@ import { VIETNAM_PROVINCES, MAJOR_LOGISTICS_HUBS } from '@/content/vietnam-provi
     top: calc(100% + 4px);
     left: 0;
     right: 0;
-    max-height: 280px;
+    max-height: 340px;
     overflow-y: auto;
     background: #ffffff;
     border: 1px solid #cbd5e1;
@@ -689,6 +689,82 @@ import { VIETNAM_PROVINCES, MAJOR_LOGISTICS_HUBS } from '@/content/vietnam-provi
     color: #92400e;
     border-color: #fde68a;
     font-weight: 700;
+  }
+
+  .location-dropdown :global(.loc-depot-badge) {
+    background-color: #e0f2fe;
+    color: #0369a1;
+    border-color: #bae6fd;
+    font-weight: 700;
+  }
+
+  .location-dropdown :global(.depot-city-tabs) {
+    padding: 0.5rem 0.65rem;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 0.375rem !important;
+    background-color: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .location-dropdown :global(.depot-city-tab) {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 0.35rem !important;
+    padding: 0.32rem 0.65rem !important;
+    background-color: #ffffff;
+    border: 1px solid #cbd5e1;
+    border-radius: 9999px;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #0f172a;
+    cursor: pointer;
+    transition: all var(--transition-fast, 150ms ease);
+    min-height: 30px;
+    line-height: 1.1;
+  }
+
+  .location-dropdown :global(.depot-city-tab:hover) {
+    background-color: #eff6ff;
+    border-color: #60a5fa;
+    color: #1d4ed8;
+  }
+
+  .location-dropdown :global(.depot-city-tab.is-selected) {
+    background-color: #0284c7;
+    border-color: #0284c7;
+    color: #ffffff;
+    box-shadow: 0 2px 6px rgba(2, 132, 199, 0.25);
+  }
+
+  .location-dropdown :global(.depot-tab-count) {
+    font-size: 0.6875rem;
+    font-weight: 700;
+    opacity: 0.85;
+  }
+
+  .location-dropdown :global(.depot-list-panel) {
+    background-color: #f8fafc;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .location-dropdown :global(.depot-item-text) {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    flex: 1;
+  }
+
+  .location-dropdown :global(.depot-item-sub) {
+    font-size: 0.72rem;
+    color: #64748b;
+    line-height: 1.3;
+    white-space: normal;
+    margin-top: 2px;
+  }
+
+  .location-dropdown :global(.depot-item .loc-name) {
+    white-space: normal;
   }
 
   .location-dropdown :global(.location-empty-item) {
@@ -1325,13 +1401,24 @@ import { VIETNAM_PROVINCES, MAJOR_LOGISTICS_HUBS } from '@/content/vietnam-provi
       badge?: string;
     }
 
+    interface DepotRecord {
+      id: string;
+      name: string;
+      address: string;
+      city: 'TP. Hồ Chí Minh' | 'Bình Dương' | 'Hà Nội';
+      area: string;
+      aliases?: string[];
+    }
+
     const staticDataEl = document.getElementById('provincesStaticData');
     let provincesList: ProvinceRecord[] = [];
+    let depotsList: DepotRecord[] = [];
 
     if (staticDataEl && staticDataEl.textContent) {
       try {
         const parsed = JSON.parse(staticDataEl.textContent);
         if (Array.isArray(parsed.provinces)) provincesList = parsed.provinces;
+        if (Array.isArray(parsed.depots)) depotsList = parsed.depots;
       } catch (_) {}
     }
 
@@ -1403,6 +1490,25 @@ import { VIETNAM_PROVINCES, MAJOR_LOGISTICS_HUBS } from '@/content/vietnam-provi
       return matches.slice(0, 8);
     }
 
+    function filterDepots(query: string): DepotRecord[] {
+      const qClean = removeTones(query);
+      if (!qClean) return [];
+      return depotsList.filter((d) => {
+        const nameClean = removeTones(d.name);
+        const addrClean = removeTones(d.address);
+        const cityClean = removeTones(d.city);
+        const areaClean = removeTones(d.area);
+        const aliasMatch = Array.isArray(d.aliases) && d.aliases.some((a) => removeTones(a).includes(qClean));
+        return nameClean.includes(qClean) || addrClean.includes(qClean) || cityClean.includes(qClean) || areaClean.includes(qClean) || aliasMatch;
+      });
+    }
+
+    const DEPOT_CITIES: Array<'TP. Hồ Chí Minh' | 'Bình Dương' | 'Hà Nội'> = [
+      'TP. Hồ Chí Minh',
+      'Bình Dương',
+      'Hà Nội'
+    ];
+
     function escapeHtml(str: string): string {
       return str.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
     }
@@ -1416,6 +1522,7 @@ import { VIETNAM_PROVINCES, MAJOR_LOGISTICS_HUBS } from '@/content/vietnam-provi
       if (!dropdown) return { close: () => {} };
       const dropdownEl = dropdown;
       let activeIndex = -1;
+      let selectedDepotCity: string | null = null;
 
       function updateClearBtn() {
         if (clearBtn) {
@@ -1423,8 +1530,62 @@ import { VIETNAM_PROVINCES, MAJOR_LOGISTICS_HUBS } from '@/content/vietnam-provi
         }
       }
 
+      function renderDepotItemHtml(d: DepotRecord): string {
+        const fullVal = `${d.name} – ${d.address}`;
+        return `
+          <li class="location-item depot-item" role="option" data-val="${escapeHtml(fullVal)}">
+            <div class="location-item-left">
+              <span class="loc-pin-icon-wrap" aria-hidden="true">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="1" y="3" width="15" height="13" rx="1"/>
+                  <polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/>
+                  <circle cx="5.5" cy="18.5" r="2.5"/>
+                  <circle cx="18.5" cy="18.5" r="2.5"/>
+                </svg>
+              </span>
+              <div class="depot-item-text">
+                <span class="loc-name">${escapeHtml(d.name)}</span>
+                <span class="depot-item-sub">${escapeHtml(d.address)}</span>
+              </div>
+            </div>
+            <span class="loc-region-badge loc-depot-badge">${escapeHtml(d.area)}</span>
+          </li>
+        `;
+      }
+
       function renderDefault() {
         let html = `
+          <div class="location-dropdown-header">
+            <span>Bãi xe tại 3 khu vực trọng điểm</span>
+            <span class="loc-sub-hint">Ấn để xem danh sách bãi xe</span>
+          </div>
+          <div class="depot-city-tabs">
+        `;
+
+        for (const city of DEPOT_CITIES) {
+          const count = depotsList.filter((d) => d.city === city).length;
+          const isSelected = selectedDepotCity === city;
+          html += `
+            <button type="button" class="depot-city-tab ${isSelected ? 'is-selected' : ''}" data-depot-city="${escapeHtml(city)}">
+              <span>${escapeHtml(city)}</span>
+              <span class="depot-tab-count">(${count})</span>
+            </button>
+          `;
+        }
+        html += `</div>`;
+
+        if (selectedDepotCity) {
+          const cityDepots = depotsList.filter((d) => d.city === selectedDepotCity);
+          html += `
+            <div class="depot-list-panel">
+              <ul class="location-items-list" role="listbox" aria-label="Danh sách bãi xe ${escapeHtml(selectedDepotCity)}">
+                ${cityDepots.map(renderDepotItemHtml).join('')}
+              </ul>
+            </div>
+          `;
+        }
+
+        html += `
           <div class="location-dropdown-header">
             <span>Tỉnh / thành phổ biến</span>
             <span class="loc-sub-hint">1 chạm để chọn</span>
@@ -1478,14 +1639,16 @@ import { VIETNAM_PROVINCES, MAJOR_LOGISTICS_HUBS } from '@/content/vietnam-provi
 
       function renderFiltered(query: string) {
         const matches = filterLocations(query);
-        if (matches.length === 0) {
+        const depotMatches = filterDepots(query);
+
+        if (matches.length === 0 && depotMatches.length === 0) {
           dropdownEl.innerHTML = `
             <div class="location-empty-item">
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2" style="margin-bottom: 6px; display: inline-block;">
                 <circle cx="11" cy="11" r="8"></circle>
                 <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
               </svg>
-              <div>Không tìm thấy tỉnh thành có tên "<strong>${escapeHtml(query)}</strong>".</div>
+              <div>Không tìm thấy tỉnh thành hoặc bãi xe có tên "<strong>${escapeHtml(query)}</strong>".</div>
               <div style="font-size: 0.75rem; color: #64748b; margin-top: 4px;">
                 Quý khách có thể giữ nguyên địa chỉ chi tiết vừa nhập (KCN, số nhà, phường/xã).
               </div>
@@ -1494,30 +1657,46 @@ import { VIETNAM_PROVINCES, MAJOR_LOGISTICS_HUBS } from '@/content/vietnam-provi
           return;
         }
 
-        let html = `
-          <div class="location-dropdown-header">
-            <span>Gợi ý tỉnh / thành</span>
-            <span class="loc-count-pill">${matches.length} kết quả</span>
-          </div>
-          <ul class="location-items-list" role="listbox">
-        `;
-        for (const m of matches) {
+        let html = '';
+
+        if (depotMatches.length > 0) {
           html += `
-            <li class="location-item" role="option" data-val="${m.name}">
-              <div class="location-item-left">
-                <span class="loc-pin-icon-wrap" aria-hidden="true">
-                  <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/>
-                    <circle cx="12" cy="10" r="3"/>
-                  </svg>
-                </span>
-                <span class="loc-name">${m.name}</span>
-              </div>
-              <span class="loc-region-badge ${m.isHub ? 'loc-hub-badge' : ''}">${m.badge || m.region}</span>
-            </li>
+            <div class="location-dropdown-header">
+              <span>Bãi xe tại TP.HCM / Bình Dương / Hà Nội</span>
+              <span class="loc-count-pill">${depotMatches.length} bãi xe</span>
+            </div>
+            <ul class="location-items-list" role="listbox">
+              ${depotMatches.map(renderDepotItemHtml).join('')}
+            </ul>
           `;
         }
-        html += `</ul>`;
+
+        if (matches.length > 0) {
+          html += `
+            <div class="location-dropdown-header">
+              <span>Gợi ý tỉnh / thành</span>
+              <span class="loc-count-pill">${matches.length} kết quả</span>
+            </div>
+            <ul class="location-items-list" role="listbox">
+          `;
+          for (const m of matches) {
+            html += `
+              <li class="location-item" role="option" data-val="${m.name}">
+                <div class="location-item-left">
+                  <span class="loc-pin-icon-wrap" aria-hidden="true">
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M12 2a8 8 0 0 0-8 8c0 5.25 8 12 8 12s8-6.75 8-12a8 8 0 0 0-8-8z"/>
+                      <circle cx="12" cy="10" r="3"/>
+                    </svg>
+                  </span>
+                  <span class="loc-name">${m.name}</span>
+                </div>
+                <span class="loc-region-badge ${m.isHub ? 'loc-hub-badge' : ''}">${m.badge || m.region}</span>
+              </li>
+            `;
+          }
+          html += `</ul>`;
+        }
 
         dropdownEl.innerHTML = html;
         bindDropdownEvents();
@@ -1540,6 +1719,16 @@ import { VIETNAM_PROVINCES, MAJOR_LOGISTICS_HUBS } from '@/content/vietnam-provi
       }
 
       function bindDropdownEvents() {
+        // 3-city Depot tabs
+        dropdownEl.querySelectorAll<HTMLButtonElement>('.depot-city-tab').forEach((btn) => {
+          btn.addEventListener('mousedown', (e) => {
+            e.preventDefault();
+            const city = btn.getAttribute('data-depot-city') || '';
+            selectedDepotCity = selectedDepotCity === city ? null : city;
+            renderDefault();
+          });
+        });
+
         // Quick chips
         dropdownEl.querySelectorAll<HTMLButtonElement>('.loc-chip').forEach((btn) => {
           btn.addEventListener('mousedown', (e) => {
